@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo sự cố | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/ua4.css">
+</head>
+<body data-page="ua4">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Báo cáo sự cố</h1>
+            <p class="sub">Gửi báo cáo về phòng học, thiết bị và theo dõi tiến độ xử lý.</p>
+          </div>
+          <div class="date-chip" id="dateChip"></div>
+        </div>
+
+        <div id="pageAlert"></div>
+        <div id="pageNotice"></div>
+
+        <div class="layout eq">
+          <!-- Cột trái: biểu mẫu (JS tự vẽ) -->
+          <section class="card" id="formCard"></section>
+
+          <!-- Cột phải: sự cố của tôi -->
+          <aside class="card">
+            <div class="card-head">
+              <h2>Sự cố của tôi</h2>
+              <span class="count" id="incCount"></span>
+            </div>
+
+            <div class="tabs" id="incTabs">
+              <button class="tab active" data-filter="all">Tất cả</button>
+              <button class="tab" data-filter="doing">Đang xử lý</button>
+              <button class="tab" data-filter="done">Đã xử lý</button>
+            </div>
+
+            <div class="inc-list" id="incList"></div>
+
+            <p class="note" id="noteInc"></p>
+          </aside>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <!-- Ngăn chi tiết trượt từ phải + hộp giả lập -->
+  <div id="drawerRoot"></div>
+  <div id="simRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua4.js"></script>
+</body>
+</html>
