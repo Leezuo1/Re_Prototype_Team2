@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giảng viên | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/teacher.css?v=workflow3">
+</head>
+<body data-page="teacher">
+  <div id="app-header"></div>
+  <div class="app-body">
+    <aside class="sidebar" id="app-sidebar"></aside>
+    <div class="app-main">
+      <main class="page teacher-page">
+        <header class="teacher-page-title">
+          <h1>Mượn – trả phòng</h1>
+        </header>
+
+        <section class="teacher-quick-grid" aria-label="Chức năng giảng viên">
+          <a class="teacher-quick active" href="#teacher-booking"><b>Đặt phòng</b></a>
+          <a class="teacher-quick" href="#teacher-requests"><b>Lịch mượn</b></a>
+          <a class="teacher-quick" href="#teacher-help"><b>Đơn vị duyệt</b></a>
+        </section>
+
+        <section class="teacher-section-heading" id="teacher-booking">
+          <div><span class="teacher-section-kicker">ĐẶT PHÒNG</span><h2>Tìm phòng phù hợp</h2></div>
+          <span class="teacher-live">Lịch phòng</span>
+        </section>
+
+        <section class="teacher-card teacher-search-card">
+          <form id="teacherSearchForm" class="teacher-filter-grid">
+            <label class="teacher-field"><span>Ngày sử dụng</span><input id="teacherDate" type="date" value="2026-11-23" required></label>
+            <label class="teacher-field"><span>Bắt đầu</span><input id="teacherStart" type="time" value="09:00" required></label>
+            <label class="teacher-field"><span>Kết thúc</span><input id="teacherEnd" type="time" value="11:00" required></label>
+            <label class="teacher-field"><span>Loại phòng</span><select id="teacherRoomType"><option value="all">Tất cả loại phòng</option><option value="classroom">Phòng học</option><option value="hall">Hội trường</option><option value="meeting">Phòng họp</option></select></label>
+            <label class="teacher-field"><span>Sức chứa tối thiểu</span><select id="teacherCapacity"><option value="0">Tất cả sức chứa</option><option value="20">Từ 20 chỗ</option><option value="40">Từ 40 chỗ</option><option value="80">Từ 80 chỗ</option><option value="200">Từ 200 chỗ</option></select></label>
+            <button class="teacher-button teacher-button-primary" type="submit">Tìm phòng trống</button>
+          </form>
+        </section>
+
+        <div class="teacher-results-head"><div><h3>Phòng có thể đăng ký <span id="teacherRoomCount">3 phòng</span></h3><p id="teacherSearchSummary">Thứ Hai, 23/11/2026 · 09:00 – 11:00</p></div><button class="teacher-text-button" id="teacherReset" type="button">Đặt lại bộ lọc</button></div>
+        <section id="teacherRoomGrid" class="teacher-room-grid" aria-live="polite"></section>
+
+        <section class="teacher-requests-section" id="teacher-requests">
+          <div class="teacher-section-heading compact"><div><span class="teacher-section-kicker">THEO DÕI</span><h2>Lịch mượn</h2></div><button class="teacher-text-button" id="teacherShowAll" type="button" hidden>Xem tất cả</button></div>
+          <div class="teacher-card teacher-requests-card">
+            <div class="teacher-request-tabs" id="teacherRequestTabs"><button class="selected" data-filter="all">Tất cả <span>0</span></button><button data-filter="pending">Chờ duyệt <span>0</span></button><button data-filter="approved">Đã duyệt <span>0</span></button><button data-filter="rejected">Từ chối <span>0</span></button><button data-filter="cancelled">Đã hủy <span>0</span></button><button data-filter="returned">Đã trả <span>0</span></button></div>
+            <div id="teacherRequestList"></div>
+          </div>
+        </section>
+
+        <section class="teacher-process" id="teacher-help">
+          <div><span class="teacher-section-kicker">QUY TRÌNH PHÊ DUYỆT</span><h2>Đơn vị phê duyệt</h2></div>
+          <div class="teacher-approvers"><div><b>Phòng học</b><small>Phòng Đào tạo</small></div><div><b>Hội trường</b><small>Trung tâm Hỗ trợ Sinh viên</small></div><div><b>Phòng họp</b><small>Quản lý CSVC</small></div></div>
+        </section>
+      </main>
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div class="teacher-modal-backdrop" id="teacherModal" hidden>
+    <section class="teacher-modal" role="dialog" aria-modal="true" aria-labelledby="teacherModalTitle">
+      <div class="teacher-modal-head"><div><span class="teacher-section-kicker">TẠO YÊU CẦU</span><h2 id="teacherModalTitle">Đăng ký mượn phòng</h2><p id="teacherModalRoom"></p></div><button type="button" class="teacher-modal-close" id="teacherModalClose">Đóng</button></div>
+      <form id="teacherBookingForm" class="teacher-booking-form">
+        <input type="hidden" id="teacherSelectedRoom">
+        <div class="teacher-modal-fields">
+          <label class="teacher-field"><span>Phòng *</span><select id="teacherFormRoom" required></select></label>
+          <label class="teacher-field"><span>Loại phòng</span><input id="teacherFormType" readonly></label>
+          <label class="teacher-field"><span>Mục đích sử dụng <em>*</em></span><input id="teacherPurpose" placeholder="Ví dụ: Dạy bù môn Phân tích thiết kế" required></label>
+          <label class="teacher-field"><span>Ngày sử dụng *</span><input id="teacherFormDate" type="date" required></label>
+          <label class="teacher-field"><span>Bắt đầu *</span><input id="teacherFormStart" type="time" required></label>
+          <label class="teacher-field"><span>Kết thúc *</span><input id="teacherFormEnd" type="time" required></label>
+        </div>
+        <p id="teacherExistingFiles" class="teacher-sub"></p>
+        <label class="teacher-upload"><span><b>Tờ trình <em>*</em></b><small>Đính kèm tờ trình đã được xác nhận · PDF, DOC, DOCX · tối đa 10 MB</small><input id="teacherProposal" type="file" accept=".pdf,.doc,.docx" required></span></label>
+        <label class="teacher-upload" id="teacherDecisionWrap" hidden><span><b>Quyết định phê duyệt <em>*</em></b><small>Hội trường yêu cầu thêm quyết định phê duyệt · PDF, DOC, DOCX · tối đa 10 MB</small><input id="teacherDecision" type="file" accept=".pdf,.doc,.docx"></span></label>
+        <div class="teacher-routing-message" id="teacherRoutingMessage"></div>
+        <p class="teacher-form-error" id="teacherFormError" role="alert"></p>
+        <div class="teacher-modal-actions"><button type="button" class="teacher-button teacher-button-secondary" id="teacherCancel">Quay lại</button><button class="teacher-button teacher-button-primary" type="submit">Gửi yêu cầu</button></div>
+      </form>
+    </section>
+  </div>
+  <div id="app-toast" class="teacher-toast" role="status" aria-live="polite"></div>
+  <div class="teacher-modal-backdrop" id="teacherActionModal" hidden>
+    <section class="teacher-modal" role="dialog" aria-modal="true" aria-labelledby="teacherActionTitle">
+      <div class="teacher-modal-head"><h2 id="teacherActionTitle"></h2><button type="button" class="teacher-modal-close" id="teacherActionClose">Đóng</button></div>
+      <div class="teacher-booking-form" id="teacherActionBody"></div>
+    </section>
+  </div>
+  <script src="../js/main.js?v=teacher-sidebar-20261118"></script>
+  <script src="../js/teacher.js?v=showall"></script>
+</body>
+</html>

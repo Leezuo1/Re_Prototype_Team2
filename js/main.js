@@ -27,7 +27,8 @@ function icon(name, cls = '') {
 function loadPartial(file) {
   try {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '../components/' + file, false);   // false = đồng bộ
+    const cacheBuster = file === 'sidebar.html' ? '?v=teacher-nav-20261118' : '';
+    xhr.open('GET', '../components/' + file + cacheBuster, false);   // false = đồng bộ
     xhr.send();
     const ok = xhr.status === 200 || (xhr.status === 0 && xhr.responseText);
     return ok ? xhr.responseText : null;
