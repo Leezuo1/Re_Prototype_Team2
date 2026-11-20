@@ -21,7 +21,7 @@ function icon(name, cls = '') {
 /* =====================================================
    HEADER + SIDEBAR: nạp từ thư mục components/
    Nạp đồng bộ ngay khi script chạy để header/sidebar có sẵn
-   trước khi code của từng trang (ua1.js, ua3.js, ua4.js...) khởi tạo.
+   trước khi code của từng trang (ua1.js, ua2.js, ua3.js...) khởi tạo.
    Lưu ý: phải mở web bằng Live Server (không bấm đúp file .html)
    ===================================================== */
 function loadPartial(file) {
@@ -110,6 +110,24 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ===== Mô phỏng gửi lên máy chủ: khóa nút + hiện loading rồi mới chạy work() =====
+   Chống bấm nhiều lần. Nếu work() vẽ lại giao diện (nút bị thay mới) thì không cần trả nút về. */
+function submitWithLoading(btn, work, delay = 700) {
+  if (!btn || btn.disabled) return;
+  const label = btn.innerHTML;
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="spinner"></span> Đang gửi...';
+  setTimeout(() => {
+    work();
+    if (document.body.contains(btn)) {          // nút còn đó -> trả về trạng thái ban đầu
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.innerHTML = label;
+    }
+  }, delay);
 }
 
 document.addEventListener('DOMContentLoaded', renderFooter);

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mượn – trả thiết bị | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/ua2.css">
+</head>
+<body data-page="ua2">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Mượn – trả thiết bị</h1>
+            <p class="sub">Chọn thiết bị mượn thêm, nhận mã QR và theo dõi phiếu mượn của bạn.</p>
+          </div>
+          <div class="date-chip" id="dateChip"></div>
+        </div>
+
+        <div id="pageAlert"></div>
+        <div id="pageNotice"></div>
+
+        <div class="layout" id="layout">
+          <!-- Cột trái: danh mục thiết bị + phiếu đang chọn (JS tự vẽ) -->
+          <section class="card" id="catalog"></section>
+
+          <!-- Cột phải: phiếu mượn của tôi / lịch sử (JS tự vẽ) -->
+          <aside class="card" id="panel"></aside>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua2.js"></script>
+</body>
+</html>
