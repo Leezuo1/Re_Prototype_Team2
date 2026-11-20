@@ -1,7 +1,8 @@
 /* ===== Khung modal dùng chung ===== */
-function setModal(html) {
+// variant = 'drawer' => ngăn trượt từ bên phải (dùng cho chi tiết đơn)
+function setModal(html, variant = '') {
   const root = document.getElementById('modalRoot');
-  root.innerHTML = `<div class="overlay"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true">${html}</div></div>`;
   document.body.classList.add('no-scroll');
   root.querySelector('.overlay').addEventListener('mousedown', e => {
     if (e.target.classList.contains('overlay')) closeModal();
@@ -150,10 +151,11 @@ function renderBooking(st) {
   }
 
   // Gửi yêu cầu
-  m.querySelector('#bSubmit').addEventListener('click', () => submitBooking(st, needFile));
+  const sendBtn = m.querySelector('#bSubmit');
+  sendBtn.addEventListener('click', () => submitBooking(st, needFile, sendBtn));
 }
 
-function submitBooking(st, needFile) {
+function submitBooking(st, needFile, btn) {
   st.errors = {};
   st.conflict = null;
   if (!st.purpose.trim()) st.errors.purpose = 'Vui lòng nhập mục đích sử dụng.';
@@ -163,25 +165,28 @@ function submitBooking(st, needFile) {
   }
   if (Object.keys(st.errors).length) return renderBooking(st);
 
-  // Kiểm tra trùng lịch khi gửi
-  const c = findConflict(st.room, st.date, st.start, st.end);
-  if (c) {
-    const dur = toMin(st.end) - toMin(st.start);
-    const fs = c.end, fe = toTime(toMin(c.end) + dur);
-    st.conflict = { slot: c, free: findConflict(st.room, st.date, fs, fe) ? null : `${fs} – ${fe}` };
-    return renderBooking(st);
-  }
+  // Thông tin đủ -> khóa nút, hiện loading rồi gửi (mô phỏng máy chủ)
+  submitWithLoading(btn, () => {
+    // Kiểm tra trùng lịch tại thời điểm gửi
+    const c = findConflict(st.room, st.date, st.start, st.end);
+    if (c) {
+      const dur = toMin(st.end) - toMin(st.start);
+      const fs = c.end, fe = toTime(toMin(c.end) + dur);
+      st.conflict = { slot: c, free: findConflict(st.room, st.date, fs, fe) ? null : `${fs} – ${fe}` };
+      return renderBooking(st);
+    }
 
-  const code = nextCode();
-  ORDERS.unshift({
-    code, room: st.room, date: st.date, start: st.start, end: st.end,
-    purpose: st.purpose.trim(), status: 'pending', sent: '10:52', file: st.file ? st.file.name : null
+    const code = nextCode();
+    ORDERS.unshift({
+      code, room: st.room, date: st.date, start: st.start, end: st.end,
+      purpose: st.purpose.trim(), status: 'pending', sent: '10:52', file: st.file ? st.file.name : null
+    });
+    closeModal();
+    highlightCode = code;
+    setOrderFilter('all');
+    renderRooms();
+    showOrderBanner('ok', 'Gửi yêu cầu thành công', `Đơn #${code} đã được thêm vào Đơn của tôi.`);
   });
-  closeModal();
-  highlightCode = code;
-  setOrderFilter('all');
-  renderRooms();
-  showOrderBanner('ok', 'Gửi yêu cầu thành công', `Đơn #${code} đã được thêm vào Đơn của tôi.`);
 }
 
 /* =====================================================
@@ -227,7 +232,7 @@ function openDetail(code, flash) {
 
   body += sumBox(`${o.room} · ${r.type}`, o, `${esc(o.purpose)} · ${r.cap} chỗ`);
 
-  if (o.status === 'pending' && o.file) {
+  if (o.file) {
     body += `<div class="file-row">${icon('file')} ${esc(o.file)}</div>`;
   }
   if (o.status === 'rejected') {
@@ -274,7 +279,7 @@ function openDetail(code, flash) {
   else if (o.status === 'rejected') foot = mFoot(`<button class="btn btn-primary" id="dRetry">${icon('search')} Chọn lại phòng/thời gian</button>`, 'full');
   else if (o.status === 'cancelled') foot = mFoot('<button class="btn btn-outline" data-close>Đóng</button>', 'full');
 
-  const m = setModal(`${mHead('Chi tiết yêu cầu', sub)}<div class="m-body">${body}</div>${foot}`);
+  const m = setModal(`${mHead('Chi tiết yêu cầu', sub)}<div class="m-body">${body}</div>${foot}`, 'drawer');
 
   const on = (id, fn) => { const el = m.querySelector(id); if (el) el.addEventListener('click', fn); };
   on('#dCancel', () => openCancel(o.code));
@@ -298,7 +303,6 @@ function renderReschedule(o, st) {
     : [];
   if (!list.find(r => r.name === st.room)) st.room = list.length ? list[0].name : null;
   const pick = st.room ? getRoom(st.room) : null;
-  const cur = getRoom(o.room);
 
   const m = setModal(`
     ${mHead('Đổi lịch mượn phòng', `Đơn #${o.code} · ${esc(o.purpose)}`)}
@@ -358,7 +362,8 @@ function openCancel(code) {
     ${mFoot(`<button class="btn btn-outline" data-close>Giữ lịch</button><button class="btn btn-danger" id="cOk">Xác nhận hủy</button>`)}
   `);
 
-  m.querySelector('#cOk').addEventListener('click', () => {
+  const okBtn = m.querySelector('#cOk');
+  okBtn.addEventListener('click', () => submitWithLoading(okBtn, () => {
     o.status = 'cancelled';
     dropNotif(o.code);
     renderOrders(); renderNotifs(); renderRooms();
@@ -378,5 +383,5 @@ function openCancel(code) {
       closeModal();
       document.getElementById('searchCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-  });
+  }));
 }

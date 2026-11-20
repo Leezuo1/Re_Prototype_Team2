@@ -2,541 +2,380 @@
 Object.assign(ICONS, {
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
   alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
-  xcircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',
-  clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
+  door: '<path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56z"/>',
   plug: '<path d="M12 22v-5M9 8V2M15 8V2M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
-  hub: '<path d="m19 5 3-3M2 22l3-3M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11M10.5 16.5 13 14M12 6l6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/>',
-  cable: '<path d="M4 9a2 2 0 0 1-2-2V5h6v2a2 2 0 0 1-2 2Z"/><path d="M3 5V3M7 5V3M19 15V6.5a3.5 3.5 0 0 0-7 0v11a3.5 3.5 0 0 1-7 0V9"/><path d="M17 21v-2M21 21v-2M22 19h-6v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2Z"/>',
-  wifi: '<path d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.859a10 10 0 0 1 14 0M8.5 16.429a5 5 0 0 1 7 0"/>',
-  qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/>',
-  box: '<path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
-  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
-  searchx: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M13.5 8.5l-5 5M8.5 8.5l5 5"/>'
+  imagePlus: '<path d="M16 5h6M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+  send: '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
+  clipboardCheck: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>'
 });
 
 /* ===== Dữ liệu mock ===== */
 const TODAY = '2026-10-26';
+const ROOMS = ['Phòng A.301', 'Phòng A.302'];
+const DEVICES = ['Máy chiếu B.205', 'Ổ điện kéo dài số 07', 'Hub USB-C số 03', 'Dây cáp HDMI số 05'];
 
-const EQUIP = [
-  { id: 'odien',  name: 'Ổ điện kéo dài',   short: 'Ổ điện',    desc: 'Ổ cắm 6 lỗ · Dây dài 5 m',            icon: 'plug' },
-  { id: 'hub',    name: 'Hub USB-C',        short: 'Hub USB-C', desc: 'Đa cổng · HDMI / USB / USB-C',        icon: 'hub' },
-  { id: 'hdmi',   name: 'Dây cáp HDMI',     short: 'HDMI',      desc: 'Kết nối trình chiếu · Dài 2 m',        icon: 'cable' },
-  { id: 'remote', name: 'Remote máy chiếu', short: 'Remote',    desc: 'Điều khiển cầm tay · Mượn thêm',       icon: 'wifi' }
-];
-const BASE  = { odien: 12, hub: 5, hdmi: 2, remote: 0 };
-const STOCK = { ...BASE };
+// Các bước xử lý theo thứ tự
+const STAGES = ['sent', 'received', 'repairing', 'done'];
+const STAGE_TITLE = { sent: 'Đã gửi', received: 'Đã tiếp nhận', repairing: 'Đang sửa', done: 'Đã xử lý' };
+const STAGE_CLASS = { sent: 'gray', received: 'pending', repairing: 'blue', done: 'ok' };
+const OFFSET = { received: 10, repairing: 30, done: 210 }; // phút kể từ lúc gửi (dùng khi giả lập)
 
-const ROOM_OPTS = [
-  ['A.301', 'A.301 · Tòa A · Tầng 3'], ['A.302', 'A.302 · Tòa A · Tầng 3'], ['A.303', 'A.303 · Tòa A · Tầng 3'],
-  ['B.205', 'B.205 · Tòa B · Tầng 2'], ['B.206', 'B.206 · Tòa B · Tầng 2'], ['C.402', 'C.402 · Tòa C · Tầng 4']
-];
-
-// status: wait (Chờ nhận) | borrowed (Đang mượn) | returned (Đã trả) | issue (Thiết bị có vấn đề)
-// old: true => chỉ hiện ở Lịch sử, không hiện ở tab "Phiếu mượn của tôi"
-const TICKETS = [
-  { code: 'TB1030', items: [{ id: 'hdmi', qty: 1 }],                          room: 'A.302', b: { date: '2026-10-26', time: '13:00' }, d: { date: '2026-10-26', time: '15:00' }, status: 'wait',     created: '08:10' },
-  { code: 'TB1029', items: [{ id: 'odien', qty: 1 }, { id: 'hub', qty: 1 }],   room: 'B.205', b: { date: '2026-10-26', time: '08:00' }, d: { date: '2026-10-26', time: '11:00' }, status: 'borrowed', created: '07:45', handed: '08:05' },
-  { code: 'TB1028', items: [{ id: 'hub', qty: 1 }],                           room: 'A.301', b: { date: '2026-10-23', time: '09:00' }, d: { date: '2026-10-23', time: '11:00' }, status: 'returned' },
-  { code: 'TB1027', items: [{ id: 'hdmi', qty: 1 }],                          room: 'C.402', b: { date: '2026-10-22', time: '14:00' }, d: { date: '2026-10-22', time: '16:00' }, status: 'issue' },
-  { code: 'TB1026', items: [{ id: 'odien', qty: 2 }],                         room: 'A.303', b: { date: '2026-10-21', time: '10:00' }, d: { date: '2026-10-21', time: '12:00' }, status: 'returned' },
-  { code: 'TB1025', items: [{ id: 'hdmi', qty: 1 }],                          room: 'A.301', b: { date: '2026-10-20', time: '08:00' }, d: { date: '2026-10-20', time: '10:00' }, status: 'returned', old: true },
-  { code: 'TB1024', items: [{ id: 'hub', qty: 1 }],                           room: 'B.206', b: { date: '2026-10-19', time: '13:00' }, d: { date: '2026-10-19', time: '15:00' }, status: 'returned', old: true },
-  { code: 'TB1023', items: [{ id: 'odien', qty: 1 }],                         room: 'A.302', b: { date: '2026-10-16', time: '09:00' }, d: { date: '2026-10-16', time: '11:00' }, status: 'returned', old: true },
-  { code: 'TB1022', items: [{ id: 'hdmi', qty: 1 }],                          room: 'C.402', b: { date: '2026-10-15', time: '14:00' }, d: { date: '2026-10-15', time: '16:00' }, status: 'returned', old: true }
+// kind: 'room' | 'device'; result (khi xong): 'repair' | 'replace'
+const INCIDENTS = [
+  { code: 'SC1040', kind: 'device', title: 'Dây cáp HDMI số 05',   desc: 'Đầu cáp lỏng, hình ảnh bị ngắt khi trình chiếu.',   status: 'sent',
+    times: { sent: { date: '2026-10-26', time: '10:05' } } },
+  { code: 'SC1039', kind: 'room',   title: 'Phòng A.301',          desc: 'Điều hòa không làm mát dù đã bật khoảng 20 phút.', status: 'received',
+    times: { sent: { date: '2026-10-26', time: '09:10' }, received: { date: '2026-10-26', time: '09:25' } } },
+  { code: 'SC1038', kind: 'device', title: 'Máy chiếu B.205',      desc: 'Máy chiếu không lên nguồn khi bật công tắc.',       status: 'repairing',
+    times: { sent: { date: '2026-10-26', time: '08:20' }, received: { date: '2026-10-26', time: '08:40' }, repairing: { date: '2026-10-26', time: '09:00' } } },
+  { code: 'SC1037', kind: 'room',   title: 'Phòng A.302',          desc: 'Tay nắm cửa bị lỏng, khó đóng cửa phòng.',          status: 'done', result: 'repair',
+    times: { sent: { date: '2026-10-23', time: '14:00' }, received: { date: '2026-10-23', time: '14:20' }, repairing: { date: '2026-10-23', time: '15:00' }, done: { date: '2026-10-23', time: '16:00' } } },
+  { code: 'SC1036', kind: 'device', title: 'Ổ điện kéo dài số 07', desc: 'Công tắc không sáng, các ổ cắm không có điện.',     status: 'done', result: 'replace',
+    img: { name: 'o-dien-07.jpg', size: '1,1 MB', url: null },
+    times: { sent: { date: '2026-10-22', time: '09:00' }, received: { date: '2026-10-22', time: '09:20' }, repairing: { date: '2026-10-22', time: '10:00' }, done: { date: '2026-10-23', time: '15:00' } } }
 ];
 
-const ST_TEXT  = { wait: 'Chờ nhận', borrowed: 'Đang mượn', returned: 'Đã trả', issue: 'Thiết bị có vấn đề' };
-const ST_CLASS = { wait: 'pending', borrowed: 'blue', returned: 'ok', issue: 'rejected' };
+const NOTIFS = [
+  { code: 'SC1039', stage: 'received',  title: 'Đã tiếp nhận · Phòng A.301',   text: 'Phòng CSVC đã tiếp nhận báo cáo điều hòa không làm mát.',   time: '09:25 · 26/10/2026', unread: true },
+  { code: 'SC1038', stage: 'repairing', title: 'Đang sửa · Máy chiếu B.205',   text: 'Sự cố máy chiếu không lên nguồn đang được khắc phục.',      time: '09:00 · 26/10/2026', unread: true },
+  { code: 'SC1037', stage: 'done',      title: 'Đã xử lý · Phòng A.302',       text: 'Sự cố đã được xử lý, bạn có thể sử dụng lại',               time: '16:00 · 23/10/2026', unread: true }
+];
 
-const cart = {};          // id -> số lượng đang chọn trong "Phiếu mượn đang chọn"
-const cardQty = {};       // id -> số lượng trên thẻ danh mục
-let tab = 'mine';         // 'mine' | 'hist'
-let hl = null;            // phiếu vừa tạo
-let lastReturned = null;  // phiếu vừa trả (tô xanh trong lịch sử)
-let hq = '', hs = '';     // tìm kiếm + lọc trạng thái ở lịch sử
+const f = { kind: 'device', target: '', desc: '', file: null, show: false };   // biểu mẫu
+let tab = 'all';       // all | doing | done
+let hl = null;         // phiếu vừa gửi
 
 /* ===== Tiện ích ===== */
 const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmtDate = iso => { const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; };
-const fmtDT = (o) => `${o.time} · ${fmtDate(o.date)}`;
-const lf = s => s.charAt(0).toLowerCase() + s.slice(1);
-const eq = id => EQUIP.find(e => e.id === id);
+const fmtDT = o => `${o.time} · ${fmtDate(o.date)}`;
 const num = c => Number(c.slice(2));
-const sortedTickets = () => [...TICKETS].sort((a, b) => num(b.code) - num(a.code));
-const nextCode = () => 'TB' + (Math.max(...TICKETS.map(t => num(t.code))) + 1);
-const getTicket = code => TICKETS.find(t => t.code === code);
-const itemsLine = items => items.map(i => `${eq(i.id).name} × ${i.qty}`).join(' · ');
-const itemsPhrase = items => {
-  const p = items.map(i => `${i.qty} ${lf(eq(i.id).name)}`);
-  return p.length > 1 ? p.slice(0, -1).join(', ') + ' và ' + p[p.length - 1] : p[0];
+const sorted = () => [...INCIDENTS].sort((a, b) => num(b.code) - num(a.code));
+const getInc = code => INCIDENTS.find(i => i.code === code);
+const nextCode = () => 'SC' + (Math.max(...INCIDENTS.map(i => num(i.code))) + 1);
+const addMin = (t, m) => {
+  const n = Math.min(Number(t.slice(0, 2)) * 60 + Number(t.slice(3)) + m, 23 * 60 + 59);
+  return String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
 };
-const stockLine = () => EQUIP.map(e => STOCK[e.id]).join(' / ');
-
-function stockBadge(n) {
-  if (n === 0) return ['rejected', 'Hết hàng'];
-  if (n <= 2) return ['pending', 'Sắp hết'];
-  return ['ok', 'Còn hàng'];
-}
 
 function alertBox(kind, title, text, ic = 'info') {
   return `<div class="alert ${kind}">${icon(ic)}<div>${title ? `<b>${title}</b>` : ''}${text || ''}</div></div>`;
 }
 
-const stepper = (dec, inc, q, over) => `
-  <div class="stepper ${over ? 'over' : ''}">
-    <button type="button" ${dec} aria-label="Giảm">−</button><span>${q}</span><button type="button" ${inc} aria-label="Tăng">+</button>
-  </div>`;
+const sentText = i => i.kind === 'device'
+  ? 'Hệ thống đã tạo phiếu sự cố, đánh dấu thiết bị Đang hỏng và thông báo Phòng CSVC'
+  : 'Hệ thống đã tạo phiếu sự cố và thông báo Phòng CSVC';
 
-/* ===== Khung modal ===== */
-function setModal(html) {
-  const root = $('modalRoot');
-  root.innerHTML = `<div class="overlay"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
-  document.body.classList.add('no-scroll');
-  root.querySelector('.overlay').addEventListener('mousedown', e => {
-    if (e.target.classList.contains('overlay')) closeModal();
-  });
-  root.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
-  return root.querySelector('.modal');
-}
-function closeModal() { $('modalRoot').innerHTML = ''; document.body.classList.remove('no-scroll'); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+/* ===== Biểu mẫu báo cáo (cột trái) ===== */
+function renderForm() {
+  const dev = f.kind === 'device';
+  const opts = dev ? DEVICES : ROOMS;
+  $('formCard').innerHTML = `
+    <h2>Báo cáo sự cố mới</h2>
+    <p class="fsub">Chọn đối tượng và mô tả vấn đề bạn gặp phải. <span class="req">*</span> là thông tin bắt buộc.</p>
 
-const xBtn = `<button type="button" class="m-x" data-close aria-label="Đóng">${icon('x')}</button>`;
-const mHead = (title, sub) => `<div class="m-head"><div><h2>${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>${xBtn}</div>`;
-const mFoot = (html, cls = '') => `<div class="m-foot ${cls}">${html}</div>`;
-
-/* ===== Danh mục thiết bị (cột trái) ===== */
-function renderCatalog() {
-  const el = $('catalog');
-
-  // Tab lịch sử: danh mục gọn
-  if (tab === 'hist') {
-    const restored = EQUIP.every(e => STOCK[e.id] === BASE[e.id]);
-    el.innerHTML = `
-      <div class="card-head"><h2>Danh mục thiết bị</h2></div>
-      <div class="eq-compact">
-        ${EQUIP.map(e => {
-          const [c, t] = stockBadge(STOCK[e.id]);
-          return `<div class="ec-row"><b>${e.name}</b><div><strong>${STOCK[e.id]}</strong><span class="badge ${c}">${t}</span></div></div>`;
-        }).join('')}
+    <div class="fl">
+      <label>Đối tượng báo sự cố <span class="req">*</span></label>
+      <div class="kinds">
+        <button type="button" class="kind ${dev ? '' : 'on'}" data-kind="room"><span class="rad"></span>${icon('door')} Phòng</button>
+        <button type="button" class="kind ${dev ? 'on' : ''}" data-kind="device"><span class="rad"></span>${icon('plug')} Thiết bị</button>
       </div>
-      <p class="ok-note">${restored ? `Khả dụng đã khôi phục về ${stockLine()} sau khi trả đủ thiết bị.` : `Khả dụng hiện tại: ${stockLine()}. Số lượng được hoàn lại khi trả thiết bị.`}</p>`;
-    return;
-  }
-
-  EQUIP.forEach(e => {
-    const s = STOCK[e.id];
-    cardQty[e.id] = s === 0 ? 0 : Math.min(Math.max(cardQty[e.id] || 1, 1), s);
-  });
-
-  const cartItems = EQUIP.filter(e => cart[e.id] > 0);
-  const total = cartItems.reduce((n, e) => n + cart[e.id], 0);
-
-  el.innerHTML = `
-    <div class="card-head"><h2>Danh mục thiết bị</h2><span class="count">4 loại thiết bị mượn thêm</span></div>
-    <div class="eq-grid">
-      ${EQUIP.map(e => {
-        const s = STOCK[e.id], [c, t] = stockBadge(s), q = cardQty[e.id];
-        return `
-        <article class="eq-card">
-          <div class="eq-top"><div class="room-icon">${icon(e.icon)}</div><span class="badge ${c}">${t}</span></div>
-          <h3>${e.name}</h3>
-          <p class="eq-desc">${e.desc}</p>
-          <div class="eq-mid">
-            <div><small>Hiện có thể mượn</small><strong class="${s ? '' : 'zero'}">${s} thiết bị</strong></div>
-            <div class="stepper ${s ? '' : 'off'}">
-              <button type="button" data-card-dec="${e.id}" ${q <= 1 ? 'disabled' : ''} aria-label="Giảm">−</button><span>${q}</span><button type="button" data-card-inc="${e.id}" ${q >= s ? 'disabled' : ''} aria-label="Tăng">+</button>
-            </div>
-          </div>
-          <button type="button" class="btn btn-primary btn-block" data-add="${e.id}" ${s ? '' : 'disabled'}>${s ? icon('plus') + ' ' : ''}Thêm vào phiếu mượn</button>
-        </article>`;
-      }).join('')}
     </div>
 
-    <div class="cart">
-      <div class="cart-head">
-        <b>Phiếu mượn đang chọn</b>
-        <span class="${cartItems.length ? 'cart-sum' : 'cart-sum none'}">${cartItems.length ? `${cartItems.length} loại · ${total} thiết bị` : 'Chưa chọn thiết bị'}</span>
-      </div>
-      ${cartItems.length
-        ? cartItems.map(e => `
-            <div class="cart-row"><span>${e.name}</span>${stepper(`data-cart-dec="${e.id}"`, `data-cart-inc="${e.id}"`, cart[e.id], cart[e.id] > STOCK[e.id])}</div>`).join('')
-        : '<p class="muted small cart-empty">Chọn thiết bị từ danh mục để tạo phiếu mượn tiếp theo.</p>'}
-      <button type="button" class="btn btn-primary btn-block" data-create ${cartItems.length ? '' : 'disabled'}>Tạo yêu cầu mượn</button>
+    <div class="fl">
+      <label for="fSel">${dev ? 'Thiết bị gặp sự cố' : 'Phòng gặp sự cố'} <span class="req">*</span></label>
+      <select id="fSel">
+        <option value="">${dev ? 'Chọn thiết bị gặp sự cố' : 'Chọn phòng gặp sự cố'}</option>
+        ${opts.map(o => `<option value="${o}" ${f.target === o ? 'selected' : ''}>${o}</option>`).join('')}
+      </select>
+      <p class="err" id="eSel" hidden>Vui lòng chọn phòng hoặc thiết bị gặp sự cố.</p>
     </div>
 
-    <p class="note">${icon('info')} Số lượng khả dụng được kiểm tra lại khi gửi yêu cầu. Chỉ đăng ký thiết bị mượn thêm, không đăng ký thiết bị có sẵn trong phòng.</p>`;
-}
+    <div class="fl">
+      <label for="fDesc">Mô tả sự cố <span class="req">*</span></label>
+      <textarea id="fDesc" placeholder="Mô tả hiện tượng, vị trí và tình trạng bạn quan sát được...">${esc(f.desc)}</textarea>
+      <p class="err" id="eDesc" hidden>Vui lòng nhập mô tả sự cố.</p>
+    </div>
 
-/* ===== Cột phải: Phiếu mượn của tôi / Lịch sử ===== */
-const tabsHtml = () => `
-  <div class="seg-tabs">
-    <button type="button" class="${tab === 'mine' ? 'active' : ''}" data-tab="mine">Phiếu mượn của tôi</button>
-    <button type="button" class="${tab === 'hist' ? 'active' : ''}" data-tab="hist">Lịch sử mượn - trả</button>
-  </div>`;
-
-function ticketCard(t) {
-  const dueLine = t.status === 'returned'
-    ? `<p class="tk-line">Đã trả: ${fmtDT(t.ret || t.d)}</p>`
-    : `<p class="tk-line">Trả dự kiến: ${fmtDT(t.d)}</p>`;
-  return `
-    <article class="tk ${t.code === hl ? 'new' : ''}">
-      <div class="tk-top">
-        <span class="order-code">#${t.code}${t.code === hl ? ' · Vừa tạo' : ''}</span>
-        <span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span>
+    <div class="fl">
+      <div class="lbl-row"><label>Ảnh đính kèm</label><small>Không bắt buộc</small></div>
+      <div class="drop" id="fDrop">
+        ${icon('imagePlus')}
+        <p>Kéo thả ảnh vào đây hoặc <b>Chọn ảnh</b></p>
+        <small>Có thể gửi báo cáo mà không cần đính kèm ảnh.</small>
       </div>
-      <div class="tk-title"><h3>${itemsLine(t.items)}</h3><button type="button" class="detail-link" data-detail="${t.code}">Chi tiết ${icon('chevron')}</button></div>
-      <p class="tk-room">Phòng sử dụng: ${t.room}</p>
-      <p class="tk-line">Mượn: ${fmtDT(t.b)}</p>
-      ${dueLine}
-      ${t.status === 'wait' ? `<button type="button" class="qr-link" data-qr="${t.code}">${icon('qr')} Xem mã QR</button>` : ''}
-    </article>`;
+      <input type="file" id="fFile" accept="image/*" hidden>
+      ${f.file ? `
+        <div class="file-card">
+          <div class="thumb">${f.file.url ? `<img src="${f.file.url}" alt="">` : icon('image')}</div>
+          <div class="fc-info"><b>${esc(f.file.name)}</b><small>Đã thêm · ${f.file.size}</small></div>
+          <button type="button" class="fc-x" id="fRemove" aria-label="Xóa ảnh">${icon('x')}</button>
+        </div>` : ''}
+    </div>
+
+    <div id="fAlert" hidden>${alertBox('err', '', 'Chưa thể gửi báo cáo. Vui lòng bổ sung các thông tin bắt buộc ở trên.', 'alert')}</div>
+    <button type="button" class="btn btn-primary btn-block" id="fBtn">${icon('send')} Gửi báo cáo</button>
+    <p class="note">${icon('info')} Phiếu sự cố được tự động chuyển đến Phòng CSVC. Bạn không cần liên hệ người xử lý.</p>`;
+
+  const sel = $('fSel'), desc = $('fDesc');
+  sel.addEventListener('change', () => { f.target = sel.value; syncForm(); });
+  desc.addEventListener('input', () => { f.desc = desc.value; syncForm(); });
+  document.querySelectorAll('[data-kind]').forEach(b => b.addEventListener('click', () => {
+    if (f.kind === b.dataset.kind) return;
+    f.kind = b.dataset.kind; f.target = '';
+    renderForm(); syncForm();
+  }));
+
+  const input = $('fFile'), drop = $('fDrop');
+  const take = file => {
+    if (!file) return;
+    if (!/^image\//.test(file.type || 'image/')) { showToast('Chỉ nhận tệp ảnh'); return; }
+    if (file.size > 10 * 1024 * 1024) { showToast('Ảnh tối đa 10 MB'); return; }
+    const url = typeof URL !== 'undefined' && URL.createObjectURL ? URL.createObjectURL(file) : null;
+    f.file = { name: file.name, size: (file.size / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB', url };
+    renderForm(); syncForm();
+  };
+  drop.addEventListener('click', () => input.click());
+  input.addEventListener('change', () => take(input.files[0]));
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); take(e.dataTransfer.files[0]); });
+  if ($('fRemove')) $('fRemove').addEventListener('click', () => { f.file = null; renderForm(); syncForm(); });
+
+  $('fBtn').addEventListener('click', submitForm);
+  syncForm();
 }
 
-function histMatches() {
-  const q = hq.trim().toLowerCase().replace('#', '');
-  return sortedTickets().filter(t => (t.status === 'returned' || t.status === 'issue')
-    && (!hs || t.status === hs)
-    && (!q || t.code.toLowerCase().includes(q) || t.items.some(i => eq(i.id).name.toLowerCase().includes(q))));
+function syncForm() {
+  if (!f.show) return;
+  const okS = !!f.target, okD = !!f.desc.trim();
+  $('eSel').hidden = okS;   $('fSel').classList.toggle('invalid', !okS);
+  $('eDesc').hidden = okD;  $('fDesc').classList.toggle('invalid', !okD);
+  $('fAlert').hidden = okS && okD;
+  $('fBtn').classList.toggle('is-disabled', !(okS && okD));
 }
 
-function renderHistResult() {
-  const all = TICKETS.filter(t => t.status === 'returned' || t.status === 'issue');
-  const list = histMatches();
-  const filtering = hq.trim() || hs;
+function submitForm() {
+  if (!f.target || !f.desc.trim()) { f.show = true; syncForm(); return; }
 
-  $('histCount').textContent = filtering ? `${list.length} kết quả phù hợp` : '';
-  $('histClear').hidden = !hq;
+  // Thông tin đủ -> khóa nút, hiện loading rồi tạo phiếu (mô phỏng máy chủ)
+  submitWithLoading($('fBtn'), () => {
+    const code = nextCode();
+    const inc = {
+      code, kind: f.kind, title: f.target, desc: f.desc.trim(), status: 'sent',
+      img: f.file ? { ...f.file } : null,
+      times: { sent: { date: TODAY, time: '10:30' } }
+    };
+    INCIDENTS.push(inc);
+    NOTIFS.unshift({ code, stage: 'sent', title: `Đã gửi · ${inc.title}`, text: sentText(inc), time: fmtDT(inc.times.sent), unread: true });
+    hl = code; tab = 'all';
+    f.target = ''; f.desc = ''; f.file = null; f.show = false;
+    $('pageNotice').innerHTML = `
+      <div class="alert ok with-x">${icon('check')}<div><b>Gửi báo cáo thành công · #${code}</b>${sentText(inc)}</div>
+        <button type="button" class="notice-x" id="noticeX" aria-label="Đóng">${icon('x')}</button></div>`;
+    $('noticeX').onclick = () => { $('pageNotice').innerHTML = ''; };
+    renderForm(); renderList(); renderNotifs();
+  });
+}
+
+/* ===== Sự cố của tôi (cột phải) ===== */
+function renderList() {
+  const all = sorted();
+  const list = tab === 'all' ? all : all.filter(i => (tab === 'done') === (i.status === 'done'));
+  $('incCount').textContent = tab === 'all' ? `${all.length} sự cố` : `${list.length} phù hợp`;
+  document.querySelectorAll('#incTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.filter === tab));
 
   if (!list.length) {
-    const sTxt = hs ? ` với trạng thái ${ST_TEXT[hs]}` : '';
-    $('histBody').innerHTML = `
-      <div class="empty-block">
-        <div class="empty-ico brand">${icon('searchx')}</div>
-        <h3>Không tìm thấy phiếu phù hợp</h3>
-        <p>Không có kết quả${hq.trim() ? ` cho “${hq.trim()}”` : ''}${sTxt}. Thử mã phiếu, tên thiết bị khác hoặc bỏ bộ lọc.</p>
-        <button type="button" class="btn btn-outline" data-hreset>Xóa tìm kiếm và bộ lọc</button>
-      </div>`;
-    $('histFoot').textContent = '';
+    $('incList').innerHTML = !all.length
+      ? `<div class="empty-block"><div class="empty-ico">${icon('clipboard')}</div><h3>Bạn chưa gửi báo cáo sự cố nào</h3><p>Khi gặp vấn đề với phòng học hoặc thiết bị, hãy gửi báo cáo ở biểu mẫu bên cạnh.</p></div>`
+      : `<div class="empty-block"><div class="empty-ico">${icon('clipboardCheck')}</div><h3>Không có sự cố ${tab === 'done' ? 'đã' : 'đang'} xử lý</h3><p>Hiện không có phiếu trong trạng thái này. Chọn Tất cả để xem các sự cố của bạn.</p><button type="button" class="btn btn-outline" data-all>Xem tất cả sự cố</button></div>`;
     return;
   }
 
-  $('histBody').innerHTML = `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Mã phiếu</th><th>Thiết bị</th><th>Số lượng</th><th>Thời gian mượn</th><th>Thời gian trả</th><th>Trạng thái</th></tr></thead>
-        <tbody>
-          ${list.map(t => {
-            const r = t.ret || t.d;
-            return `<tr class="${t.code === lastReturned ? 'hot' : ''}">
-              <td><button type="button" class="code-link" data-detail="${t.code}">#${t.code}</button></td>
-              <td>${t.items.map(i => `<div>${eq(i.id).name}</div>`).join('')}</td>
-              <td>${t.items.map(i => `<div>${i.qty}</div>`).join('')}</td>
-              <td><b>${t.b.time}</b><small>${fmtDate(t.b.date)}</small></td>
-              <td><b>${r.time}</b><small>${fmtDate(r.date)}</small></td>
-              <td><span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>`;
-  $('histFoot').textContent = `Hiển thị ${list.length} / ${all.length} phiếu · Phiếu gặp vấn đề được ghi nhận bởi Phòng CSVC và chuyển Đội ngũ Kỹ thuật.`;
-}
-
-function renderPanel() {
-  const el = $('panel');
-  $('layout').classList.toggle('hist', tab === 'hist');
-
-  if (tab === 'mine') {
-    const list = sortedTickets().filter(t => !t.old);
-    el.innerHTML = `
-      <div class="card-head"><h2>Phiếu mượn của tôi</h2><span class="count">${list.length} phiếu</span></div>
-      ${tabsHtml()}
-      ${list.length ? `<div class="tk-list">${list.map(ticketCard).join('')}</div>` : `
-        <div class="empty-block">
-          <div class="empty-ico brand">${icon('clipboard')}</div>
-          <h3>Bạn chưa có phiếu mượn</h3>
-          <p>Chọn thiết bị mượn thêm từ danh mục, sau đó tạo yêu cầu để nhận mã QR tại Phòng CSVC.</p>
-        </div>`}
-      <p class="note">${icon('qr')} Xuất trình mã QR tại Phòng CSVC để nhận và trả thiết bị. Không cần để thẻ sinh viên hoặc ghi sổ tay.</p>`;
-    return;
-  }
-
-  const total = TICKETS.filter(t => t.status === 'returned' || t.status === 'issue').length;
-  el.innerHTML = `
-    ${tabsHtml()}
-    <div class="card-head hh"><h2>Lịch sử mượn - trả</h2><span class="count">${total} phiếu</span></div>
-    <div class="hist-filter">
-      <div class="search-box">
-        ${icon('search')}
-        <input type="text" id="hSearch" placeholder="Tìm theo mã phiếu hoặc tên thiết bị" value="${hq.replace(/"/g, '&quot;')}">
-        <button type="button" class="clear-x" id="histClear" hidden aria-label="Xóa">${icon('x')}</button>
+  $('incList').innerHTML = list.map(i => `
+    <article class="inc ${i.code === hl ? 'new' : ''}">
+      <div class="inc-top">
+        <span class="order-code">#${i.code}${i.code === hl ? ' · Vừa gửi' : ''}</span>
+        <span class="badge ${STAGE_CLASS[i.status]}">${STAGE_TITLE[i.status]}</span>
       </div>
-      <select id="hStatus">
-        <option value="">Tất cả trạng thái</option>
-        <option value="returned" ${hs === 'returned' ? 'selected' : ''}>Đã trả</option>
-        <option value="issue" ${hs === 'issue' ? 'selected' : ''}>Thiết bị có vấn đề</option>
-      </select>
-    </div>
-    <p class="muted small" id="histCount"></p>
-    <div id="histBody"></div>
-    <p class="note" id="histFoot"></p>`;
-  renderHistResult();
-}
-
-function renderAll() { renderCatalog(); renderPanel(); }
-
-function setTab(t) { tab = t; renderAll(); }
-function setNotice(html) { $('pageNotice').innerHTML = html; }
-
-/* =====================================================
-   1. TẠO YÊU CẦU MƯỢN
-   ===================================================== */
-function validate(st) {
-  const e = {};
-  EQUIP.forEach(x => { if (cart[x.id] > STOCK[x.id]) e.stock = true; });
-  if (!st.room) e.room = 'Vui lòng chọn phòng sử dụng.';
-  if (!st.bd) e.bd = 'Vui lòng chọn ngày mượn.';
-  if (!st.bt) e.bt = 'Vui lòng chọn giờ mượn.';
-  if (!st.rd) e.rd = 'Vui lòng chọn ngày trả.';
-  if (!st.rt) e.rt = 'Vui lòng chọn giờ trả.';
-  if (!e.bd && !e.bt && !e.rd && !e.rt && `${st.rd}T${st.rt}` <= `${st.bd}T${st.bt}`) e.order = 'Thời gian trả phải sau thời gian mượn.';
-  return e;
-}
-
-function openCreate(st) {
-  st = st || { room: '', bd: TODAY, bt: '09:00', rd: TODAY, rt: '11:00', show: false };
-  const items = EQUIP.filter(e => cart[e.id] > 0);
-  if (!items.length) { closeModal(); renderAll(); return; }
-
-  const e = validate(st), sh = st.show, bad = Object.keys(e).length > 0;
-  const inv = k => (sh && e[k] ? 'invalid' : '');
-  const err = k => (sh && e[k] ? `<p class="err">${e[k]}</p>` : '');
-
-  const m = setModal(`
-    ${mHead('Tạo yêu cầu mượn', 'Kiểm tra thiết bị và thời gian sử dụng trước khi gửi yêu cầu.')}
-    <div class="m-body">
-      ${sh && bad ? alertBox('err', '', 'Chưa thể gửi yêu cầu. Vui lòng kiểm tra số lượng và điền đủ thông tin bắt buộc.', 'alert') : ''}
-
-      <div class="sel-box">
-        <h4>Thiết bị đã chọn</h4>
-        ${items.map(x => {
-          const q = cart[x.id], over = q > STOCK[x.id];
-          return `<div class="ci">
-            <div class="ci-row"><div><b>${x.name}</b><small>Khả dụng: ${STOCK[x.id]}</small></div>${stepper(`data-m-dec="${x.id}"`, `data-m-inc="${x.id}"`, q, over)}</div>
-            ${over ? `<p class="err">Số lượng vượt quá khả dụng. Chỉ còn ${STOCK[x.id]} ${lf(x.name)}; vui lòng chọn tối đa ${STOCK[x.id]}.</p>` : ''}
-          </div>`;
-        }).join('')}
-      </div>
-
-      <div class="f-group">
-        <label>Phòng sử dụng *</label>
-        <select id="cRoom" class="${inv('room')}">
-          <option value="">Chọn phòng sử dụng</option>
-          ${ROOM_OPTS.map(([v, l]) => `<option value="${v}" ${st.room === v ? 'selected' : ''}>${l}</option>`).join('')}
-        </select>
-        ${err('room')}
-      </div>
-
-      <div class="f-row">
-        <div class="f-group"><label>Ngày mượn *</label><input type="date" id="cBd" value="${st.bd}" class="${inv('bd')}">${err('bd')}</div>
-        <div class="f-group"><label>Giờ mượn *</label><input type="time" id="cBt" value="${st.bt}" class="${inv('bt')}">${err('bt')}</div>
-      </div>
-      <div class="f-row">
-        <div class="f-group"><label>Ngày trả *</label><input type="date" id="cRd" value="${st.rd}" class="${inv('rd')}">${err('rd')}</div>
-        <div class="f-group"><label>Giờ trả *</label><input type="time" id="cRt" value="${st.rt}" class="${inv('rt')}">${err('rt')}</div>
-      </div>
-      ${err('order')}
-      <p class="req-note">Thời gian trả phải sau thời gian mượn. Số lượng khả dụng được kiểm tra lại khi gửi yêu cầu.</p>
-    </div>
-    ${mFoot(`<button type="button" class="btn btn-outline" data-close>Hủy</button>
-             <button type="button" class="btn btn-primary ${bad ? 'is-disabled' : ''}" id="cSend">Gửi yêu cầu</button>`, 'wide')}
-  `);
-
-  const bind = (id, key) => m.querySelector(id).addEventListener('change', ev => { st[key] = ev.target.value; openCreate(st); });
-  bind('#cRoom', 'room'); bind('#cBd', 'bd'); bind('#cBt', 'bt'); bind('#cRd', 'rd'); bind('#cRt', 'rt');
-
-  m.querySelectorAll('[data-m-dec]').forEach(b => b.addEventListener('click', () => {
-    const id = b.dataset.mDec; cart[id] -= 1; if (cart[id] <= 0) delete cart[id];
-    renderCatalog(); openCreate(st);
-  }));
-  m.querySelectorAll('[data-m-inc]').forEach(b => b.addEventListener('click', () => {
-    const id = b.dataset.mInc; cart[id] = Math.min((cart[id] || 0) + 1, 99);
-    renderCatalog(); openCreate(st);
-  }));
-
-  m.querySelector('#cSend').addEventListener('click', () => {
-    if (Object.keys(validate(st)).length) { st.show = true; openCreate(st); return; }
-    const code = nextCode();
-    const list = EQUIP.filter(x => cart[x.id] > 0).map(x => ({ id: x.id, qty: cart[x.id] }));
-    list.forEach(i => { STOCK[i.id] -= i.qty; });
-    TICKETS.push({
-      code, items: list, room: st.room,
-      b: { date: st.bd, time: st.bt }, d: { date: st.rd, time: st.rt },
-      status: 'wait', created: '08:30', cd: TODAY
-    });
-    Object.keys(cart).forEach(k => delete cart[k]);
-    tab = 'mine'; hl = code;
-    setNotice(alertBox('ok', '', `Tạo yêu cầu thành công. Đã kiểm tra số lượng khả dụng, lưu phiếu #${code} và tạo mã QR.`, 'check'));
-    renderAll();
-    openQR(code, true);
-  });
+      <div class="inc-title"><h3>${esc(i.title)}</h3><button type="button" class="detail-link" data-detail="${i.code}">Chi tiết ${icon('chevron')}</button></div>
+      <p class="inc-desc">${esc(i.desc)}</p>
+      <p class="inc-time">${icon('clock')} Đã gửi: ${fmtDT(i.times.sent)}</p>
+      ${i.status === 'done' && i.result === 'replace' ? `<div class="inc-res"><span>Kết quả xử lý</span><span class="badge orange">Thay thế / bảo hành</span></div>` : ''}
+    </article>`).join('');
 }
 
 /* =====================================================
-   2. MÃ QR (mẫu, không mã hóa dữ liệu thật)
+   NGĂN CHI TIẾT SỰ CỐ (trượt từ bên phải)
    ===================================================== */
-function qrSvg(seed) {
-  const N = 25;
-  let h = 7;
-  for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  const rnd = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
-  const m = Array.from({ length: N }, () => Array.from({ length: N }, () => (rnd() < 0.5 ? 1 : 0)));
-  const finder = (ox, oy) => {
-    for (let y = -1; y <= 7; y++) for (let x = -1; x <= 7; x++) {
-      const X = ox + x, Y = oy + y;
-      if (X < 0 || Y < 0 || X >= N || Y >= N) continue;
-      const inside = x >= 0 && x <= 6 && y >= 0 && y <= 6;
-      const edge = x === 0 || x === 6 || y === 0 || y === 6;
-      const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
-      m[Y][X] = inside && (edge || core) ? 1 : 0;
-    }
-  };
-  finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
-  let rects = '';
-  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (m[y][x]) rects += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
-  return `<svg viewBox="0 0 ${N} ${N}" class="qr-svg" shape-rendering="crispEdges" fill="#1f2430">${rects}</svg>`;
-}
+function closeDrawer() { $('drawerRoot').innerHTML = ''; document.body.classList.remove('no-scroll'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); closeSim(); } });
 
-function openQR(code, fresh) {
-  const t = getTicket(code);
-  const m = setModal(`
-    ${mHead('Mã QR của phiếu mượn')}
-    <div class="m-body">
-      ${fresh ? alertBox('ok', '', `Tạo yêu cầu thành công · Phiếu #${t.code} đã được lưu.`, 'check') : ''}
-      <div class="qr-wrap">
-        <span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span>
-        <div class="qr-box">${qrSvg(t.code)}</div>
-        <h3 class="qr-code">#${t.code}</h3>
-        <small class="muted">Mã QR minh họa</small>
-      </div>
-      <div class="qr-info">
-        <b>${itemsLine(t.items)}</b>
-        <p>Phòng sử dụng: ${t.room}</p>
-        <p class="muted">Mượn: ${fmtDT(t.b)}</p>
-        <p class="muted">Trả dự kiến: ${fmtDT(t.d)}</p>
-      </div>
-      <p class="qr-hint">Đến Phòng CSVC và xuất trình mã QR để nhận thiết bị</p>
-      <button type="button" class="btn btn-primary btn-block" id="qSave">${icon('download')} Lưu ảnh QR</button>
-      <p class="muted small" style="margin-top:12px">Minh họa giao diện tĩnh: nút lưu ảnh không tải tệp. Có thể xem lại mã QR trong chi tiết phiếu.</p>
-    </div>
-  `);
-  m.querySelector('#qSave').addEventListener('click', () => showToast('Đã lưu ảnh QR (minh họa)'));
+function noteOf(i) {
+  const dev = i.kind === 'device';
+  if (i.status === 'sent') return 'Phiếu sự cố đã được tạo và chuyển đến Phòng CSVC.';
+  if (i.status === 'received') return 'Phòng CSVC đã tiếp nhận và đang kiểm tra sự cố.';
+  if (i.status === 'repairing') return dev ? 'Đang khắc phục sự cố của thiết bị.' : 'Đang khắc phục sự cố tại phòng.';
+  return i.result === 'replace' ? 'Đã thay thiết bị và thông báo kết quả cho sinh viên.' : 'Đã khắc phục sự cố và kiểm tra hoạt động ổn định.';
 }
-
-/* =====================================================
-   3. CHI TIẾT PHIẾU MƯỢN
-   ===================================================== */
-function ticketTimeline(t) {
-  const created = `${t.created || '08:00'} · ${fmtDate(t.cd || t.b.date)}`;
-  const step = (done, title, sub) =>
-    `<li class="${done ? 'done' : 'todo'}"><span class="dot">${done ? icon('check') : ''}</span><div><b>${title}</b><small>${sub}</small></div></li>`;
-  const got = t.status !== 'wait';
-  const back = t.status === 'returned' || t.status === 'issue';
-  let s = step(true, 'Đã tạo phiếu', created);
-  s += got ? step(true, 'Đã nhận thiết bị', `${t.handed || '08:55'} · ${fmtDate(t.b.date)}`)
-           : step(false, 'Đã nhận thiết bị', 'Chờ CSVC quét QR bàn giao');
-  s += back ? step(true, 'Đã trả', `${fmtDT(t.ret || t.d)} · ${t.status === 'returned' ? 'Đủ thiết bị, bình thường' : 'Có thiết bị gặp vấn đề'}`)
-            : step(false, 'Đã trả', `Dự kiến ${fmtDT(t.d)}`);
-  return `<h4 class="sec">Tiến trình phiếu</h4><ol class="tl tl-brand">${s}</ol>`;
-}
-
-const availBox = note => `
-  <div class="avail">
-    <h4>Khả dụng sau trạng thái này</h4>
-    <div class="cells">${EQUIP.map(e => `<div class="cell"><small>${e.short}</small><b>${STOCK[e.id]}</b></div>`).join('')}</div>
-    <p class="muted small">${note}</p>
-  </div>`;
 
 function openDetail(code) {
-  const t = getTicket(code);
-  let body = `<div class="dt-top"><h3>#${t.code}</h3><span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span></div>`;
-  if (t.status === 'borrowed') {
-    body += `<div class="hand"><span class="badge blue">Đã bàn giao</span><small>CSVC đã quét QR lúc ${t.handed || '08:55'} · ${fmtDate(t.b.date)}</small></div>`;
-  }
-  body += `
-    <div class="sum">
-      <h4>Thiết bị trong phiếu</h4>
-      ${t.items.map(i => `<div class="it"><span>${eq(i.id).name}</span><b>× ${i.qty}</b></div>`).join('')}
-    </div>
-    <p class="dt-room">Phòng sử dụng: ${t.room}</p>
-    <p class="dt-line">Mượn: ${fmtDT(t.b)}</p>
-    <p class="dt-line">Trả dự kiến: ${fmtDT(t.d)}</p>
-    <p class="muted small">Người mượn: Nguyễn Đình Thuần · SV Khoa CNTT</p>
-    ${ticketTimeline(t)}`;
+  const i = getInc(code);
+  const idx = STAGES.indexOf(i.status);
 
-  if (t.status === 'wait') body += `<div class="alert info lg">${icon('box')}<div>Thiết bị đã được chuẩn bị sẵn tại Phòng CSVC</div></div>`;
-  if (t.status === 'returned') {
-    body += alertBox('ok', '', 'Trả thiết bị thành công. Phiếu đã được chuyển vào Lịch sử mượn - trả.', 'check');
-    body += availBox(`Đã hoàn lại ${itemsPhrase(t.items)} vào số lượng khả dụng.`);
-  }
-  if (t.status === 'issue') {
-    const bad = t.items[t.items.length - 1], ok = t.items.slice(0, -1);
-    body += alertBox('err', '', 'Phòng CSVC đã tạo phiếu sự cố chuyển Đội ngũ Kỹ thuật', 'alert');
-    body += `<p class="issue-text">${eq(bad.id).name} × ${bad.qty} được Phòng CSVC ghi nhận gặp sự cố khi trả. Thiết bị này chưa khả dụng cho đến khi được xử lý${ok.length ? `; ${itemsPhrase(ok)} đã trả bình thường` : ''}.</p>`;
-    body += availBox(`${eq(bad.id).name} gặp vấn đề không được cộng lại vào số lượng có thể mượn.`);
+  const steps = STAGES.map((s, n) => {
+    const done = n <= idx;
+    const link = done && n < idx ? 'line-on' : '';
+    return `<li class="${done ? 'done' : 'todo'} ${link}"><span class="dot">${done ? icon('check') : ''}</span>
+      <div><b>${STAGE_TITLE[s]}</b><small>${done ? fmtDT(i.times[s]) : 'Chờ cập nhật'}</small></div></li>`;
+  }).join('');
+
+  let doneBox = '';
+  if (i.status === 'done') {
+    doneBox = i.result === 'replace'
+      ? `<div class="alert ok flat">${icon('check')}<div><b>Sự cố đã được xử lý, bạn có thể sử dụng lại</b><span class="orange-text">Thiết bị được thay thế, vui lòng nhận tại Phòng CSVC</span></div></div>`
+      : `<div class="alert ok flat">${icon('check')}<div><b>Sự cố đã được xử lý, bạn có thể sử dụng lại</b>Đã sửa chữa · ${i.kind === 'device' ? 'Thiết bị' : 'Phòng'} hoạt động bình thường.</div></div>`;
   }
 
-  let foot = '';
-  if (t.status === 'wait') foot = `<button type="button" class="btn btn-outline btn-block" data-qr-open>${icon('qr')} Mở lại mã QR</button>
-                                   <button type="button" class="btn btn-outline btn-block" id="dHand">Giả lập Phòng CSVC quét QR bàn giao</button>`;
-  if (t.status === 'borrowed') foot = `<button type="button" class="btn btn-outline btn-block" data-qr-open>${icon('qr')} Mở lại mã QR</button>
-                                       <button type="button" class="btn btn-outline btn-block" id="dRet">Giả lập Phòng CSVC quét QR nhận trả</button>`;
+  $('drawerRoot').innerHTML = `
+    <div class="drawer-overlay" id="dOverlay">
+      <aside class="drawer" role="dialog" aria-modal="true">
+        <div class="d-head">
+          <div><h2>Chi tiết sự cố</h2><p>#${i.code}</p></div>
+          <button type="button" class="d-x" id="dClose" aria-label="Đóng">${icon('x')}</button>
+        </div>
+        <div class="d-body">
+          <h3 class="d-title">${esc(i.title)}</h3>
+          <div class="d-badges">
+            <span class="badge ${STAGE_CLASS[i.status]}">${STAGE_TITLE[i.status]}</span>
+            ${i.status === 'done' && i.result === 'replace' ? '<span class="badge orange">Thay thế / bảo hành</span>' : ''}
+          </div>
+          <p class="d-sent">Đã gửi: ${fmtDT(i.times.sent)}</p>
+          ${doneBox}
+          <h4 class="d-sec">Mô tả sự cố</h4>
+          <p class="d-desc">${esc(i.desc)}</p>
+          <h4 class="d-sec">Ảnh đính kèm · ${i.img ? '1 ảnh' : '0 ảnh'}</h4>
+          ${i.img ? `
+            <div class="file-card">
+              <div class="thumb">${i.img.url ? `<img src="${i.img.url}" alt="">` : icon('image')}</div>
+              <div class="fc-info"><b>${esc(i.img.name)}</b><small>Ảnh đã gửi · ${i.img.size}</small></div>
+            </div>` : '<p class="muted small">Không có ảnh đính kèm.</p>'}
+          <h3 class="d-prog">Tiến độ xử lý</h3>
+          <ol class="tl4">${steps}</ol>
+          <div class="d-note"><b>Ghi chú xử lý</b><p>${noteOf(i)}</p></div>
+          ${i.status !== 'done' ? `<button type="button" class="btn btn-outline btn-block" id="dSim">Giả lập tiến độ</button>
+            <p class="d-foot">Minh họa: bấm để chuyển sang bước xử lý tiếp theo.</p>` : ''}
+        </div>
+      </aside>
+    </div>`;
+  document.body.classList.add('no-scroll');
+  $('dClose').onclick = closeDrawer;
+  $('dOverlay').addEventListener('mousedown', e => { if (e.target.id === 'dOverlay') closeDrawer(); });
+  if ($('dSim')) $('dSim').onclick = () => simulate(i.code);
+}
 
-  const m = setModal(`${mHead('Chi tiết phiếu mượn')}<div class="m-body">${body}${foot ? `<div class="dt-actions">${foot}</div>` : ''}
-    <p class="muted small" style="margin-top:12px">Nhận và trả trực tiếp tại Phòng CSVC bằng QR.</p></div>`);
+/* ===== Giả lập tiến độ xử lý ===== */
+function closeSim() { $('simRoot').innerHTML = ''; }
 
-  const on = (sel, fn) => { const el = m.querySelector(sel); if (el) el.addEventListener('click', fn); };
-  on('[data-qr-open]', () => openQR(t.code, false));
-  on('#dHand', () => {
-    t.status = 'borrowed'; t.handed = '08:55';
-    renderAll(); openDetail(t.code);
-  });
-  on('#dRet', () => openReturnSim(t.code));
+function simulate(code) {
+  const i = getInc(code);
+  const next = STAGES[STAGES.indexOf(i.status) + 1];
+  // Bước cuối của thiết bị: 2 kết quả thay thế nhau
+  if (next === 'done' && i.kind === 'device') {
+    $('simRoot').innerHTML = `
+      <div class="sim-overlay" id="sOverlay"><div class="sim-box">
+        <h3>Giả lập kết quả xử lý</h3>
+        <p>#${i.code} · ${esc(i.title)}. Chọn một trong hai kết quả hoàn tất (thay thế nhau).</p>
+        <div class="sim-btns">
+          <button type="button" class="btn btn-primary" id="sRepair">Sửa chữa xong</button>
+          <button type="button" class="btn btn-outline" id="sReplace">Thay thế / bảo hành</button>
+          <button type="button" class="btn btn-outline" id="sCancel">Quay lại</button>
+        </div></div></div>`;
+    $('sRepair').onclick = () => { closeSim(); advance(i, next, 'repair'); };
+    $('sReplace').onclick = () => { closeSim(); advance(i, next, 'replace'); };
+    $('sCancel').onclick = closeSim;
+    $('sOverlay').addEventListener('mousedown', e => { if (e.target.id === 'sOverlay') closeSim(); });
+    return;
+  }
+  advance(i, next, next === 'done' ? 'repair' : null);
+}
+
+function advance(i, next, result) {
+  const s = i.times.sent;
+  i.times[next] = { date: s.date, time: addMin(s.time, OFFSET[next]) };
+  i.status = next;
+  if (result) i.result = result;
+
+  const dev = i.kind === 'device';
+  const text = {
+    received: 'Phòng CSVC đã tiếp nhận và đang kiểm tra sự cố.',
+    repairing: dev ? 'Đang khắc phục sự cố của thiết bị.' : 'Đang khắc phục sự cố tại phòng.',
+    done: result === 'replace' ? 'Thiết bị được thay thế, vui lòng nhận tại Phòng CSVC' : 'Sự cố đã được xử lý, bạn có thể sử dụng lại'
+  }[next];
+  NOTIFS.unshift({ code: i.code, stage: next, title: `${STAGE_TITLE[next]} · ${i.title}`, text, time: fmtDT(i.times[next]), unread: true });
+
+  renderList(); renderNotifs();
+  openDetail(i.code);
 }
 
 /* =====================================================
-   4. GIẢ LẬP PHÒNG CSVC NHẬN TRẢ (2 kết quả thay thế nhau)
+   THÔNG BÁO (chuông)
    ===================================================== */
-function openReturnSim(code) {
-  const t = getTicket(code);
-  const m = setModal(`
-    ${mHead('Giả lập Phòng CSVC nhận trả', `#${t.code} · ${fmtDate(t.d.date)} lúc ${t.d.time}`)}
-    <div class="m-body">
-      ${alertBox('brand', '', `Từ trạng thái Đang mượn: ${itemsPhrase(t.items)}. Khả dụng trước trả: ${stockLine()}.`)}
-      <p class="muted small">Chọn một trong hai kết quả thay thế nhau. Chức năng chỉ dùng để minh họa luồng.</p>
-    </div>
-    ${mFoot(`<button type="button" class="btn btn-outline" id="rBad">Có vấn đề · Hub chưa thể mượn lại</button><button type="button" class="btn btn-primary" id="rOk">Trả bình thường</button>`, 'col')}
-  `);
-  // nhãn nút "có vấn đề" theo thiết bị cuối của phiếu
-  m.querySelector('#rBad').textContent = `Có vấn đề · ${eq(t.items[t.items.length - 1].id).name} chưa thể mượn lại`;
+const N_ICON = { sent: 'send', received: 'clipboard', repairing: 'wrench', done: 'check' };
 
-  m.querySelector('#rOk').addEventListener('click', () => {
-    t.items.forEach(i => { STOCK[i.id] += i.qty; });
-    t.status = 'returned'; t.ret = { ...t.d };
-    lastReturned = t.code; hq = ''; hs = '';
-    tab = 'hist';
-    setNotice(alertBox('ok', '', `Trả thiết bị thành công. Đã hoàn lại ${itemsPhrase(t.items)} vào số lượng khả dụng.`, 'check'));
-    renderAll(); openDetail(t.code);
-  });
-  m.querySelector('#rBad').addEventListener('click', () => {
-    const bad = t.items[t.items.length - 1];
-    t.items.slice(0, -1).forEach(i => { STOCK[i.id] += i.qty; });
-    t.status = 'issue'; t.ret = { ...t.d };
-    lastReturned = t.code; hq = ''; hs = '';
-    tab = 'hist';
-    setNotice(alertBox('err', '', `Trả thiết bị có vấn đề. Phiếu #${t.code} đã chuyển Đội ngũ Kỹ thuật; ${lf(eq(bad.id).name)} chưa được cộng lại vào số lượng khả dụng.`, 'alert'));
-    renderAll(); openDetail(t.code);
+function renderNotifs() {
+  const panel = $('notifPanel');
+  if (!panel) return;
+  const unread = NOTIFS.filter(n => n.unread).length;
+  const badge = document.querySelector('.bell-badge');
+  if (badge) { badge.textContent = unread; badge.style.display = unread ? 'flex' : 'none'; }
+
+  panel.innerHTML = `
+    <div class="np-head">
+      <h3>Thông báo ${unread ? `<span class="np-pill">${unread} mới</span>` : ''}</h3>
+      <button type="button" class="m-x" data-np-close aria-label="Đóng">${icon('x')}</button>
+    </div>
+    ${NOTIFS.length ? NOTIFS.map((n, k) => `
+      <div class="n4 ${n.unread ? 'unread' : ''}" data-n="${k}">
+        <div class="n4-ico ${n.stage}">${icon(N_ICON[n.stage])}</div>
+        <div class="n4-main">
+          <b>${esc(n.title)}</b>
+          <p>${esc(n.text)}</p>
+          <div class="n4-bot"><small>${n.time}</small><span class="n4-link">#${n.code} · Chi tiết ›</span></div>
+        </div>
+        ${n.unread ? '<i class="n4-dot"></i>' : ''}
+      </div>`).join('') : `
+      <div class="np-empty4">${icon('bell')}<b>Chưa có thông báo</b><p>Các cập nhật về báo cáo sự cố sẽ hiển thị tại đây.</p></div>`}`;
+}
+
+function initBell() {
+  const bell = document.querySelector('.bell');
+  const holder = document.querySelector('.header-inner');
+  if (!bell || !holder) return;
+
+  const panel = document.createElement('div');
+  panel.id = 'notifPanel';
+  panel.className = 'notif-panel wide';
+  panel.hidden = true;
+  holder.appendChild(panel);
+  renderNotifs();
+
+  bell.addEventListener('click', e => { e.stopPropagation(); panel.hidden = !panel.hidden; });
+  document.addEventListener('click', e => { if (!panel.contains(e.target)) panel.hidden = true; });
+  panel.addEventListener('click', e => {
+    if (e.target.closest('[data-np-close]')) { panel.hidden = true; return; }
+    const item = e.target.closest('[data-n]');
+    if (item) {
+      const n = NOTIFS[Number(item.dataset.n)];
+      n.unread = false;
+      panel.hidden = true;
+      renderNotifs();
+      openDetail(n.code);
+    }
   });
 }
 
@@ -545,43 +384,34 @@ function openReturnSim(code) {
    ===================================================== */
 function initUA3() {
   $('dateChip').innerHTML = `${icon('calendar')} Thứ Hai, 26/10/2026`;
-  $('pageAlert').innerHTML = alertBox('brand', '', 'Chỉ mượn thiết bị mượn thêm. Thiết bị có sẵn trong phòng (máy chiếu, màn chiếu, máy lạnh...) không cần đăng ký. Nhận và trả trực tiếp tại Phòng CSVC bằng mã QR, không cần để thẻ sinh viên.');
+  $('pageAlert').innerHTML = alertBox('brand', '', 'Báo sự cố trực tiếp trên hệ thống để không bị trôi tin nhắn. Hệ thống tự chuyển đến bộ phận xử lý, bạn không cần liên hệ ai.');
+  $('noteInc').innerHTML = `${icon('bell')} Bạn sẽ nhận thông báo khi sự cố được tiếp nhận, đang sửa hoặc đã xử lý.`;
 
   const fr = document.querySelector('.footer-inner span:last-child');
-  if (fr) fr.textContent = 'Nhận và trả thiết bị trực tiếp tại Phòng CSVC';
+  if (fr) fr.textContent = 'Theo dõi kết quả trực tiếp trên hệ thống';
 
-  renderAll();
+  // Quét mã QR dán tại phòng: trang mở với ?room=A.301 -> chọn sẵn "Phòng" và phòng đó
+  const qrRoom = new URLSearchParams(location.search).get('room');
+  const matched = qrRoom && ROOMS.find(r => r === qrRoom || r === 'Phòng ' + qrRoom);
+  if (matched) {
+    f.kind = 'room';
+    f.target = matched;
+    $('pageNotice').innerHTML = alertBox('info', `Bạn đang báo sự cố cho ${matched}`, 'Phòng được chọn sẵn từ mã QR dán tại phòng. Bạn vẫn có thể đổi nếu cần.');
+  }
 
-  // Danh mục + phiếu đang chọn
-  $('catalog').addEventListener('click', e => {
-    const g = sel => e.target.closest(sel);
-    let b;
-    if ((b = g('[data-card-dec]'))) { const id = b.dataset.cardDec; cardQty[id] = Math.max(1, cardQty[id] - 1); renderCatalog(); }
-    else if ((b = g('[data-card-inc]'))) { const id = b.dataset.cardInc; cardQty[id] = Math.min(STOCK[id], cardQty[id] + 1); renderCatalog(); }
-    else if ((b = g('[data-add]'))) {
-      const id = b.dataset.add, q = cardQty[id];
-      if (!q) return;
-      cart[id] = (cart[id] || 0) + q;
-      renderCatalog();
-      showToast(`Đã thêm ${eq(id).name} × ${q} vào phiếu mượn`);
-    }
-    else if ((b = g('[data-cart-dec]'))) { const id = b.dataset.cartDec; cart[id] -= 1; if (cart[id] <= 0) delete cart[id]; renderCatalog(); }
-    else if ((b = g('[data-cart-inc]'))) { const id = b.dataset.cartInc; cart[id] = Math.min(cart[id] + 1, 99); renderCatalog(); }
-    else if (g('[data-create]')) openCreate();
+  renderForm();
+  renderList();
+  initBell();
+
+  $('incTabs').addEventListener('click', e => {
+    const t = e.target.closest('.tab');
+    if (t) { tab = t.dataset.filter; renderList(); }
   });
-
-  // Cột phải
-  $('panel').addEventListener('click', e => {
-    const tb = e.target.closest('[data-tab]'), d = e.target.closest('[data-detail]'),
-          q = e.target.closest('[data-qr]'), r = e.target.closest('[data-hreset]');
-    if (tb) { setNotice(''); setTab(tb.dataset.tab); }
+  $('incList').addEventListener('click', e => {
+    const d = e.target.closest('[data-detail]');
     if (d) openDetail(d.dataset.detail);
-    if (q) openQR(q.dataset.qr, false);
-    if (r) { hq = ''; hs = ''; renderPanel(); }
-    if (e.target.closest('#histClear')) { hq = ''; $('hSearch').value = ''; renderHistResult(); $('hSearch').focus(); }
+    if (e.target.closest('[data-all]')) { tab = 'all'; renderList(); }
   });
-  $('panel').addEventListener('input', e => { if (e.target.id === 'hSearch') { hq = e.target.value; renderHistResult(); } });
-  $('panel').addEventListener('change', e => { if (e.target.id === 'hStatus') { hs = e.target.value; renderHistResult(); } });
 }
 
 document.addEventListener('DOMContentLoaded', initUA3);

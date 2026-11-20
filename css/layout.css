@@ -65,6 +65,31 @@ html { scroll-padding-top: var(--header-h); }
 }
 .layout-error code { background: #fff; padding: 1px 6px; border-radius: 4px; }
 
+/* ===== Nút đang gửi (loading) ===== */
+.btn.loading { cursor: wait; opacity: .85; }
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255, 255, 255, .45); border-top-color: #fff;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+.btn-outline.loading .spinner { border-color: rgba(0, 0, 0, .15); border-top-color: var(--primary); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== Ngăn chi tiết trượt từ bên phải (hộp thoại dạng 'drawer') ===== */
+.overlay.drawer { justify-content: flex-end; align-items: stretch; padding: 0; }
+.modal.drawer {
+  max-width: 440px; max-height: none; height: 100%;
+  border-radius: 0;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, .15);
+  animation: drawerIn .22s ease;
+}
+.modal.drawer .m-body { flex: 1; }
+@keyframes drawerIn { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* ===== Thông báo đơn bị từ chối ===== */
+.np-ico.bad { color: var(--bad-text); }
+.np-main .np-reason { color: var(--bad-text); }
+
 @media (max-width: 900px) {
   .app-body { flex-direction: column; }
   .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #dee2e6; }

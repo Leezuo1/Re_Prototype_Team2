@@ -6,6 +6,7 @@ Object.assign(ICONS, {
   file: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/>',
   upload: '<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/>',
   calx: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M10 14l4 4M14 14l-4 4"/>',
+  xcircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',
   door: '<path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56z"/>',
   sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
 });
@@ -38,7 +39,8 @@ const ORDERS = [
 
 const NOTIFS = [
   { type: 'soon',     code: 'MT1024', time: 'Hôm nay, 10:50', unread: true },
-  { type: 'approved', code: 'MT1025', time: 'Hôm nay, 09:40', unread: true }
+  { type: 'approved', code: 'MT1025', time: 'Hôm nay, 09:40', unread: true },
+  { type: 'rejected', code: 'MT1023', time: 'Hôm nay, 09:20', unread: false }
 ];
 
 const STATUS_TEXT  = { soon: 'Sắp hết giờ', approved: 'Đã duyệt', pending: 'Chờ duyệt', rejected: 'Bị từ chối', cancelled: 'Đã hủy' };
@@ -196,6 +198,18 @@ function renderNotifs() {
             <b>Còn 10 phút là hết giờ</b>
             <p>${o.room} · #${o.code} · Kết thúc lúc ${o.end}</p>
             <small>${n.time}</small>
+          </div>
+        </div>`;
+    }
+    if (n.type === 'rejected') {
+      return `
+        <div class="np-item">
+          <div class="np-ico bad">${icon('xcircle')}</div>
+          <div class="np-main">
+            <b>Yêu cầu #${o.code} bị từ chối</b>
+            <p>${o.room} · ${fmtDate(o.date)} · ${o.start} – ${o.end}</p>
+            <p class="np-reason">Lý do: ${esc(o.reason || 'Không có lý do cụ thể.')}</p>
+            <small>${n.time} · <button class="link-btn" data-np-detail="${o.code}">Xem chi tiết</button></small>
           </div>
         </div>`;
     }
