@@ -19,21 +19,14 @@ function icon(name, cls = '') {
 }
 
 /* =====================================================
-   HEADER + SIDEBAR: nạp từ thư mục components/
-   Nạp đồng bộ ngay khi script chạy để header/sidebar có sẵn
-   trước khi code của từng trang (ua1.js, ua2.js, ua3.js...) khởi tạo.
+   HEADER + SIDEBAR: nạp song song từ thư mục components/
+   Trang vẫn khởi tạo trong khi các thành phần dùng chung được tải.
    Lưu ý: phải mở web bằng Live Server (không bấm đúp file .html)
    ===================================================== */
-function loadPartial(file) {
-  try {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '../components/' + file, false);   // false = đồng bộ
-    xhr.send();
-    const ok = xhr.status === 200 || (xhr.status === 0 && xhr.responseText);
-    return ok ? xhr.responseText : null;
-  } catch (err) {
-    return null;
-  }
+async function loadPartial(file) {
+  const response = await fetch('../components/' + file);
+  if (!response.ok) return null;
+  return response.text();
 }
 
 function showLayoutError() {
@@ -69,18 +62,29 @@ function initSidebar(root) {
   });
 }
 
-function mountLayout() {
+async function mountLayout() {
   const headerHolder = document.getElementById('app-header');
   const sideHolder = document.getElementById('app-sidebar');
-  const headerHtml = loadPartial('header.html');
-  const sideHtml = loadPartial('sidebar.html');
+  let headerHtml, sideHtml;
 
-  if (headerHtml === null || sideHtml === null) { showLayoutError(); return; }
+  try {
+    [headerHtml, sideHtml] = await Promise.all([
+      loadPartial('header.html'),
+      loadPartial('sidebar.html')
+    ]);
+  } catch (error) {
+    console.error('Không thể tải thành phần giao diện dùng chung.', error);
+    showLayoutError();
+    return false;
+  }
+
+  if (headerHtml === null || sideHtml === null) { showLayoutError(); return false; }
   if (headerHolder) headerHolder.innerHTML = headerHtml;
   if (sideHolder) { sideHolder.innerHTML = sideHtml; initSidebar(sideHolder); }
+  return true;
 }
 
-mountLayout();
+const layoutReady = mountLayout();
 
 /* ===== Footer ===== */
 function renderFooter() {
@@ -104,6 +108,9 @@ function showToast(msg) {
     t = document.createElement('div');
     t.id = 'toast';
     t.className = 'toast';
+    t.setAttribute('role', 'status');
+    t.setAttribute('aria-live', 'polite');
+    t.setAttribute('aria-atomic', 'true');
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -131,3 +138,49 @@ function submitWithLoading(btn, work, delay = 700) {
 }
 
 document.addEventListener('DOMContentLoaded', renderFooter);
+
+let dialogCleanup = null;
+
+function trapDialog(dialog, closeDialog) {
+  if (dialogCleanup) dialogCleanup();
+  const previouslyFocused = document.activeElement;
+
+  const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const focusable = () => Array.from(dialog.querySelectorAll(focusableSelector)).filter(el => !el.hidden && el.offsetParent !== null);
+
+  const handleKeydown = event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeDialog();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const elements = focusable();
+    if (!elements.length) {
+      event.preventDefault();
+      dialog.focus();
+      return;
+    }
+    const first = elements[0];
+    const last = elements[elements.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  dialog.setAttribute('tabindex', '-1');
+  dialog.addEventListener('keydown', handleKeydown);
+  const initialTarget = dialog.querySelector('[data-autofocus]') || focusable()[0] || dialog;
+  setTimeout(() => initialTarget.focus(), 0);
+
+  dialogCleanup = () => {
+    dialog.removeEventListener('keydown', handleKeydown);
+    dialogCleanup = null;
+    if (previouslyFocused && document.contains(previouslyFocused)) previouslyFocused.focus();
+  };
+  return dialogCleanup;
+}

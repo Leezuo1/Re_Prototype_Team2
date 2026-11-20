@@ -91,19 +91,25 @@ const stepper = (dec, inc, q, over) => `
 // variant = 'drawer' => ngăn trượt từ bên phải (dùng cho chi tiết phiếu)
 function setModal(html, variant = '') {
   const root = $('modalRoot');
-  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true">${html}</div></div>`;
+  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">${html}</div></div>`;
   document.body.classList.add('no-scroll');
   root.querySelector('.overlay').addEventListener('mousedown', e => {
     if (e.target.classList.contains('overlay')) closeModal();
   });
   root.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
-  return root.querySelector('.modal');
+  const dialog = root.querySelector('.modal');
+  trapDialog(dialog, closeModal);
+  return dialog;
 }
-function closeModal() { $('modalRoot').innerHTML = ''; document.body.classList.remove('no-scroll'); }
+function closeModal() {
+  if (typeof dialogCleanup === 'function') dialogCleanup();
+  $('modalRoot').innerHTML = '';
+  document.body.classList.remove('no-scroll');
+}
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 const xBtn = `<button type="button" class="m-x" data-close aria-label="Đóng">${icon('x')}</button>`;
-const mHead = (title, sub) => `<div class="m-head"><div><h2>${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>${xBtn}</div>`;
+const mHead = (title, sub) => `<div class="m-head"><div><h2 id="modalTitle">${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>${xBtn}</div>`;
 const mFoot = (html, cls = '') => `<div class="m-foot ${cls}">${html}</div>`;
 
 /* ===== Danh mục thiết bị (cột trái) ===== */

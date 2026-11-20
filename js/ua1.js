@@ -60,7 +60,8 @@ const getRoom = name => ROOMS.find(r => r.name === name);
 const logOf = o => ({ sent: o.sent || '09:15', review: o.review || '09:20', result: o.result || '09:40' });
 
 function alertBox(kind, title, text, ic = 'alert') {
-  return `<div class="alert ${kind}">${icon(ic)}<div>${title ? `<b>${title}</b>` : ''}${text || ''}</div></div>`;
+  const liveRegion = kind === 'err' ? ' role="alert"' : '';
+  return `<div class="alert ${kind}"${liveRegion}>${icon(ic)}<div>${title ? `<b>${title}</b>` : ''}${text || ''}</div></div>`;
 }
 
 // Tìm lịch trùng của 1 phòng trong khoảng giờ (bỏ qua đơn ignoreCode). Trả về lịch trùng đầu tiên hoặc null
@@ -146,7 +147,7 @@ function renderOrders() {
       </div>
       <div class="order-meta">${icon('calendar')} ${fmtDate(o.date)} · ${o.start} – ${o.end}</div>
       <p class="order-purpose">${esc(o.purpose)}</p>
-      ${o.reason ? `<p class="order-reason">Lý do: ${o.reason}</p>` : ''}
+      ${o.reason ? `<p class="order-reason">Lý do: ${esc(o.reason)}</p>` : ''}
       ${o.status === 'soon' ? `
         <div class="order-foot">
           <span class="warn-text">Còn 10 phút là hết giờ</span>
@@ -287,14 +288,18 @@ function initUA1() {
 
   renderRooms();
   renderOrders();
-  initBell();
   setTimeout(showReminder, 1200);
 
   // Tìm phòng trống
   document.getElementById('searchForm').addEventListener('submit', e => {
     e.preventDefault();
+    const date = document.getElementById('fDate').value;
     const start = document.getElementById('fStart').value;
     const end = document.getElementById('fEnd').value;
+    if (!date) {
+      showToast('Vui lòng chọn ngày mượn');
+      return;
+    }
     if (!start || !end || end <= start) {
       showToast('Giờ kết thúc phải sau giờ bắt đầu');
       return;
@@ -326,4 +331,7 @@ function initUA1() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initUA1);
+document.addEventListener('DOMContentLoaded', () => {
+  initUA1();
+  layoutReady.then(initBell);
+});
