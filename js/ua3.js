@@ -88,7 +88,7 @@ function renderForm() {
 
     <div class="fl">
       <label for="fSel">${dev ? 'Thiết bị gặp sự cố' : 'Phòng gặp sự cố'} <span class="req">*</span></label>
-      <select id="fSel">
+      <select id="fSel" aria-describedby="eSel">
         <option value="">${dev ? 'Chọn thiết bị gặp sự cố' : 'Chọn phòng gặp sự cố'}</option>
         ${opts.map(o => `<option value="${o}" ${f.target === o ? 'selected' : ''}>${o}</option>`).join('')}
       </select>
@@ -97,13 +97,13 @@ function renderForm() {
 
     <div class="fl">
       <label for="fDesc">Mô tả sự cố <span class="req">*</span></label>
-      <textarea id="fDesc" placeholder="Mô tả hiện tượng, vị trí và tình trạng bạn quan sát được...">${esc(f.desc)}</textarea>
+      <textarea id="fDesc" maxlength="1000" aria-describedby="eDesc" placeholder="Mô tả hiện tượng, vị trí và tình trạng bạn quan sát được...">${esc(f.desc)}</textarea>
       <p class="err" id="eDesc" hidden>Vui lòng nhập mô tả sự cố.</p>
     </div>
 
     <div class="fl">
       <div class="lbl-row"><label>Ảnh đính kèm</label><small>Không bắt buộc</small></div>
-      <div class="drop" id="fDrop">
+      <div class="drop" id="fDrop" role="button" tabindex="0" aria-label="Chọn ảnh đính kèm">
         ${icon('imagePlus')}
         <p>Kéo thả ảnh vào đây hoặc <b>Chọn ảnh</b></p>
         <small>Có thể gửi báo cáo mà không cần đính kèm ảnh.</small>
@@ -140,6 +140,12 @@ function renderForm() {
     renderForm(); syncForm();
   };
   drop.addEventListener('click', () => input.click());
+  drop.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      input.click();
+    }
+  });
   input.addEventListener('change', () => take(input.files[0]));
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('over'));
@@ -243,9 +249,9 @@ function openDetail(code) {
 
   $('drawerRoot').innerHTML = `
     <div class="drawer-overlay" id="dOverlay">
-      <aside class="drawer" role="dialog" aria-modal="true">
+      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
         <div class="d-head">
-          <div><h2>Chi tiết sự cố</h2><p>#${i.code}</p></div>
+          <div><h2 id="drawerTitle">Chi tiết sự cố</h2><p>#${i.code}</p></div>
           <button type="button" class="d-x" id="dClose" aria-label="Đóng">${icon('x')}</button>
         </div>
         <div class="d-body">
@@ -273,6 +279,7 @@ function openDetail(code) {
       </aside>
     </div>`;
   document.body.classList.add('no-scroll');
+  trapDialog($('drawerRoot').querySelector('.drawer'), closeDrawer);
   $('dClose').onclick = closeDrawer;
   $('dOverlay').addEventListener('mousedown', e => { if (e.target.id === 'dOverlay') closeDrawer(); });
   if ($('dSim')) $('dSim').onclick = () => simulate(i.code);
@@ -401,7 +408,6 @@ function initUA3() {
 
   renderForm();
   renderList();
-  initBell();
 
   $('incTabs').addEventListener('click', e => {
     const t = e.target.closest('.tab');
@@ -414,4 +420,7 @@ function initUA3() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', initUA3);
+document.addEventListener('DOMContentLoaded', () => {
+  initUA3();
+  layoutReady.then(initBell);
+});

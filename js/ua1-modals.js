@@ -2,16 +2,19 @@
 // variant = 'drawer' => ngăn trượt từ bên phải (dùng cho chi tiết đơn)
 function setModal(html, variant = '') {
   const root = document.getElementById('modalRoot');
-  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true">${html}</div></div>`;
+  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">${html}</div></div>`;
   document.body.classList.add('no-scroll');
   root.querySelector('.overlay').addEventListener('mousedown', e => {
     if (e.target.classList.contains('overlay')) closeModal();
   });
   root.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
-  return root.querySelector('.modal');
+  const dialog = root.querySelector('.modal');
+  trapDialog(dialog, closeModal);
+  return dialog;
 }
 
 function closeModal() {
+  if (typeof dialogCleanup === 'function') dialogCleanup();
   document.getElementById('modalRoot').innerHTML = '';
   document.body.classList.remove('no-scroll');
 }
@@ -20,7 +23,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 const mHead = (title, sub) => `
   <div class="m-head">
-    <div><h2>${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>
+    <div><h2 id="modalTitle">${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>
     <button type="button" class="m-x" data-close aria-label="Đóng">${icon('x')}</button>
   </div>`;
 const mFoot = (html, cls = '') => `<div class="m-foot ${cls}">${html}</div>`;
@@ -59,8 +62,8 @@ function renderBooking(st) {
   const e = st.errors;
 
   const dropHtml = st.file
-    ? `<div class="drop has" id="bDrop">${icon('file')}<div>${esc(st.file.name)}<small>${st.file.ext} · ${st.file.size} MB · Đã tải lên</small></div></div>`
-    : `<div class="drop ${e.file ? 'invalid' : ''}" id="bDrop">${icon('upload')}<div>Nhấn để tải lên hoặc kéo thả tệp<small>PDF, DOC, DOCX · Tối đa 10 MB</small></div></div>`;
+    ? `<button type="button" class="drop has" id="bDrop" aria-labelledby="bFileLabel bDropText" aria-describedby="${e.file ? 'bFileHint bFileError' : 'bFileHint'}" aria-invalid="${e.file ? 'true' : 'false'}">${icon('file')}<span class="drop-copy"><span id="bDropText">Đổi tệp: ${esc(st.file.name)}</span><small id="bFileHint">${esc(st.file.ext)} · ${st.file.size} MB · Đã tải lên</small></span></button>`
+    : `<button type="button" class="drop ${e.file ? 'invalid' : ''}" id="bDrop" aria-labelledby="bFileLabel bDropText" aria-describedby="${e.file ? 'bFileHint bFileError' : 'bFileHint'}" aria-invalid="${e.file ? 'true' : 'false'}">${icon('upload')}<span class="drop-copy"><span id="bDropText">Nhấn để tải lên hoặc kéo thả tệp</span><small id="bFileHint">PDF, DOC, DOCX · Tối đa 10 MB</small></span></button>`;
 
   const m = setModal(`
     ${mHead('Đặt phòng', `${r.name} · ${r.cap} chỗ · ${r.building}, ${r.floor.toLowerCase()}`)}
@@ -69,42 +72,42 @@ function renderBooking(st) {
           `${st.room} có lịch trùng ${st.conflict.slot.start} – ${st.conflict.slot.end}, ngày ${fmtDate(st.date)}. Vui lòng chọn thời gian khác.`) : ''}
       ${e.time ? alertBox('err', '', e.time) : ''}
 
-      <div class="f-group">
-        <label>Loại phòng *</label>
+      <div class="f-group" role="group" aria-labelledby="bTypeLabel">
+        <label id="bTypeLabel">Loại phòng *</label>
         <div class="seg">
-          ${ROOM_TYPES.map(t => `<button type="button" class="${t === st.type ? 'active' : ''}" data-type="${t}">${t}</button>`).join('')}
+          ${ROOM_TYPES.map(t => `<button type="button" class="${t === st.type ? 'active' : ''}" aria-pressed="${t === st.type}" data-type="${t}">${t}</button>`).join('')}
         </div>
       </div>
 
       <div class="f-group">
-        <label>Phòng *</label>
+        <label for="bRoom">Phòng *</label>
         <select id="bRoom">
           ${rooms.map(x => `<option value="${x.name}" ${x.name === st.room ? 'selected' : ''}>${x.name}</option>`).join('')}
         </select>
       </div>
 
       <div class="f-group">
-        <label>Mục đích sử dụng *</label>
-        <textarea id="bPurpose" class="${e.purpose ? 'invalid' : ''}" placeholder="Nhập mục đích sử dụng phòng">${esc(st.purpose)}</textarea>
-        ${e.purpose ? `<p class="err">${e.purpose}</p>` : ''}
+        <label for="bPurpose">Mục đích sử dụng *</label>
+        <textarea id="bPurpose" class="${e.purpose ? 'invalid' : ''}" aria-invalid="${e.purpose ? 'true' : 'false'}" ${e.purpose ? 'aria-describedby="bPurposeError"' : ''} required placeholder="Nhập mục đích sử dụng phòng">${esc(st.purpose)}</textarea>
+        ${e.purpose ? `<p class="err" id="bPurposeError" role="alert">${e.purpose}</p>` : ''}
       </div>
 
       <div class="f-group">
-        <label>Ngày mượn *</label>
-        <input type="date" id="bDate" value="${st.date}">
+        <label for="bDate">Ngày mượn *</label>
+        <input type="date" id="bDate" value="${esc(st.date)}" required>
       </div>
 
       <div class="f-row">
-        <div class="f-group"><label>Giờ bắt đầu *</label><input type="time" id="bStart" value="${st.start}"></div>
-        <div class="f-group"><label>Giờ kết thúc *</label><input type="time" id="bEnd" value="${st.end}"></div>
+        <div class="f-group"><label for="bStart">Giờ bắt đầu *</label><input type="time" id="bStart" value="${esc(st.start)}" required></div>
+        <div class="f-group"><label for="bEnd">Giờ kết thúc *</label><input type="time" id="bEnd" value="${esc(st.end)}" required></div>
       </div>
 
       ${needFile ? `
         <div class="f-group">
-          <label>Tệp quyết định phê duyệt *</label>
+          <label id="bFileLabel" for="bFile">Tệp quyết định phê duyệt *</label>
           ${dropHtml}
           <input type="file" id="bFile" accept=".pdf,.doc,.docx" hidden>
-          ${e.file ? `<p class="err">${e.file}</p>` : ''}
+          ${e.file ? `<p class="err" id="bFileError" role="alert">${e.file}</p>` : ''}
         </div>` : ''}
 
       ${st.conflict && st.conflict.free
@@ -138,8 +141,18 @@ function renderBooking(st) {
     const takeFile = f => {
       if (!f) return;
       const ext = f.name.split('.').pop().toUpperCase();
-      if (!['PDF', 'DOC', 'DOCX'].includes(ext)) { showToast('Chỉ nhận tệp PDF, DOC, DOCX'); return; }
-      if (f.size > 10 * 1024 * 1024) { showToast('Tệp tối đa 10 MB'); return; }
+      if (!['PDF', 'DOC', 'DOCX'].includes(ext)) {
+        st.file = null;
+        st.errors.file = 'Chỉ nhận tệp PDF, DOC hoặc DOCX.';
+        renderBooking(st);
+        return;
+      }
+      if (f.size > 10 * 1024 * 1024) {
+        st.file = null;
+        st.errors.file = 'Tệp vượt quá giới hạn 10 MB.';
+        renderBooking(st);
+        return;
+      }
       st.file = { name: f.name, ext, size: (f.size / 1024 / 1024).toFixed(1).replace('.', ',') };
       delete st.errors.file;
       renderBooking(st);
@@ -236,7 +249,7 @@ function openDetail(code, flash) {
     body += `<div class="file-row">${icon('file')} ${esc(o.file)}</div>`;
   }
   if (o.status === 'rejected') {
-    body += alertBox('err', 'Lý do từ chối', o.reason || 'Không có lý do cụ thể.');
+    body += alertBox('err', 'Lý do từ chối', esc(o.reason || 'Không có lý do cụ thể.'));
   }
 
   if (isOk) {
