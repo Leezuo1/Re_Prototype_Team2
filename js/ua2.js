@@ -1,601 +1,570 @@
-/* ===== Icon bổ sung (dùng chung hàm icon() trong main.js) ===== */
-Object.assign(ICONS, {
-  x: '<path d="M18 6 6 18M6 6l12 12"/>',
-  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
-  xcircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',
-  clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
-  plug: '<path d="M12 22v-5M9 8V2M15 8V2M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
-  hub: '<path d="m19 5 3-3M2 22l3-3M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11M10.5 16.5 13 14M12 6l6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/>',
-  cable: '<path d="M4 9a2 2 0 0 1-2-2V5h6v2a2 2 0 0 1-2 2Z"/><path d="M3 5V3M7 5V3M19 15V6.5a3.5 3.5 0 0 0-7 0v11a3.5 3.5 0 0 1-7 0V9"/><path d="M17 21v-2M21 21v-2M22 19h-6v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2Z"/>',
-  wifi: '<path d="M12 20h.01M2 8.82a15 15 0 0 1 20 0M5 12.859a10 10 0 0 1 14 0M8.5 16.429a5 5 0 0 1 7 0"/>',
+/* js/ua2.js — Nghiệp vụ Kiểm tra kỹ thuật & Bàn giao thiết bị (UA2 - Đội ngũ Kỹ thuật) */
+
+Object.assign(TECH_ICONS, {
   qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/>',
   box: '<path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
-  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
-  searchx: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3M13.5 8.5l-5 5M8.5 8.5l5 5"/>'
+  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>'
 });
 
-/* ===== Dữ liệu mock ===== */
-const TODAY = '2026-10-26';
-
-const EQUIP = [
-  { id: 'odien',  name: 'Ổ điện kéo dài',   short: 'Ổ điện',    desc: 'Ổ cắm 6 lỗ · Dây dài 5 m',            icon: 'plug' },
-  { id: 'hub',    name: 'Hub USB-C',        short: 'Hub USB-C', desc: 'Đa cổng · HDMI / USB / USB-C',        icon: 'hub' },
-  { id: 'hdmi',   name: 'Dây cáp HDMI',     short: 'HDMI',      desc: 'Kết nối trình chiếu · Dài 2 m',        icon: 'cable' },
-  { id: 'remote', name: 'Remote máy chiếu', short: 'Remote',    desc: 'Điều khiển cầm tay · Mượn thêm',       icon: 'wifi' }
+/* ===== Dữ liệu mẫu đơn mượn đã duyệt & trạng thái bàn giao (F79) ===== */
+const HANDOVER_LIST = [
+  {
+    code: 'TB1032',
+    borrowerName: 'Nguyễn Đình Thuần',
+    borrowerId: '2474802010377',
+    borrowerRole: 'Sinh viên CNTT',
+    room: 'A.04-02',
+    campus: 'Cơ sở chính',
+    assetCode: 'VLU-MC-105',
+    deviceName: 'Máy chiếu di động Epson EB-E01',
+    sysStatus: 'Sẵn sàng', // BR1: chỉ xuất kho khi trạng thái là Sẵn sàng
+    accessories: ['Dây nguồn 3m', 'Cáp HDMI 2m', 'Remote điều khiển', 'Túi chống sốc'],
+    borrowSlot: '13:00 – 15:30 · Hôm nay',
+    status: 'ready_out',
+    handedAt: null,
+    returnedAt: null,
+    note: ''
+  },
+  {
+    code: 'TB1031',
+    borrowerName: 'GV. Lê Gia Hiếu',
+    borrowerId: 'GV-CNTT-019',
+    borrowerRole: 'Giảng viên',
+    room: 'B.02-05',
+    campus: 'Cơ sở chính',
+    assetCode: 'VLU-AT-212',
+    deviceName: 'Bộ Micro không dây Shure BLX288',
+    sysStatus: 'Sẵn sàng',
+    accessories: ['2 Tay micro không dây', 'Đầu thu tín hiệu', 'Adapter nguồn', '4 Pin AA'],
+    borrowSlot: '13:30 – 16:30 · Hôm nay',
+    status: 'ready_out',
+    handedAt: null,
+    returnedAt: null,
+    note: ''
+  },
+  {
+    code: 'TB1029',
+    borrowerName: 'Trần Khánh Hưng',
+    borrowerId: '2474802010157',
+    borrowerRole: 'Sinh viên CNTT',
+    room: 'Lab CNTT 02',
+    campus: 'Cơ sở chính',
+    assetCode: 'VLU-HB-034',
+    deviceName: 'Bộ Hub chuyển đổi USB-C & Cáp trình chiếu',
+    sysStatus: 'Đang được mượn',
+    accessories: ['Hub USB-C 7-in-1', 'Cáp HDMI 2m', 'Ổ cắm kéo dài 5m'],
+    borrowSlot: '08:00 – 11:30 · Hôm nay',
+    status: 'borrowed',
+    handedAt: '07:55 · Hôm nay',
+    returnedAt: null,
+    note: 'Đã kiểm tra đủ 3 phụ kiện, tín hiệu xuất hình ổn định.'
+  },
+  {
+    code: 'TB1027',
+    borrowerName: 'Nguyễn Quang Vũ',
+    borrowerId: '2474802010445',
+    borrowerRole: 'Sinh viên CNTT',
+    room: 'A.03-01',
+    campus: 'Cơ sở chính',
+    assetCode: 'VLU-AT-118',
+    deviceName: 'Loa trợ giảng di động Sony',
+    sysStatus: 'Đang bảo trì / Hỏng',
+    accessories: ['Loa chính', 'Micro cài áo', 'Dây sạc'],
+    borrowSlot: '07:30 – 10:00 · Hôm nay',
+    status: 'damaged',
+    handedAt: '07:25 · Hôm nay',
+    returnedAt: '10:05 · Hôm nay',
+    incidentId: 'SC-205',
+    note: 'Thiếu dây sạc đi kèm và màng loa rè. Đã lập biên bản chuyển UA1 (#SC-205).'
+  }
 ];
-const BASE  = { odien: 12, hub: 5, hdmi: 2, remote: 0 };
-const STOCK = { ...BASE };
 
-const ROOM_OPTS = [
-  ['A.301', 'A.301 · Tòa A · Tầng 3'], ['A.302', 'A.302 · Tòa A · Tầng 3'], ['A.303', 'A.303 · Tòa A · Tầng 3'],
-  ['B.205', 'B.205 · Tòa B · Tầng 2'], ['B.206', 'B.206 · Tòa B · Tầng 2'], ['C.402', 'C.402 · Tòa C · Tầng 4']
-];
-
-// status: wait (Chờ nhận) | borrowed (Đang mượn) | returned (Đã trả) | issue (Thiết bị có vấn đề)
-// old: true => chỉ hiện ở Lịch sử, không hiện ở tab "Phiếu mượn của tôi"
-const TICKETS = [
-  { code: 'TB1030', items: [{ id: 'hdmi', qty: 1 }],                          room: 'A.302', b: { date: '2026-10-26', time: '13:00' }, d: { date: '2026-10-26', time: '15:00' }, status: 'wait',     created: '08:10' },
-  { code: 'TB1029', items: [{ id: 'odien', qty: 1 }, { id: 'hub', qty: 1 }],   room: 'B.205', b: { date: '2026-10-26', time: '08:00' }, d: { date: '2026-10-26', time: '11:00' }, status: 'borrowed', created: '07:45', handed: '08:05' },
-  { code: 'TB1028', items: [{ id: 'hub', qty: 1 }],                           room: 'A.301', b: { date: '2026-10-23', time: '09:00' }, d: { date: '2026-10-23', time: '11:00' }, status: 'returned' },
-  { code: 'TB1027', items: [{ id: 'hdmi', qty: 1 }],                          room: 'C.402', b: { date: '2026-10-22', time: '14:00' }, d: { date: '2026-10-22', time: '16:00' }, status: 'issue' },
-  { code: 'TB1026', items: [{ id: 'odien', qty: 2 }],                         room: 'A.303', b: { date: '2026-10-21', time: '10:00' }, d: { date: '2026-10-21', time: '12:00' }, status: 'returned' },
-  { code: 'TB1025', items: [{ id: 'hdmi', qty: 1 }],                          room: 'A.301', b: { date: '2026-10-20', time: '08:00' }, d: { date: '2026-10-20', time: '10:00' }, status: 'returned', old: true },
-  { code: 'TB1024', items: [{ id: 'hub', qty: 1 }],                           room: 'B.206', b: { date: '2026-10-19', time: '13:00' }, d: { date: '2026-10-19', time: '15:00' }, status: 'returned', old: true },
-  { code: 'TB1023', items: [{ id: 'odien', qty: 1 }],                         room: 'A.302', b: { date: '2026-10-16', time: '09:00' }, d: { date: '2026-10-16', time: '11:00' }, status: 'returned', old: true },
-  { code: 'TB1022', items: [{ id: 'hdmi', qty: 1 }],                          room: 'C.402', b: { date: '2026-10-15', time: '14:00' }, d: { date: '2026-10-15', time: '16:00' }, status: 'returned', old: true }
-];
-
-const ST_TEXT  = { wait: 'Chờ nhận', borrowed: 'Đang mượn', returned: 'Đã trả', issue: 'Thiết bị có vấn đề' };
-const ST_CLASS = { wait: 'pending', borrowed: 'blue', returned: 'ok', issue: 'rejected' };
-
-const cart = {};          // id -> số lượng đang chọn trong "Phiếu mượn đang chọn"
-const cardQty = {};       // id -> số lượng trên thẻ danh mục
-let tab = 'mine';         // 'mine' | 'hist'
-let hl = null;            // phiếu vừa tạo
-let lastReturned = null;  // phiếu vừa trả (tô xanh trong lịch sử)
-let hq = '', hs = '';     // tìm kiếm + lọc trạng thái ở lịch sử
-
-/* ===== Tiện ích ===== */
-const $ = id => document.getElementById(id);
-const fmtDate = iso => { const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; };
-const fmtDT = (o) => `${o.time} · ${fmtDate(o.date)}`;
-const lf = s => s.charAt(0).toLowerCase() + s.slice(1);
-const eq = id => EQUIP.find(e => e.id === id);
-const num = c => Number(c.slice(2));
-const sortedTickets = () => [...TICKETS].sort((a, b) => num(b.code) - num(a.code));
-const nextCode = () => 'TB' + (Math.max(...TICKETS.map(t => num(t.code))) + 1);
-const getTicket = code => TICKETS.find(t => t.code === code);
-const itemsLine = items => items.map(i => `${eq(i.id).name} × ${i.qty}`).join(' · ');
-const itemsPhrase = items => {
-  const p = items.map(i => `${i.qty} ${lf(eq(i.id).name)}`);
-  return p.length > 1 ? p.slice(0, -1).join(', ') + ' và ' + p[p.length - 1] : p[0];
+const HANDOVER_STATUS_TEXT = {
+  ready_out: 'Chờ kiểm tra xuất kho',
+  borrowed: 'Đang được mượn',
+  returned: 'Đã thu hồi đạt chuẩn',
+  damaged: 'Ghi nhận hư hỏng (BR2)'
 };
-const stockLine = () => EQUIP.map(e => STOCK[e.id]).join(' / ');
 
-function stockBadge(n) {
-  if (n === 0) return ['rejected', 'Hết hàng'];
-  if (n <= 2) return ['pending', 'Sắp hết'];
-  return ['ok', 'Còn hàng'];
-}
+let activeTab = 'all';
+let modalTrapCloser = null;
 
-function alertBox(kind, title, text, ic = 'info') {
-  return `<div class="alert ${kind}">${icon(ic)}<div>${title ? `<b>${title}</b>` : ''}${text || ''}</div></div>`;
-}
+const escHtml = (v) =>
+  String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-const stepper = (dec, inc, q, over) => `
-  <div class="stepper ${over ? 'over' : ''}">
-    <button type="button" ${dec} aria-label="Giảm">−</button><span>${q}</span><button type="button" ${inc} aria-label="Tăng">+</button>
-  </div>`;
+const getReq = (code) => HANDOVER_LIST.find((item) => item.code === code);
 
-/* ===== Khung modal ===== */
-// variant = 'drawer' => ngăn trượt từ bên phải (dùng cho chi tiết phiếu)
-function setModal(html, variant = '') {
-  const root = $('modalRoot');
-  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">${html}</div></div>`;
+/* ===== Khung Modal / Drawer dùng chung trong UA2 ===== */
+function openHandoverModal(innerHtml, variant = '') {
+  const root = document.getElementById('modalRoot');
+  if (!root) return null;
+
+  root.innerHTML = `
+    <div class="overlay ${variant}">
+      <div class="modal ${variant}" role="dialog" aria-modal="true" aria-labelledby="ua2ModalTitle">
+        ${innerHtml}
+      </div>
+    </div>`;
+
   document.body.classList.add('no-scroll');
-  root.querySelector('.overlay').addEventListener('mousedown', e => {
-    if (e.target.classList.contains('overlay')) closeModal();
+
+  root.querySelector('.overlay').addEventListener('mousedown', (e) => {
+    if (e.target.classList.contains('overlay')) closeHandoverModal();
   });
-  root.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
+  root.querySelectorAll('[data-close-modal]').forEach((btn) => {
+    btn.addEventListener('click', closeHandoverModal);
+  });
+
   const dialog = root.querySelector('.modal');
-  trapDialog(dialog, closeModal);
+  if (typeof bindDialogFocus === 'function') {
+    modalTrapCloser = bindDialogFocus(dialog, closeHandoverModal);
+  }
   return dialog;
 }
-function closeModal() {
-  if (typeof dialogCleanup === 'function') dialogCleanup();
-  $('modalRoot').innerHTML = '';
+
+function closeHandoverModal() {
+  if (typeof modalTrapCloser === 'function') {
+    modalTrapCloser();
+    modalTrapCloser = null;
+  }
+  const root = document.getElementById('modalRoot');
+  if (root) root.innerHTML = '';
   document.body.classList.remove('no-scroll');
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-const xBtn = `<button type="button" class="m-x" data-close aria-label="Đóng">${icon('x')}</button>`;
-const mHead = (title, sub) => `<div class="m-head"><div><h2 id="modalTitle">${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>${xBtn}</div>`;
-const mFoot = (html, cls = '') => `<div class="m-foot ${cls}">${html}</div>`;
-
-/* ===== Danh mục thiết bị (cột trái) ===== */
-function renderCatalog() {
-  const el = $('catalog');
-
-  // Tab lịch sử: danh mục gọn
-  if (tab === 'hist') {
-    const restored = EQUIP.every(e => STOCK[e.id] === BASE[e.id]);
-    el.innerHTML = `
-      <div class="card-head"><h2>Danh mục thiết bị</h2></div>
-      <div class="eq-compact">
-        ${EQUIP.map(e => {
-          const [c, t] = stockBadge(STOCK[e.id]);
-          return `<div class="ec-row"><b>${e.name}</b><div><strong>${STOCK[e.id]}</strong><span class="badge ${c}">${t}</span></div></div>`;
-        }).join('')}
-      </div>
-      <p class="ok-note">${restored ? `Khả dụng đã khôi phục về ${stockLine()} sau khi trả đủ thiết bị.` : `Khả dụng hiện tại: ${stockLine()}. Số lượng được hoàn lại khi trả thiết bị.`}</p>`;
-    return;
-  }
-
-  EQUIP.forEach(e => {
-    const s = STOCK[e.id];
-    cardQty[e.id] = s === 0 ? 0 : Math.min(Math.max(cardQty[e.id] || 1, 1), s);
-  });
-
-  const cartItems = EQUIP.filter(e => cart[e.id] > 0);
-  const total = cartItems.reduce((n, e) => n + cart[e.id], 0);
-
-  el.innerHTML = `
-    <div class="card-head"><h2>Danh mục thiết bị</h2><span class="count">4 loại thiết bị mượn thêm</span></div>
-    <div class="eq-grid">
-      ${EQUIP.map(e => {
-        const s = STOCK[e.id], [c, t] = stockBadge(s), q = cardQty[e.id];
-        return `
-        <article class="eq-card">
-          <div class="eq-top"><div class="room-icon">${icon(e.icon)}</div><span class="badge ${c}">${t}</span></div>
-          <h3>${e.name}</h3>
-          <p class="eq-desc">${e.desc}</p>
-          <div class="eq-mid">
-            <div><small>Hiện có thể mượn</small><strong class="${s ? '' : 'zero'}">${s} thiết bị</strong></div>
-            <div class="stepper ${s ? '' : 'off'}">
-              <button type="button" data-card-dec="${e.id}" ${q <= 1 ? 'disabled' : ''} aria-label="Giảm">−</button><span>${q}</span><button type="button" data-card-inc="${e.id}" ${q >= s ? 'disabled' : ''} aria-label="Tăng">+</button>
-            </div>
-          </div>
-          <button type="button" class="btn btn-primary btn-block" data-add="${e.id}" ${s ? '' : 'disabled'}>${s ? icon('plus') + ' ' : ''}Thêm vào phiếu mượn</button>
-        </article>`;
-      }).join('')}
+const buildHead = (title, sub = '') => `
+  <div class="m-head">
+    <div>
+      <h2 id="ua2ModalTitle">${title}</h2>
+      ${sub ? `<p>${sub}</p>` : ''}
     </div>
-
-    <div class="cart">
-      <div class="cart-head">
-        <b>Phiếu mượn đang chọn</b>
-        <span class="${cartItems.length ? 'cart-sum' : 'cart-sum none'}">${cartItems.length ? `${cartItems.length} loại · ${total} thiết bị` : 'Chưa chọn thiết bị'}</span>
-      </div>
-      ${cartItems.length
-        ? cartItems.map(e => `
-            <div class="cart-row"><span>${e.name}</span>${stepper(`data-cart-dec="${e.id}"`, `data-cart-inc="${e.id}"`, cart[e.id], cart[e.id] > STOCK[e.id])}</div>`).join('')
-        : '<p class="muted small cart-empty">Chọn thiết bị từ danh mục để tạo phiếu mượn tiếp theo.</p>'}
-      <button type="button" class="btn btn-primary btn-block" data-create ${cartItems.length ? '' : 'disabled'}>Tạo yêu cầu mượn</button>
-    </div>
-
-    <p class="note">${icon('info')} Số lượng khả dụng được kiểm tra lại khi gửi yêu cầu. Chỉ đăng ký thiết bị mượn thêm, không đăng ký thiết bị có sẵn trong phòng.</p>`;
-}
-
-/* ===== Cột phải: Phiếu mượn của tôi / Lịch sử ===== */
-const tabsHtml = () => `
-  <div class="seg-tabs">
-    <button type="button" class="${tab === 'mine' ? 'active' : ''}" data-tab="mine">Phiếu mượn của tôi</button>
-    <button type="button" class="${tab === 'hist' ? 'active' : ''}" data-tab="hist">Lịch sử mượn - trả</button>
+    <button type="button" class="m-x" data-close-modal aria-label="Đóng">${renderIcon('x')}</button>
   </div>`;
 
-function ticketCard(t) {
-  const dueLine = t.status === 'returned'
-    ? `<p class="tk-line">Đã trả: ${fmtDT(t.ret || t.d)}</p>`
-    : `<p class="tk-line">Trả dự kiến: ${fmtDT(t.d)}</p>`;
-  return `
-    <article class="tk ${t.code === hl ? 'new' : ''}">
-      <div class="tk-top">
-        <span class="order-code">#${t.code}${t.code === hl ? ' · Vừa tạo' : ''}</span>
-        <span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span>
-      </div>
-      <div class="tk-title"><h3>${itemsLine(t.items)}</h3><button type="button" class="detail-link" data-detail="${t.code}">Chi tiết ${icon('chevron')}</button></div>
-      <p class="tk-room">Phòng sử dụng: ${t.room}</p>
-      <p class="tk-line">Mượn: ${fmtDT(t.b)}</p>
-      ${dueLine}
-      ${t.status === 'wait' ? `<button type="button" class="qr-link" data-qr="${t.code}">${icon('qr')} Xem mã QR</button>` : ''}
-    </article>`;
+const buildFoot = (btns, cls = '') => `<div class="m-foot ${cls}">${btns}</div>`;
+
+/* ===== 1. Thống kê & Danh sách yêu cầu mượn/trả trong ngày (F79) ===== */
+function updateHandoverStats() {
+  const setNum = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+  setNum('stReadyOut', HANDOVER_LIST.filter((x) => x.status === 'ready_out').length);
+  setNum('stBorrowed', HANDOVER_LIST.filter((x) => x.status === 'borrowed').length);
+  setNum('stReturned', HANDOVER_LIST.filter((x) => x.status === 'returned').length);
+  setNum('stDamaged', HANDOVER_LIST.filter((x) => x.status === 'damaged').length);
 }
 
-function histMatches() {
-  const q = hq.trim().toLowerCase().replace('#', '');
-  return sortedTickets().filter(t => (t.status === 'returned' || t.status === 'issue')
-    && (!hs || t.status === hs)
-    && (!q || t.code.toLowerCase().includes(q) || t.items.some(i => eq(i.id).name.toLowerCase().includes(q))));
+function setHandoverTab(nextTab) {
+  activeTab = nextTab;
+  document.querySelectorAll('#handoverTabs .tab').forEach((t) => {
+    t.classList.toggle('active', t.dataset.tab === nextTab);
+  });
+  renderHandoverList();
 }
 
-function renderHistResult() {
-  const all = TICKETS.filter(t => t.status === 'returned' || t.status === 'issue');
-  const list = histMatches();
-  const filtering = hq.trim() || hs;
+function renderHandoverList() {
+  updateHandoverStats();
 
-  $('histCount').textContent = filtering ? `${list.length} kết quả phù hợp` : '';
-  $('histClear').hidden = !hq;
+  const q = (document.getElementById('hSearch')?.value || '').trim().toLowerCase();
+  const roleFilter = document.getElementById('hRole')?.value || 'all';
+
+  const list = HANDOVER_LIST
+    .filter((item) => activeTab === 'all' || item.status === activeTab)
+    .filter((item) => roleFilter === 'all' || item.borrowerRole.includes(roleFilter))
+    .filter((item) => {
+      if (!q) return true;
+      const text = `${item.code} ${item.assetCode} ${item.deviceName} ${item.borrowerName} ${item.borrowerId} ${item.room}`.toLowerCase();
+      return text.includes(q);
+    });
+
+  const countEl = document.getElementById('handoverCount');
+  if (countEl) countEl.textContent = `Hiển thị ${list.length} / ${HANDOVER_LIST.length} phiếu trong ngày`;
+
+  const container = document.getElementById('handoverList');
+  if (!container) return;
 
   if (!list.length) {
-    const sTxt = hs ? ` với trạng thái ${ST_TEXT[hs]}` : '';
-    $('histBody').innerHTML = `
-      <div class="empty-block">
-        <div class="empty-ico brand">${icon('searchx')}</div>
-        <h3>Không tìm thấy phiếu phù hợp</h3>
-        <p>Không có kết quả${hq.trim() ? ` cho “${hq.trim()}”` : ''}${sTxt}. Thử mã phiếu, tên thiết bị khác hoặc bỏ bộ lọc.</p>
-        <button type="button" class="btn btn-outline" data-hreset>Xóa tìm kiếm và bộ lọc</button>
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${renderIcon('box')}</div>
+        <h3>Không có phiếu bàn giao phù hợp</h3>
+        <p>Thử thay đổi từ khóa MSSV/Mã GV, mã thiết bị hoặc chọn tab trạng thái khác.</p>
       </div>`;
-    $('histFoot').textContent = '';
     return;
   }
 
-  $('histBody').innerHTML = `
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Mã phiếu</th><th>Thiết bị</th><th>Số lượng</th><th>Thời gian mượn</th><th>Thời gian trả</th><th>Trạng thái</th></tr></thead>
-        <tbody>
-          ${list.map(t => {
-            const r = t.ret || t.d;
-            return `<tr class="${t.code === lastReturned ? 'hot' : ''}">
-              <td><button type="button" class="code-link" data-detail="${t.code}">#${t.code}</button></td>
-              <td>${t.items.map(i => `<div>${eq(i.id).name}</div>`).join('')}</td>
-              <td>${t.items.map(i => `<div>${i.qty}</div>`).join('')}</td>
-              <td><b>${t.b.time}</b><small>${fmtDate(t.b.date)}</small></td>
-              <td><b>${r.time}</b><small>${fmtDate(r.date)}</small></td>
-              <td><span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>`;
-  $('histFoot').textContent = `Hiển thị ${list.length} / ${all.length} phiếu · Phiếu gặp vấn đề được ghi nhận bởi Phòng CSVC và chuyển Đội ngũ Kỹ thuật.`;
+  container.innerHTML = list
+    .map((item) => {
+      let actionHtml = `<button type="button" class="btn btn-outline btn-sm" data-view="${item.code}">Chi tiết</button>`;
+      if (item.status === 'ready_out') {
+        actionHtml = `
+          <button type="button" class="btn btn-outline btn-sm" data-view="${item.code}">Chi tiết</button>
+          <button type="button" class="btn btn-primary btn-sm" data-outbound="${item.code}">${renderIcon('qr')} Kiểm tra &amp; Xuất kho</button>`;
+      } else if (item.status === 'borrowed') {
+        actionHtml = `
+          <button type="button" class="btn btn-outline btn-sm" data-view="${item.code}">Chi tiết</button>
+          <button type="button" class="btn btn-primary btn-sm" data-return="${item.code}">${renderIcon('qr')} Quét QR nhận trả</button>`;
+      }
+
+      return `
+        <article class="ho-card st-${item.status}">
+          <div class="ho-top">
+            <div class="ho-codes">
+              <span class="order-code">#${escHtml(item.code)}</span>
+              <code>${escHtml(item.assetCode)}</code>
+              <span class="sys-tag">Kho: ${escHtml(item.sysStatus)}</span>
+            </div>
+            <span class="badge badge-${item.status}">${HANDOVER_STATUS_TEXT[item.status]}</span>
+          </div>
+
+          <div class="ho-body">
+            <div>
+              <h3>${escHtml(item.deviceName)} · Phòng ${escHtml(item.room)}</h3>
+              <p class="ho-acc">Phụ kiện đi kèm (${item.accessories.length}): ${item.accessories.map(escHtml).join(', ')}</p>
+            </div>
+            <div class="ho-actions">${actionHtml}</div>
+          </div>
+
+          <div class="ho-meta">
+            <span>${renderIcon('user')} <b>${escHtml(item.borrowerName)}</b> (${escHtml(item.borrowerId)} · ${escHtml(item.borrowerRole)})</span>
+            <span>${renderIcon('clock')} ${escHtml(item.borrowSlot)}</span>
+          </div>
+
+          ${item.note ? `<div class="ho-note">${escHtml(item.note)}</div>` : ''}
+        </article>`;
+    })
+    .join('');
 }
-
-function renderPanel() {
-  const el = $('panel');
-  $('layout').classList.toggle('hist', tab === 'hist');
-
-  if (tab === 'mine') {
-    const list = sortedTickets().filter(t => !t.old);
-    el.innerHTML = `
-      <div class="card-head"><h2>Phiếu mượn của tôi</h2><span class="count">${list.length} phiếu</span></div>
-      ${tabsHtml()}
-      ${list.length ? `<div class="tk-list">${list.map(ticketCard).join('')}</div>` : `
-        <div class="empty-block">
-          <div class="empty-ico brand">${icon('clipboard')}</div>
-          <h3>Bạn chưa có phiếu mượn</h3>
-          <p>Chọn thiết bị mượn thêm từ danh mục, sau đó tạo yêu cầu để nhận mã QR tại Phòng CSVC.</p>
-        </div>`}
-      <p class="note">${icon('qr')} Xuất trình mã QR tại Phòng CSVC để nhận và trả thiết bị. Không cần để thẻ sinh viên hoặc ghi sổ tay.</p>`;
-    return;
-  }
-
-  const total = TICKETS.filter(t => t.status === 'returned' || t.status === 'issue').length;
-  el.innerHTML = `
-    ${tabsHtml()}
-    <div class="card-head hh"><h2>Lịch sử mượn - trả</h2><span class="count">${total} phiếu</span></div>
-    <div class="hist-filter">
-      <div class="search-box">
-        ${icon('search')}
-        <input type="text" id="hSearch" placeholder="Tìm theo mã phiếu hoặc tên thiết bị" value="${hq.replace(/"/g, '&quot;')}">
-        <button type="button" class="clear-x" id="histClear" hidden aria-label="Xóa">${icon('x')}</button>
-      </div>
-      <select id="hStatus">
-        <option value="">Tất cả trạng thái</option>
-        <option value="returned" ${hs === 'returned' ? 'selected' : ''}>Đã trả</option>
-        <option value="issue" ${hs === 'issue' ? 'selected' : ''}>Thiết bị có vấn đề</option>
-      </select>
-    </div>
-    <p class="muted small" id="histCount"></p>
-    <div id="histBody"></div>
-    <p class="note" id="histFoot"></p>`;
-  renderHistResult();
-}
-
-function renderAll() { renderCatalog(); renderPanel(); }
-
-function setTab(t) { tab = t; renderAll(); }
-function setNotice(html) { $('pageNotice').innerHTML = html; }
 
 /* =====================================================
-   1. TẠO YÊU CẦU MƯỢN
+   2. KIỂM TRA CHẤT LƯỢNG & XUẤT KHO BÀN GIAO (F80, F81, BR1)
    ===================================================== */
-function validate(st) {
-  const e = {};
-  EQUIP.forEach(x => { if (cart[x.id] > STOCK[x.id]) e.stock = true; });
-  if (!st.room) e.room = 'Vui lòng chọn phòng sử dụng.';
-  if (!st.bd) e.bd = 'Vui lòng chọn ngày mượn.';
-  if (!st.bt) e.bt = 'Vui lòng chọn giờ mượn.';
-  if (!st.rd) e.rd = 'Vui lòng chọn ngày trả.';
-  if (!st.rt) e.rt = 'Vui lòng chọn giờ trả.';
-  if (!e.bd && !e.bt && !e.rd && !e.rt && `${st.rd}T${st.rt}` <= `${st.bd}T${st.bt}`) e.order = 'Thời gian trả phải sau thời gian mượn.';
-  return e;
-}
+function openOutboundModal(code) {
+  const req = getReq(code);
+  if (!req) return;
 
-function openCreate(st) {
-  st = st || { room: '', bd: TODAY, bt: '09:00', rd: TODAY, rt: '11:00', show: false };
-  const items = EQUIP.filter(e => cart[e.id] > 0);
-  if (!items.length) { closeModal(); renderAll(); return; }
+  const isSystemReady = req.sysStatus === 'Sẵn sàng'; // BR1
+  let qrVerified = false;
 
-  const e = validate(st), sh = st.show, bad = Object.keys(e).length > 0;
-  const inv = k => (sh && e[k] ? 'invalid' : '');
-  const err = k => (sh && e[k] ? `<p class="err">${e[k]}</p>` : '');
+  const checks = [
+    { id: 'chkBody', label: 'Ngoại quan thiết bị nguyên vẹn, không nứt vỡ' },
+    { id: 'chkPower', label: 'Nguồn điện / pin đầy, khởi động ổn định' },
+    { id: 'chkSignal', label: 'Tín hiệu kết nối (HDMI / Audio / Wireless) hoạt động tốt' },
+    { id: 'chkAcc', label: `Đủ ${req.accessories.length} phụ kiện đi kèm (${req.accessories.join(', ')})` }
+  ];
 
-  const m = setModal(`
-    ${mHead('Tạo yêu cầu mượn', 'Kiểm tra thiết bị và thời gian sử dụng trước khi gửi yêu cầu.')}
+  const dlg = openHandoverModal(`
+    ${buildHead('Kiểm tra kỹ thuật & Xuất kho bàn giao', `Phiếu #${req.code} · Người nhận: ${req.borrowerName} (${req.borrowerId})`)}
     <div class="m-body">
-      ${sh && bad ? alertBox('err', '', 'Chưa thể gửi yêu cầu. Vui lòng kiểm tra số lượng và điền đủ thông tin bắt buộc.', 'alert') : ''}
-
-      <div class="sel-box">
-        <h4>Thiết bị đã chọn</h4>
-        ${items.map(x => {
-          const q = cart[x.id], over = q > STOCK[x.id];
-          return `<div class="ci">
-            <div class="ci-row"><div><b>${x.name}</b><small>Khả dụng: ${STOCK[x.id]}</small></div>${stepper(`data-m-dec="${x.id}"`, `data-m-inc="${x.id}"`, q, over)}</div>
-            ${over ? `<p class="err">Số lượng vượt quá khả dụng. Chỉ còn ${STOCK[x.id]} ${lf(x.name)}; vui lòng chọn tối đa ${STOCK[x.id]}.</p>` : ''}
-          </div>`;
-        }).join('')}
+      <div class="alert ${isSystemReady ? 'info' : 'err'}">
+        ${renderIcon('shield')}
+        <span><b>Quy tắc BR1:</b> Chỉ xuất kho khi trạng thái hệ thống là <b>"Sẵn sàng"</b> (Hiện tại: <b>${req.sysStatus}</b>) và đạt checklist kỹ thuật.</span>
       </div>
 
       <div class="f-group">
-        <label>Phòng sử dụng *</label>
-        <select id="cRoom" class="${inv('room')}">
-          <option value="">Chọn phòng sử dụng</option>
-          ${ROOM_OPTS.map(([v, l]) => `<option value="${v}" ${st.room === v ? 'selected' : ''}>${l}</option>`).join('')}
-        </select>
-        ${err('room')}
+        <label>Bước 1: Đối chiếu mã QR / Barcode thiết bị xuất kho *</label>
+        <div class="qr-verify-row">
+          <input type="text" id="outQrInput" placeholder="Quét hoặc nhập mã tài sản (VD: ${req.assetCode})">
+          <button type="button" class="btn btn-outline btn-sm" id="btnSimScanOut">${renderIcon('qr')} Quét mẫu</button>
+        </div>
+        <small id="outQrMsg" class="muted">Cần khớp đúng mã tài sản <b>${req.assetCode}</b> trước khi bàn giao.</small>
       </div>
 
-      <div class="f-row">
-        <div class="f-group"><label>Ngày mượn *</label><input type="date" id="cBd" value="${st.bd}" class="${inv('bd')}">${err('bd')}</div>
-        <div class="f-group"><label>Giờ mượn *</label><input type="time" id="cBt" value="${st.bt}" class="${inv('bt')}">${err('bt')}</div>
+      <div class="f-group">
+        <label>Bước 2: Checklist kiểm tra kỹ thuật trước bàn giao (F80) *</label>
+        <div class="chk-box">
+          ${checks
+            .map(
+              (c) => `
+            <label class="chk-item">
+              <input type="checkbox" class="out-chk" id="${c.id}">
+              <span>${escHtml(c.label)}</span>
+            </label>`
+            )
+            .join('')}
+        </div>
       </div>
-      <div class="f-row">
-        <div class="f-group"><label>Ngày trả *</label><input type="date" id="cRd" value="${st.rd}" class="${inv('rd')}">${err('rd')}</div>
-        <div class="f-group"><label>Giờ trả *</label><input type="time" id="cRt" value="${st.rt}" class="${inv('rt')}">${err('rt')}</div>
+
+      <div class="f-group">
+        <label for="outNote">Ghi chú tình trạng bàn giao</label>
+        <input type="text" id="outNote" placeholder="VD: Đã test máy chiếu với laptop, đủ 4 phụ kiện">
       </div>
-      ${err('order')}
-      <p class="req-note">Thời gian trả phải sau thời gian mượn. Số lượng khả dụng được kiểm tra lại khi gửi yêu cầu.</p>
     </div>
-    ${mFoot(`<button type="button" class="btn btn-outline" data-close>Hủy</button>
-             <button type="button" class="btn btn-primary ${bad ? 'is-disabled' : ''}" id="cSend">Gửi yêu cầu</button>`, 'wide')}
+    ${buildFoot(`
+      <button type="button" class="btn btn-outline" data-close-modal>Hủy</button>
+      <button type="button" class="btn btn-outline" id="btnFailOut">Không đạt · Khóa thiết bị</button>
+      <button type="button" class="btn btn-primary" id="btnConfirmOut" disabled>Xác nhận xuất kho &amp; Bàn giao</button>`)}
   `);
 
-  const bind = (id, key) => m.querySelector(id).addEventListener('change', ev => { st[key] = ev.target.value; openCreate(st); });
-  bind('#cRoom', 'room'); bind('#cBd', 'bd'); bind('#cBt', 'bt'); bind('#cRd', 'rd'); bind('#cRt', 'rt');
+  const qrInput = dlg.querySelector('#outQrInput');
+  const qrMsg = dlg.querySelector('#outQrMsg');
+  const checkBoxes = Array.from(dlg.querySelectorAll('.out-chk'));
+  const confirmBtn = dlg.querySelector('#btnConfirmOut');
 
-  m.querySelectorAll('[data-m-dec]').forEach(b => b.addEventListener('click', () => {
-    const id = b.dataset.mDec; cart[id] -= 1; if (cart[id] <= 0) delete cart[id];
-    renderCatalog(); openCreate(st);
-  }));
-  m.querySelectorAll('[data-m-inc]').forEach(b => b.addEventListener('click', () => {
-    const id = b.dataset.mInc; cart[id] = Math.min((cart[id] || 0) + 1, 99);
-    renderCatalog(); openCreate(st);
-  }));
+  const evaluateReady = () => {
+    qrVerified = qrInput.value.trim().toUpperCase() === req.assetCode;
+    if (qrInput.value.trim()) {
+      qrMsg.innerHTML = qrVerified
+        ? `<span style="color:#047857">✔ Khớp đúng mã tài sản <b>${req.assetCode}</b></span>`
+        : `<span style="color:#d71920">✘ Sai mã tài sản (Yêu cầu: <b>${req.assetCode}</b>)</span>`;
+    }
+    const allChecked = checkBoxes.every((cb) => cb.checked);
+    confirmBtn.disabled = !(isSystemReady && qrVerified && allChecked);
+  };
 
-  const sendBtn = m.querySelector('#cSend');
-  sendBtn.addEventListener('click', () => {
-    if (Object.keys(validate(st)).length) { st.show = true; openCreate(st); return; }
+  qrInput.addEventListener('input', evaluateReady);
+  checkBoxes.forEach((cb) => cb.addEventListener('change', evaluateReady));
 
-    // Thông tin đủ -> khóa nút, hiện loading rồi lưu phiếu (mô phỏng máy chủ)
-    submitWithLoading(sendBtn, () => {
-      // Kiểm tra lại số lượng khả dụng tại thời điểm gửi
-      if (Object.keys(validate(st)).length) { st.show = true; openCreate(st); return; }
-      const code = nextCode();
-      const list = EQUIP.filter(x => cart[x.id] > 0).map(x => ({ id: x.id, qty: cart[x.id] }));
-      list.forEach(i => { STOCK[i.id] -= i.qty; });
-      TICKETS.push({
-        code, items: list, room: st.room,
-        b: { date: st.bd, time: st.bt }, d: { date: st.rd, time: st.rt },
-        status: 'wait', created: '08:30', cd: TODAY
-      });
-      Object.keys(cart).forEach(k => delete cart[k]);
-      tab = 'mine'; hl = code;
-      setNotice(alertBox('ok', '', `Tạo yêu cầu thành công. Đã kiểm tra số lượng khả dụng, lưu phiếu #${code} và tạo mã QR.`, 'check'));
-      renderAll();
-      openQR(code, true);
+  dlg.querySelector('#btnSimScanOut').addEventListener('click', () => {
+    qrInput.value = req.assetCode;
+    evaluateReady();
+  });
+
+  // Nếu thiết bị kiểm tra thực tế không đạt -> khóa không cho mượn (BR1)
+  dlg.querySelector('#btnFailOut').addEventListener('click', () => {
+    runWithLock(dlg.querySelector('#btnFailOut'), () => {
+      req.sysStatus = 'Đang bảo trì / Hỏng';
+      req.status = 'damaged';
+      req.note = 'Kiểm tra xuất kho không đạt chuẩn kỹ thuật. Đã khóa thiết bị để bảo trì.';
+      closeHandoverModal();
+      renderHandoverList();
+      notifyToast(`Đã khóa thiết bị ${req.assetCode} do không đạt kiểm tra`);
+    });
+  });
+
+  // Xác nhận bàn giao (F81)
+  confirmBtn.addEventListener('click', () => {
+    const noteText = dlg.querySelector('#outNote').value.trim();
+    runWithLock(confirmBtn, () => {
+      req.status = 'borrowed';
+      req.sysStatus = 'Đang được mượn';
+      req.handedAt = 'Vừa xong · Hôm nay';
+      req.note = noteText || 'Đã quét QR xác thực & kiểm tra đạt chuẩn kỹ thuật trước bàn giao.';
+      closeHandoverModal();
+      renderHandoverList();
+      notifyToast(`Đã bàn giao thiết bị ${req.assetCode} cho ${req.borrowerName}`);
     });
   });
 }
 
 /* =====================================================
-   2. MÃ QR (mẫu, không mã hóa dữ liệu thật)
+   3. TIẾP NHẬN & KIỂM TRA THIẾT BỊ HOÀN TRẢ (F82, F83, BR2, BR3)
    ===================================================== */
-function qrSvg(seed) {
-  const N = 25;
-  let h = 7;
-  for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  const rnd = () => { h = (h * 1664525 + 1013904223) >>> 0; return h / 4294967296; };
-  const m = Array.from({ length: N }, () => Array.from({ length: N }, () => (rnd() < 0.5 ? 1 : 0)));
-  const finder = (ox, oy) => {
-    for (let y = -1; y <= 7; y++) for (let x = -1; x <= 7; x++) {
-      const X = ox + x, Y = oy + y;
-      if (X < 0 || Y < 0 || X >= N || Y >= N) continue;
-      const inside = x >= 0 && x <= 6 && y >= 0 && y <= 6;
-      const edge = x === 0 || x === 6 || y === 0 || y === 6;
-      const core = x >= 2 && x <= 4 && y >= 2 && y <= 4;
-      m[Y][X] = inside && (edge || core) ? 1 : 0;
+function openReturnModal(code) {
+  const req = getReq(code);
+  if (!req) return;
+
+  const dlg = openHandoverModal(`
+    ${buildHead('Tiếp nhận & Kiểm tra thiết bị hoàn trả', `Phiếu #${req.code} · Đã xuất kho lúc ${req.handedAt || 'hôm nay'}`)}
+    <div class="m-body">
+      <div class="alert info">
+        ${renderIcon('qr')}
+        <span><b>Quy tắc BR3:</b> Bắt buộc quét đối chiếu đúng mã QR/Barcode <b>${req.assetCode}</b> đã xuất kho trước khi xác nhận thu hồi.</span>
+      </div>
+
+      <div class="f-group">
+        <label>Bước 1: Quét mã QR thiết bị người dùng mang trả (BR3) *</label>
+        <div class="qr-verify-row">
+          <input type="text" id="retQrInput" placeholder="Quét mã QR trên thân thiết bị...">
+          <button type="button" class="btn btn-outline btn-sm" id="btnScanRight">Quét đúng mã</button>
+          <button type="button" class="btn btn-outline btn-sm" id="btnScanWrong">Thử quét nhầm</button>
+        </div>
+        <small id="retQrStatus" class="muted">Chưa quét mã thiết bị hoàn trả.</small>
+      </div>
+
+      <div class="f-group">
+        <label>Bước 2: Kiểm đếm phụ kiện hoàn trả (F82)</label>
+        <div class="chk-box">
+          ${req.accessories
+            .map(
+              (acc, idx) => `
+            <label class="chk-item">
+              <input type="checkbox" class="ret-acc" data-acc="${escHtml(acc)}" id="rAcc${idx}" checked>
+              <span>${escHtml(acc)}</span>
+            </label>`
+            )
+            .join('')}
+        </div>
+      </div>
+
+      <div class="f-group">
+        <label for="retCondition">Bước 3: Đánh giá tình trạng vận hành thực tế *</label>
+        <select id="retCondition">
+          <option value="ok">Đạt chuẩn – Thiết bị &amp; phụ kiện nguyên vẹn</option>
+          <option value="fault">Có hư hỏng / Thiếu phụ kiện (Lập biên bản BR2)</option>
+        </select>
+      </div>
+
+      <div class="f-group" id="damageBox" hidden>
+        <label for="damageDesc">Nội dung biên bản hư hỏng / thiếu phụ kiện (BR2) *</label>
+        <textarea id="damageDesc" placeholder="Ghi rõ bộ phận hư hỏng hoặc phụ kiện bị thiếu để chuyển sang quy trình xử lý sự cố (UA1)..."></textarea>
+        <p class="err" id="damageErr" hidden>Vui lòng nhập chi tiết hư hỏng/thiếu phụ kiện trước khi lập biên bản.</p>
+      </div>
+    </div>
+    ${buildFoot(`
+      <button type="button" class="btn btn-outline" data-close-modal>Hủy</button>
+      <button type="button" class="btn btn-primary" id="btnCompleteReturn" disabled>Xác nhận đã trả về kho</button>`)}
+  `);
+
+  const qrInput = dlg.querySelector('#retQrInput');
+  const qrStatus = dlg.querySelector('#retQrStatus');
+  const accChecks = Array.from(dlg.querySelectorAll('.ret-acc'));
+  const condSelect = dlg.querySelector('#retCondition');
+  const damageBox = dlg.querySelector('#damageBox');
+  const damageDesc = dlg.querySelector('#damageDesc');
+  const damageErr = dlg.querySelector('#damageErr');
+  const submitBtn = dlg.querySelector('#btnCompleteReturn');
+
+  const syncReturnForm = () => {
+    const val = qrInput.value.trim().toUpperCase();
+    const isMatched = val === req.assetCode;
+
+    if (!val) {
+      qrStatus.innerHTML = '<span class="muted">Chưa quét mã thiết bị hoàn trả.</span>';
+    } else if (isMatched) {
+      qrStatus.innerHTML = `<span style="color:#047857">✔ Đối chiếu chính xác mã thiết bị <b>${req.assetCode}</b></span>`;
+    } else {
+      qrStatus.innerHTML = `<span style="color:#d71920">✘ Không khớp mã đã xuất kho (<b>${val}</b> ≠ <b>${req.assetCode}</b>) — Bị chặn theo BR3</span>`;
     }
+
+    const missingAcc = accChecks.filter((c) => !c.checked).map((c) => c.dataset.acc);
+    if (missingAcc.length && condSelect.value === 'ok') {
+      condSelect.value = 'fault';
+    }
+
+    const isFault = condSelect.value === 'fault' || missingAcc.length > 0;
+    damageBox.hidden = !isFault;
+
+    if (isFault) {
+      submitBtn.textContent = 'Ghi nhận hư hỏng & Chuyển UA1';
+      if (missingAcc.length && !damageDesc.value.trim()) {
+        damageDesc.value = `Thiếu phụ kiện khi trả: ${missingAcc.join(', ')}.`;
+      }
+    } else {
+      submitBtn.textContent = 'Xác nhận đã trả về kho';
+      damageErr.hidden = true;
+    }
+
+    // BR3: Không cho phép xác nhận nếu chưa khớp mã QR
+    submitBtn.disabled = !isMatched;
   };
-  finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
-  let rects = '';
-  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (m[y][x]) rects += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
-  return `<svg viewBox="0 0 ${N} ${N}" class="qr-svg" shape-rendering="crispEdges" fill="#1f2430">${rects}</svg>`;
-}
 
-function openQR(code, fresh) {
-  const t = getTicket(code);
-  const m = setModal(`
-    ${mHead('Mã QR của phiếu mượn')}
-    <div class="m-body">
-      ${fresh ? alertBox('ok', '', `Tạo yêu cầu thành công · Phiếu #${t.code} đã được lưu.`, 'check') : ''}
-      <div class="qr-wrap">
-        <span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span>
-        <div class="qr-box">${qrSvg(t.code)}</div>
-        <h3 class="qr-code">#${t.code}</h3>
-        <small class="muted">Mã QR minh họa</small>
-      </div>
-      <div class="qr-info">
-        <b>${itemsLine(t.items)}</b>
-        <p>Phòng sử dụng: ${t.room}</p>
-        <p class="muted">Mượn: ${fmtDT(t.b)}</p>
-        <p class="muted">Trả dự kiến: ${fmtDT(t.d)}</p>
-      </div>
-      <p class="qr-hint">Đến Phòng CSVC và xuất trình mã QR để nhận thiết bị</p>
-      <button type="button" class="btn btn-primary btn-block" id="qSave">${icon('download')} Lưu ảnh QR</button>
-      <p class="muted small" style="margin-top:12px">Minh họa giao diện tĩnh: nút lưu ảnh không tải tệp. Có thể xem lại mã QR trong chi tiết phiếu.</p>
-    </div>
-  `);
-  m.querySelector('#qSave').addEventListener('click', () => showToast('Đã lưu ảnh QR (minh họa)'));
+  qrInput.addEventListener('input', syncReturnForm);
+  accChecks.forEach((c) => c.addEventListener('change', syncReturnForm));
+  condSelect.addEventListener('change', syncReturnForm);
+
+  dlg.querySelector('#btnScanRight').addEventListener('click', () => {
+    qrInput.value = req.assetCode;
+    syncReturnForm();
+  });
+
+  dlg.querySelector('#btnScanWrong').addEventListener('click', () => {
+    qrInput.value = 'VLU-MC-999';
+    syncReturnForm();
+  });
+
+  submitBtn.addEventListener('click', () => {
+    const isFault = condSelect.value === 'fault' || accChecks.some((c) => !c.checked);
+    const detail = damageDesc.value.trim();
+
+    if (isFault && !detail) {
+      damageErr.hidden = false;
+      damageDesc.focus();
+      return;
+    }
+
+    runWithLock(submitBtn, () => {
+      req.returnedAt = 'Vừa xong · Hôm nay';
+      if (!isFault) {
+        req.status = 'returned';
+        req.sysStatus = 'Sẵn sàng';
+        req.note = 'Đã đối chiếu QR, thu hồi đủ phụ kiện và đưa thiết bị về trạng thái Sẵn sàng.';
+        notifyToast(`Đã thu hồi ${req.assetCode} về trạng thái Sẵn sàng`);
+      } else {
+        const newIncidentCode = 'SC-' + (205 + Math.floor(Math.random() * 20));
+        req.status = 'damaged';
+        req.sysStatus = 'Đang bảo trì / Hỏng';
+        req.incidentId = newIncidentCode;
+        req.note = `${detail} (Đã tạo phiếu sự cố #${newIncidentCode} chuyển sang UA1).`;
+        notifyToast(`Đã lập biên bản hư hỏng & tạo phiếu #${newIncidentCode}`);
+      }
+      closeHandoverModal();
+      renderHandoverList();
+    });
+  });
 }
 
 /* =====================================================
-   3. CHI TIẾT PHIẾU MƯỢN
+   4. NGĂN CHI TIẾT PHIẾU BÀN GIAO (DRAWER)
    ===================================================== */
-function ticketTimeline(t) {
-  const created = `${t.created || '08:00'} · ${fmtDate(t.cd || t.b.date)}`;
-  const step = (done, title, sub) =>
-    `<li class="${done ? 'done' : 'todo'}"><span class="dot">${done ? icon('check') : ''}</span><div><b>${title}</b><small>${sub}</small></div></li>`;
-  const got = t.status !== 'wait';
-  const back = t.status === 'returned' || t.status === 'issue';
-  let s = step(true, 'Đã tạo phiếu', created);
-  s += got ? step(true, 'Đã nhận thiết bị', `${t.handed || '08:55'} · ${fmtDate(t.b.date)}`)
-           : step(false, 'Đã nhận thiết bị', 'Chờ CSVC quét QR bàn giao');
-  s += back ? step(true, 'Đã trả', `${fmtDT(t.ret || t.d)} · ${t.status === 'returned' ? 'Đủ thiết bị, bình thường' : 'Có thiết bị gặp vấn đề'}`)
-            : step(false, 'Đã trả', `Dự kiến ${fmtDT(t.d)}`);
-  return `<h4 class="sec">Tiến trình phiếu</h4><ol class="tl tl-brand">${s}</ol>`;
-}
+function openHandoverDetail(code) {
+  const req = getReq(code);
+  if (!req) return;
 
-const availBox = note => `
-  <div class="avail">
-    <h4>Khả dụng sau trạng thái này</h4>
-    <div class="cells">${EQUIP.map(e => `<div class="cell"><small>${e.short}</small><b>${STOCK[e.id]}</b></div>`).join('')}</div>
-    <p class="muted small">${note}</p>
-  </div>`;
+  const dlg = openHandoverModal(
+    `${buildHead(`Chi tiết bàn giao #${req.code}`, `${req.campus} · Phòng ${req.room}`)}
+     <div class="m-body">
+       <div class="status-line">
+         <span class="badge badge-${req.status}">${HANDOVER_STATUS_TEXT[req.status]}</span>
+         <span class="sys-tag">Trạng thái kho: ${escHtml(req.sysStatus)}</span>
+       </div>
 
-function openDetail(code) {
-  const t = getTicket(code);
-  let body = `<div class="dt-top"><h3>#${t.code}</h3><span class="badge ${ST_CLASS[t.status]}">${ST_TEXT[t.status]}</span></div>`;
-  if (t.status === 'borrowed') {
-    body += `<div class="hand"><span class="badge blue">Đã bàn giao</span><small>CSVC đã quét QR lúc ${t.handed || '08:55'} · ${fmtDate(t.b.date)}</small></div>`;
-  }
-  body += `
-    <div class="sum">
-      <h4>Thiết bị trong phiếu</h4>
-      ${t.items.map(i => `<div class="it"><span>${eq(i.id).name}</span><b>× ${i.qty}</b></div>`).join('')}
-    </div>
-    <p class="dt-room">Phòng sử dụng: ${t.room}</p>
-    <p class="dt-line">Mượn: ${fmtDT(t.b)}</p>
-    <p class="dt-line">Trả dự kiến: ${fmtDT(t.d)}</p>
-    <p class="muted small">Người mượn: Nguyễn Đình Thuần · SV Khoa CNTT</p>
-    ${ticketTimeline(t)}`;
+       <div class="sum">
+         <h3>${escHtml(req.deviceName)} (<code>${escHtml(req.assetCode)}</code>)</h3>
+         <p><b>Người mượn:</b> ${escHtml(req.borrowerName)} (${escHtml(req.borrowerId)})</p>
+         <p><b>Khung giờ đăng ký:</b> ${escHtml(req.borrowSlot)}</p>
+         ${req.handedAt ? `<p><b>Thời điểm xuất kho:</b> ${escHtml(req.handedAt)}</p>` : ''}
+         ${req.returnedAt ? `<p><b>Thời điểm thu hồi:</b> ${escHtml(req.returnedAt)}</p>` : ''}
+       </div>
 
-  if (t.status === 'wait') body += `<div class="alert info lg">${icon('box')}<div>Thiết bị đã được chuẩn bị sẵn tại Phòng CSVC</div></div>`;
-  if (t.status === 'returned') {
-    body += alertBox('ok', '', 'Trả thiết bị thành công. Phiếu đã được chuyển vào Lịch sử mượn - trả.', 'check');
-    body += availBox(`Đã hoàn lại ${itemsPhrase(t.items)} vào số lượng khả dụng.`);
-  }
-  if (t.status === 'issue') {
-    const bad = t.items[t.items.length - 1], ok = t.items.slice(0, -1);
-    body += alertBox('err', '', 'Phòng CSVC đã tạo phiếu sự cố chuyển Đội ngũ Kỹ thuật', 'alert');
-    body += `<p class="issue-text">${eq(bad.id).name} × ${bad.qty} được Phòng CSVC ghi nhận gặp sự cố khi trả. Thiết bị này chưa khả dụng cho đến khi được xử lý${ok.length ? `; ${itemsPhrase(ok)} đã trả bình thường` : ''}.</p>`;
-    body += availBox(`${eq(bad.id).name} gặp vấn đề không được cộng lại vào số lượng có thể mượn.`);
-  }
+       <div class="kv">
+         <p><b>Danh mục phụ kiện chuẩn (${req.accessories.length}):</b></p>
+         <p class="muted">${req.accessories.map(escHtml).join(' · ')}</p>
+       </div>
 
-  let foot = '';
-  if (t.status === 'wait') foot = `<button type="button" class="btn btn-outline btn-block" data-qr-open>${icon('qr')} Mở lại mã QR</button>
-                                   <button type="button" class="btn btn-outline btn-block" id="dHand">Giả lập Phòng CSVC quét QR bàn giao</button>`;
-  if (t.status === 'borrowed') foot = `<button type="button" class="btn btn-outline btn-block" data-qr-open>${icon('qr')} Mở lại mã QR</button>
-                                       <button type="button" class="btn btn-outline btn-block" id="dRet">Giả lập Phòng CSVC quét QR nhận trả</button>`;
+       ${
+         req.incidentId
+           ? `<div class="alert err">${renderIcon('alert')} <span>Đã liên kết phiếu xử lý sự cố <b>#${escHtml(req.incidentId)}</b> tại phân hệ UA1.</span></div>`
+           : ''
+       }
+       ${req.note ? `<div class="alert info">${renderIcon('shield')} <span>${escHtml(req.note)}</span></div>` : ''}
+     </div>
+     ${buildFoot('<button type="button" class="btn btn-outline" data-close-modal>Đóng</button>', 'full')}`,
+    'drawer'
+  );
 
-  const m = setModal(`${mHead('Chi tiết phiếu mượn')}<div class="m-body">${body}${foot ? `<div class="dt-actions">${foot}</div>` : ''}
-    <p class="muted small" style="margin-top:12px">Nhận và trả trực tiếp tại Phòng CSVC bằng QR.</p></div>`, 'drawer');
-
-  const on = (sel, fn) => { const el = m.querySelector(sel); if (el) el.addEventListener('click', fn); };
-  on('[data-qr-open]', () => openQR(t.code, false));
-  on('#dHand', () => {
-    t.status = 'borrowed'; t.handed = '08:55';
-    renderAll(); openDetail(t.code);
-  });
-  on('#dRet', () => openReturnSim(t.code));
+  return dlg;
 }
 
 /* =====================================================
-   4. GIẢ LẬP PHÒNG CSVC NHẬN TRẢ (2 kết quả thay thế nhau)
-   ===================================================== */
-function openReturnSim(code) {
-  const t = getTicket(code);
-  const m = setModal(`
-    ${mHead('Giả lập Phòng CSVC nhận trả', `#${t.code} · ${fmtDate(t.d.date)} lúc ${t.d.time}`)}
-    <div class="m-body">
-      ${alertBox('brand', '', `Từ trạng thái Đang mượn: ${itemsPhrase(t.items)}. Khả dụng trước trả: ${stockLine()}.`)}
-      <p class="muted small">Chọn một trong hai kết quả thay thế nhau. Chức năng chỉ dùng để minh họa luồng.</p>
-    </div>
-    ${mFoot(`<button type="button" class="btn btn-outline" id="rBad">Có vấn đề · Hub chưa thể mượn lại</button><button type="button" class="btn btn-primary" id="rOk">Trả bình thường</button>`, 'col')}
-  `);
-  // nhãn nút "có vấn đề" theo thiết bị cuối của phiếu
-  m.querySelector('#rBad').textContent = `Có vấn đề · ${eq(t.items[t.items.length - 1].id).name} chưa thể mượn lại`;
-
-  m.querySelector('#rOk').addEventListener('click', () => {
-    t.items.forEach(i => { STOCK[i.id] += i.qty; });
-    t.status = 'returned'; t.ret = { ...t.d };
-    lastReturned = t.code; hq = ''; hs = '';
-    tab = 'hist';
-    setNotice(alertBox('ok', '', `Trả thiết bị thành công. Đã hoàn lại ${itemsPhrase(t.items)} vào số lượng khả dụng.`, 'check'));
-    renderAll(); openDetail(t.code);
-  });
-  m.querySelector('#rBad').addEventListener('click', () => {
-    const bad = t.items[t.items.length - 1];
-    t.items.slice(0, -1).forEach(i => { STOCK[i.id] += i.qty; });
-    t.status = 'issue'; t.ret = { ...t.d };
-    lastReturned = t.code; hq = ''; hs = '';
-    tab = 'hist';
-    setNotice(alertBox('err', '', `Trả thiết bị có vấn đề. Phiếu #${t.code} đã chuyển Đội ngũ Kỹ thuật; ${lf(eq(bad.id).name)} chưa được cộng lại vào số lượng khả dụng.`, 'alert'));
-    renderAll(); openDetail(t.code);
-  });
-}
-
-/* =====================================================
-   KHỞI TẠO
+   5. KHỞI TẠO TRANG UA2
    ===================================================== */
 function initUA2() {
-  $('dateChip').innerHTML = `${icon('calendar')} Thứ Hai, 26/10/2026`;
-  $('pageAlert').innerHTML = alertBox('brand', '', 'Chỉ mượn thiết bị mượn thêm. Thiết bị có sẵn trong phòng (máy chiếu, màn chiếu, máy lạnh...) không cần đăng ký. Nhận và trả trực tiếp tại Phòng CSVC bằng mã QR, không cần để thẻ sinh viên.');
+  renderHandoverList();
 
-  const fr = document.querySelector('.footer-inner span:last-child');
-  if (fr) fr.textContent = 'Nhận và trả thiết bị trực tiếp tại Phòng CSVC';
-
-  renderAll();
-
-  // Danh mục + phiếu đang chọn
-  $('catalog').addEventListener('click', e => {
-    const g = sel => e.target.closest(sel);
-    let b;
-    if ((b = g('[data-card-dec]'))) { const id = b.dataset.cardDec; cardQty[id] = Math.max(1, cardQty[id] - 1); renderCatalog(); }
-    else if ((b = g('[data-card-inc]'))) { const id = b.dataset.cardInc; cardQty[id] = Math.min(STOCK[id], cardQty[id] + 1); renderCatalog(); }
-    else if ((b = g('[data-add]'))) {
-      const id = b.dataset.add, q = cardQty[id];
-      if (!q) return;
-      cart[id] = (cart[id] || 0) + q;
-      renderCatalog();
-      showToast(`Đã thêm ${eq(id).name} × ${q} vào phiếu mượn`);
-    }
-    else if ((b = g('[data-cart-dec]'))) { const id = b.dataset.cartDec; cart[id] -= 1; if (cart[id] <= 0) delete cart[id]; renderCatalog(); }
-    else if ((b = g('[data-cart-inc]'))) { const id = b.dataset.cartInc; cart[id] = Math.min(cart[id] + 1, 99); renderCatalog(); }
-    else if (g('[data-create]')) openCreate();
+  document.getElementById('handoverTabs')?.addEventListener('click', (e) => {
+    const tabBtn = e.target.closest('.tab');
+    if (tabBtn) setHandoverTab(tabBtn.dataset.tab);
   });
 
-  // Cột phải
-  $('panel').addEventListener('click', e => {
-    const tb = e.target.closest('[data-tab]'), d = e.target.closest('[data-detail]'),
-          q = e.target.closest('[data-qr]'), r = e.target.closest('[data-hreset]');
-    if (tb) { setNotice(''); setTab(tb.dataset.tab); }
-    if (d) openDetail(d.dataset.detail);
-    if (q) openQR(q.dataset.qr, false);
-    if (r) { hq = ''; hs = ''; renderPanel(); }
-    if (e.target.closest('#histClear')) { hq = ''; $('hSearch').value = ''; renderHistResult(); $('hSearch').focus(); }
+  ['hSearch', 'hRole'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener(id === 'hSearch' ? 'input' : 'change', renderHandoverList);
   });
-  $('panel').addEventListener('input', e => { if (e.target.id === 'hSearch') { hq = e.target.value; renderHistResult(); } });
-  $('panel').addEventListener('change', e => { if (e.target.id === 'hStatus') { hs = e.target.value; renderHistResult(); } });
+
+  document.getElementById('handoverList')?.addEventListener('click', (e) => {
+    const outBtn = e.target.closest('[data-outbound]');
+    if (outBtn) return openOutboundModal(outBtn.dataset.outbound);
+
+    const retBtn = e.target.closest('[data-return]');
+    if (retBtn) return openReturnModal(retBtn.dataset.return);
+
+    const viewBtn = e.target.closest('[data-view]');
+    if (viewBtn) return openHandoverDetail(viewBtn.dataset.view);
+  });
 }
-
-document.addEventListener('DOMContentLoaded', initUA2);
