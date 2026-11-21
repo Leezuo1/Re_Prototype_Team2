@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Mượn – trả thiết bị | Văn Lang</title>
+  <title>Kiểm tra &amp; bàn giao thiết bị | Đội ngũ Kỹ thuật – VLU</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../css/ua1-modal.css">
   <link rel="stylesheet" href="../css/ua2.css">
 </head>
-<body data-page="ua2">
+<body data-page="tech-handover">
 
   <!-- Header: nạp từ components/header.html -->
   <div id="app-header"></div>
@@ -25,28 +25,79 @@
       <main class="page">
         <div class="page-head">
           <div>
-            <h1>Mượn – trả thiết bị</h1>
-            <p class="sub">Chọn thiết bị mượn thêm, nhận mã QR và theo dõi phiếu mượn của bạn.</p>
+            <h1>Kiểm tra kỹ thuật &amp; bàn giao thiết bị mượn / trả</h1>
+            <p class="sub">Quét mã QR/Barcode đối chiếu thiết bị xuất kho, kiểm tra chất lượng và tiếp nhận hoàn trả trong ngày (UA2).</p>
           </div>
-          <div class="date-chip" id="dateChip"></div>
+          <div class="date-chip">Kho thiết bị: <strong>Cơ sở chính (BR1 – BR3)</strong></div>
         </div>
 
-        <div id="pageAlert"></div>
-        <div id="pageNotice"></div>
+        <!-- Thống kê nhanh trạng thái bàn giao trong ngày (F79) -->
+        <section class="stats-grid" aria-label="Thống kê bàn giao thiết bị">
+          <article class="stat-card">
+            <span class="stat-label">Chờ kiểm tra xuất kho</span>
+            <strong class="stat-val" id="stReadyOut">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Đang được mượn</span>
+            <strong class="stat-val" id="stBorrowed">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Đã thu hồi đạt chuẩn</span>
+            <strong class="stat-val ok" id="stReturned">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Ghi nhận hư hỏng / thiếu đồ</span>
+            <strong class="stat-val urgent" id="stDamaged">0</strong>
+          </article>
+        </section>
 
-        <div class="layout" id="layout">
-          <!-- Cột trái: danh mục thiết bị + phiếu đang chọn (JS tự vẽ) -->
-          <section class="card" id="catalog"></section>
+        <!-- Danh sách phiếu mượn đã duyệt & thao tác xuất / thu hồi (F79 - F83) -->
+        <section class="card">
+          <div class="card-head">
+            <h2>Danh sách đơn mượn – trả thiết bị trong ngày</h2>
+            <span class="count" id="handoverCount">Hiển thị 0 phiếu</span>
+          </div>
 
-          <!-- Cột phải: phiếu mượn của tôi / lịch sử (JS tự vẽ) -->
-          <aside class="card" id="panel"></aside>
-        </div>
+          <!-- Tab lọc theo trạng thái bàn giao -->
+          <div class="tabs" id="handoverTabs" role="tablist">
+            <button type="button" class="tab active" data-tab="all">Tất cả</button>
+            <button type="button" class="tab" data-tab="ready_out">Chờ kiểm tra xuất kho</button>
+            <button type="button" class="tab" data-tab="borrowed">Đang được mượn</button>
+            <button type="button" class="tab" data-tab="returned">Đã thu hồi đạt chuẩn</button>
+            <button type="button" class="tab" data-tab="damaged">Ghi nhận hư hỏng</button>
+          </div>
+
+          <!-- Thanh tìm kiếm MSSV/Mã GV & đối tượng mượn -->
+          <div class="filter">
+            <div class="field wide">
+              <label for="hSearch">Tìm theo mã phiếu, mã thiết bị hoặc MSSV / Mã GV</label>
+              <input type="text" id="hSearch" placeholder="VD: TB1032, VLU-MC-105, 2474802010377, A.04-02...">
+            </div>
+            <div class="field">
+              <label for="hRole">Đối tượng mượn</label>
+              <select id="hRole">
+                <option value="all">Tất cả người mượn</option>
+                <option value="Sinh viên">Sinh viên</option>
+                <option value="Giảng viên">Giảng viên</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Vùng render danh sách phiếu bàn giao từ ua2.js -->
+          <div class="handover-list" id="handoverList"></div>
+
+          <p class="note">
+            <strong>Quy định kiểm soát kho (BR1 – BR3):</strong> Chỉ xuất kho thiết bị ở trạng thái <b>"Sẵn sàng"</b> và đạt kiểm tra ngoại quan/hoạt động; bắt buộc quét đối chiếu đúng mã QR/Barcode khi nhận trả và lập biên bản ngay nếu phát hiện hư hỏng hoặc thiếu phụ kiện.
+          </p>
+        </section>
       </main>
 
+      <!-- Footer: nạp từ main.js -->
       <div id="app-footer"></div>
     </div>
   </div>
 
+  <!-- Khung Modal quét QR xuất kho, nhận trả & Drawer chi tiết (ua2.js) -->
   <div id="modalRoot"></div>
 
   <script src="../js/main.js"></script>
