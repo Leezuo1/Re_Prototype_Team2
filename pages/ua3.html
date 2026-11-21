@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Báo cáo sự cố | Văn Lang</title>
+  <title>Bảo trì định kỳ phòng học | Đội ngũ Kỹ thuật – VLU</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../css/ua1-modal.css">
   <link rel="stylesheet" href="../css/ua3.css">
 </head>
-<body data-page="ua3">
+<body data-page="tech-maintenance">
 
   <!-- Header: nạp từ components/header.html -->
   <div id="app-header"></div>
@@ -25,46 +25,81 @@
       <main class="page">
         <div class="page-head">
           <div>
-            <h1>Báo cáo sự cố</h1>
-            <p class="sub">Gửi báo cáo về phòng học, thiết bị và theo dõi tiến độ xử lý.</p>
+            <h1>Bảo trì định kỳ phòng học &amp; hạ tầng công nghệ</h1>
+            <p class="sub">Lập kế hoạch kiểm tra theo tuần/tháng, tạm khóa phòng học, thực hiện Checklist kỹ thuật và đề xuất vật tư tiêu hao (UA3).</p>
           </div>
-          <div class="date-chip" id="dateChip"></div>
+          <button type="button" class="btn btn-primary" id="btnOpenPlanModal">+ Lập lịch bảo trì</button>
         </div>
 
-        <div id="pageAlert"></div>
-        <div id="pageNotice"></div>
+        <!-- Thống kê nhanh kế hoạch bảo trì & đề xuất vật tư (F84, F87) -->
+        <section class="stats-grid" aria-label="Thống kê bảo trì định kỳ">
+          <article class="stat-card">
+            <span class="stat-label">Đã lên lịch sắp tới</span>
+            <strong class="stat-val" id="stScheduled">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Đang tạm khóa bảo trì (BR2)</span>
+            <strong class="stat-val urgent" id="stLocked">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Đã hoàn thành &amp; mở khóa</span>
+            <strong class="stat-val ok" id="stDone">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Phiếu đề xuất vật tư</span>
+            <strong class="stat-val" id="stSupplies">0</strong>
+          </article>
+        </section>
 
-        <div class="layout eq">
-          <!-- Cột trái: biểu mẫu (JS tự vẽ) -->
-          <section class="card" id="formCard"></section>
+        <!-- Danh sách kế hoạch bảo trì & Bộ lọc (F84 - F87) -->
+        <section class="card">
+          <div class="card-head">
+            <h2>Kế hoạch bảo trì phòng học &amp; khu vực</h2>
+            <span class="count" id="maintCount">Hiển thị 0 đợt bảo trì</span>
+          </div>
 
-          <!-- Cột phải: sự cố của tôi -->
-          <aside class="card">
-            <div class="card-head">
-              <h2>Sự cố của tôi</h2>
-              <span class="count" id="incCount"></span>
+          <!-- Tab lọc theo trạng thái bảo trì -->
+          <div class="tabs" id="maintTabs" role="tablist">
+            <button type="button" class="tab active" data-tab="all">Tất cả</button>
+            <button type="button" class="tab" data-tab="scheduled">Đã lên lịch</button>
+            <button type="button" class="tab" data-tab="locked">Đang tạm khóa</button>
+            <button type="button" class="tab" data-tab="completed">Đã hoàn thành</button>
+          </div>
+
+          <!-- Thanh tìm kiếm & lọc theo loại phòng chuẩn Checklist (BR3) -->
+          <div class="filter">
+            <div class="field wide">
+              <label for="mSearch">Tìm theo mã đợt bảo trì, phòng hoặc tòa nhà</label>
+              <input type="text" id="mSearch" placeholder="VD: BT-304, Lab CNTT 02, A.04-02, Hội trường...">
             </div>
-
-            <div class="tabs" id="incTabs">
-              <button class="tab active" data-filter="all">Tất cả</button>
-              <button class="tab" data-filter="doing">Đang xử lý</button>
-              <button class="tab" data-filter="done">Đã xử lý</button>
+            <div class="field">
+              <label for="mRoomType">Loại phòng kiểm tra</label>
+              <select id="mRoomType">
+                <option value="all">Tất cả loại phòng</option>
+                <option value="Phòng lý thuyết">Phòng lý thuyết</option>
+                <option value="Phòng Lab máy tính">Phòng Lab máy tính</option>
+                <option value="Hội trường">Hội trường</option>
+              </select>
             </div>
+          </div>
 
-            <div class="inc-list" id="incList"></div>
+          <!-- Vùng render danh sách đợt bảo trì từ ua3.js -->
+          <div class="maint-list" id="maintList"></div>
 
-            <p class="note" id="noteInc"></p>
-          </aside>
-        </div>
+          <p class="note">
+            <strong>Quy định bảo trì định kỳ (BR1 – BR3):</strong> Lịch bảo trì phải tránh trùng thời khóa biểu giảng dạy chính khóa; trong khung giờ bảo trì, phòng học tự động chuyển trạng thái <b>"Tạm khóa để bảo trì"</b> và chỉ mở khóa khi hoàn tất toàn bộ hạng mục Checklist theo loại phòng.
+          </p>
+        </section>
       </main>
 
+      <!-- Footer: nạp từ main.js -->
       <div id="app-footer"></div>
     </div>
   </div>
 
-  <!-- Ngăn chi tiết trượt từ phải + hộp giả lập -->
+  <!-- Khung Modal lập lịch (BR1) & Ngăn Checklist + Đề xuất vật tư trượt từ phải -->
+  <div id="modalRoot"></div>
   <div id="drawerRoot"></div>
-  <div id="simRoot"></div>
 
   <script src="../js/main.js"></script>
   <script src="../js/ua3.js"></script>
