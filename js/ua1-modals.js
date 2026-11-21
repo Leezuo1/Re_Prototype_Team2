@@ -1,400 +1,354 @@
-/* ===== Khung modal dùng chung ===== */
-// variant = 'drawer' => ngăn trượt từ bên phải (dùng cho chi tiết đơn)
-function setModal(html, variant = '') {
-  const root = document.getElementById('modalRoot');
-  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">${html}</div></div>`;
+/* js/ua1-modals.js — Các hộp thoại xử lý sự cố (UA1 - Đội ngũ Kỹ thuật) */
+
+let activeDialogCloser = null;
+
+function openModalBox(contentHtml, mode = '') {
+  const host = document.getElementById('modalRoot');
+  if (!host) return null;
+
+  host.innerHTML = `
+    <div class="overlay ${mode}">
+      <div class="modal ${mode}" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+        ${contentHtml}
+      </div>
+    </div>`;
+
   document.body.classList.add('no-scroll');
-  root.querySelector('.overlay').addEventListener('mousedown', e => {
-    if (e.target.classList.contains('overlay')) closeModal();
+
+  host.querySelector('.overlay').addEventListener('mousedown', (e) => {
+    if (e.target.classList.contains('overlay')) closeModalBox();
   });
-  root.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
-  const dialog = root.querySelector('.modal');
-  trapDialog(dialog, closeModal);
+  host.querySelectorAll('[data-dismiss]').forEach((btn) => {
+    btn.addEventListener('click', closeModalBox);
+  });
+
+  const dialog = host.querySelector('.modal');
+  if (typeof bindDialogFocus === 'function') {
+    activeDialogCloser = bindDialogFocus(dialog, closeModalBox);
+  }
   return dialog;
 }
 
-function closeModal() {
-  if (typeof dialogCleanup === 'function') dialogCleanup();
-  document.getElementById('modalRoot').innerHTML = '';
+function closeModalBox() {
+  if (typeof activeDialogCloser === 'function') {
+    activeDialogCloser();
+    activeDialogCloser = null;
+  }
+  const host = document.getElementById('modalRoot');
+  if (host) host.innerHTML = '';
   document.body.classList.remove('no-scroll');
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-const mHead = (title, sub) => `
+const modalHeader = (title, subtitle = '') => `
   <div class="m-head">
-    <div><h2 id="modalTitle">${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>
-    <button type="button" class="m-x" data-close aria-label="Đóng">${icon('x')}</button>
-  </div>`;
-const mFoot = (html, cls = '') => `<div class="m-foot ${cls}">${html}</div>`;
-const val = id => document.getElementById(id).value;
-const getOrder = code => ORDERS.find(o => o.code === code);
-const nextCode = () => 'MT' + (Math.max(...ORDERS.map(o => Number(o.code.slice(2)))) + 1);
-
-function sumBox(title, o, extra) {
-  return `
-    <div class="sum">
-      <h3>${title}</h3>
-      <p>${icon('calendar')} ${fmtDate(o.date)}</p>
-      <p>${icon('clock')} ${o.start} – ${o.end}</p>
-      ${extra ? `<small>${extra}</small>` : ''}
-    </div>`;
-}
-
-/* =====================================================
-   1. ĐẶT PHÒNG
-   ===================================================== */
-const ROOM_TYPES = ['Phòng học', 'Hội trường', 'Phòng họp'];
-
-function openBooking(roomName) {
-  const r = getRoom(roomName);
-  renderBooking({
-    type: r.type, room: r.name, purpose: '',
-    date: val('fDate'), start: val('fStart'), end: val('fEnd'),
-    file: null, errors: {}, conflict: null
-  });
-}
-
-function renderBooking(st) {
-  const r = getRoom(st.room);
-  const rooms = ROOMS.filter(x => x.type === st.type);
-  const needFile = st.type === 'Hội trường';
-  const e = st.errors;
-
-  const dropHtml = st.file
-    ? `<button type="button" class="drop has" id="bDrop" aria-labelledby="bFileLabel bDropText" aria-describedby="${e.file ? 'bFileHint bFileError' : 'bFileHint'}" aria-invalid="${e.file ? 'true' : 'false'}">${icon('file')}<span class="drop-copy"><span id="bDropText">Đổi tệp: ${esc(st.file.name)}</span><small id="bFileHint">${esc(st.file.ext)} · ${st.file.size} MB · Đã tải lên</small></span></button>`
-    : `<button type="button" class="drop ${e.file ? 'invalid' : ''}" id="bDrop" aria-labelledby="bFileLabel bDropText" aria-describedby="${e.file ? 'bFileHint bFileError' : 'bFileHint'}" aria-invalid="${e.file ? 'true' : 'false'}">${icon('upload')}<span class="drop-copy"><span id="bDropText">Nhấn để tải lên hoặc kéo thả tệp</span><small id="bFileHint">PDF, DOC, DOCX · Tối đa 10 MB</small></span></button>`;
-
-  const m = setModal(`
-    ${mHead('Đặt phòng', `${r.name} · ${r.cap} chỗ · ${r.building}, ${r.floor.toLowerCase()}`)}
-    <div class="m-body">
-      ${st.conflict ? alertBox('err', 'Khung giờ vừa được đặt',
-          `${st.room} có lịch trùng ${st.conflict.slot.start} – ${st.conflict.slot.end}, ngày ${fmtDate(st.date)}. Vui lòng chọn thời gian khác.`) : ''}
-      ${e.time ? alertBox('err', '', e.time) : ''}
-
-      <div class="f-group" role="group" aria-labelledby="bTypeLabel">
-        <label id="bTypeLabel">Loại phòng *</label>
-        <div class="seg">
-          ${ROOM_TYPES.map(t => `<button type="button" class="${t === st.type ? 'active' : ''}" aria-pressed="${t === st.type}" data-type="${t}">${t}</button>`).join('')}
-        </div>
-      </div>
-
-      <div class="f-group">
-        <label for="bRoom">Phòng *</label>
-        <select id="bRoom">
-          ${rooms.map(x => `<option value="${x.name}" ${x.name === st.room ? 'selected' : ''}>${x.name}</option>`).join('')}
-        </select>
-      </div>
-
-      <div class="f-group">
-        <label for="bPurpose">Mục đích sử dụng *</label>
-        <textarea id="bPurpose" class="${e.purpose ? 'invalid' : ''}" aria-invalid="${e.purpose ? 'true' : 'false'}" ${e.purpose ? 'aria-describedby="bPurposeError"' : ''} required placeholder="Nhập mục đích sử dụng phòng">${esc(st.purpose)}</textarea>
-        ${e.purpose ? `<p class="err" id="bPurposeError" role="alert">${e.purpose}</p>` : ''}
-      </div>
-
-      <div class="f-group">
-        <label for="bDate">Ngày mượn *</label>
-        <input type="date" id="bDate" value="${esc(st.date)}" required>
-      </div>
-
-      <div class="f-row">
-        <div class="f-group"><label for="bStart">Giờ bắt đầu *</label><input type="time" id="bStart" value="${esc(st.start)}" required></div>
-        <div class="f-group"><label for="bEnd">Giờ kết thúc *</label><input type="time" id="bEnd" value="${esc(st.end)}" required></div>
-      </div>
-
-      ${needFile ? `
-        <div class="f-group">
-          <label id="bFileLabel" for="bFile">Tệp quyết định phê duyệt *</label>
-          ${dropHtml}
-          <input type="file" id="bFile" accept=".pdf,.doc,.docx" hidden>
-          ${e.file ? `<p class="err" id="bFileError" role="alert">${e.file}</p>` : ''}
-        </div>` : ''}
-
-      ${st.conflict && st.conflict.free
-        ? alertBox('info', `Khung giờ còn trống: ${st.conflict.free}`, 'Đổi giờ bắt đầu và kết thúc trước khi gửi lại.', 'info') : ''}
-      ${alertBox('brand', 'Hệ thống tự chuyển đơn đến đúng bộ phận duyệt', '', 'info')}
-      <p class="req-note">* Thông tin bắt buộc. Lịch trống được kiểm tra khi gửi yêu cầu.</p>
+    <div>
+      <h2 id="dlgTitle">${title}</h2>
+      ${subtitle ? `<p>${subtitle}</p>` : ''}
     </div>
-    ${mFoot(`
-      <button type="button" class="btn btn-outline" data-close>Quay lại</button>
-      <button type="button" class="btn btn-primary" id="bSubmit">${st.conflict ? 'Kiểm tra & gửi lại' : 'Gửi yêu cầu'}</button>`)}
-  `);
+    <button type="button" class="m-x" data-dismiss aria-label="Đóng">✕</button>
+  </div>`;
 
-  // Đổi loại phòng / phòng
-  m.querySelectorAll('[data-type]').forEach(b => b.addEventListener('click', () => {
-    st.type = b.dataset.type;
-    st.room = ROOMS.find(x => x.type === st.type).name;
-    st.conflict = null;
-    renderBooking(st);
-  }));
-  m.querySelector('#bRoom').addEventListener('change', ev => { st.room = ev.target.value; st.conflict = null; renderBooking(st); });
+const modalFooter = (buttonsHtml, extraClass = '') =>
+  `<div class="m-foot ${extraClass}">${buttonsHtml}</div>`;
 
-  // Lưu giá trị đang nhập
-  m.querySelector('#bPurpose').addEventListener('input', ev => { st.purpose = ev.target.value; });
-  m.querySelector('#bDate').addEventListener('change', ev => { st.date = ev.target.value; });
-  m.querySelector('#bStart').addEventListener('change', ev => { st.start = ev.target.value; });
-  m.querySelector('#bEnd').addEventListener('change', ev => { st.end = ev.target.value; });
+const findTicket = (id) => TICKETS.find((t) => t.id === id);
 
-  // Tải tệp
-  if (needFile) {
-    const input = m.querySelector('#bFile'), drop = m.querySelector('#bDrop');
-    const takeFile = f => {
-      if (!f) return;
-      const ext = f.name.split('.').pop().toUpperCase();
-      if (!['PDF', 'DOC', 'DOCX'].includes(ext)) {
-        st.file = null;
-        st.errors.file = 'Chỉ nhận tệp PDF, DOC hoặc DOCX.';
-        renderBooking(st);
-        return;
-      }
-      if (f.size > 10 * 1024 * 1024) {
-        st.file = null;
-        st.errors.file = 'Tệp vượt quá giới hạn 10 MB.';
-        renderBooking(st);
-        return;
-      }
-      st.file = { name: f.name, ext, size: (f.size / 1024 / 1024).toFixed(1).replace('.', ',') };
-      delete st.errors.file;
-      renderBooking(st);
-    };
-    drop.addEventListener('click', () => input.click());
-    input.addEventListener('change', () => takeFile(input.files[0]));
-    drop.addEventListener('dragover', ev => ev.preventDefault());
-    drop.addEventListener('drop', ev => { ev.preventDefault(); takeFile(ev.dataTransfer.files[0]); });
-  }
+const PRIORITY_TEXT = {
+  urgent: 'Khẩn cấp (Đang có tiết)',
+  medium: 'Trung bình',
+  low: 'Thấp'
+};
 
-  // Gửi yêu cầu
-  const sendBtn = m.querySelector('#bSubmit');
-  sendBtn.addEventListener('click', () => submitBooking(st, needFile, sendBtn));
-}
-
-function submitBooking(st, needFile, btn) {
-  st.errors = {};
-  st.conflict = null;
-  if (!st.purpose.trim()) st.errors.purpose = 'Vui lòng nhập mục đích sử dụng.';
-  if (needFile && !st.file) st.errors.file = 'Vui lòng tải tệp quyết định phê duyệt.';
-  if (!st.date || !st.start || !st.end || toMin(st.end) <= toMin(st.start)) {
-    st.errors.time = 'Vui lòng chọn ngày và giờ hợp lệ (giờ kết thúc phải sau giờ bắt đầu).';
-  }
-  if (Object.keys(st.errors).length) return renderBooking(st);
-
-  // Thông tin đủ -> khóa nút, hiện loading rồi gửi (mô phỏng máy chủ)
-  submitWithLoading(btn, () => {
-    // Kiểm tra trùng lịch tại thời điểm gửi
-    const c = findConflict(st.room, st.date, st.start, st.end);
-    if (c) {
-      const dur = toMin(st.end) - toMin(st.start);
-      const fs = c.end, fe = toTime(toMin(c.end) + dur);
-      st.conflict = { slot: c, free: findConflict(st.room, st.date, fs, fe) ? null : `${fs} – ${fe}` };
-      return renderBooking(st);
-    }
-
-    const code = nextCode();
-    ORDERS.unshift({
-      code, room: st.room, date: st.date, start: st.start, end: st.end,
-      purpose: st.purpose.trim(), status: 'pending', sent: '10:52', file: st.file ? st.file.name : null
-    });
-    closeModal();
-    highlightCode = code;
-    setOrderFilter('all');
-    renderRooms();
-    showOrderBanner('ok', 'Gửi yêu cầu thành công', `Đơn #${code} đã được thêm vào Đơn của tôi.`);
-  });
-}
+const TICKET_STATUS_TEXT = {
+  pending: 'Chờ tiếp nhận',
+  processing: 'Đang xử lý',
+  waiting_parts: 'Chờ linh kiện / Đổi thiết bị',
+  resolved: 'Đã hoàn tất'
+};
 
 /* =====================================================
-   2. THEO DÕI YÊU CẦU (chi tiết đơn)
-   flash: kết quả vừa thực hiện { type: 'reschedule', old: {...} }
+   1. NGĂN CHI TIẾT PHIẾU SỰ CỐ & LỊCH SỬ BẢO TRÌ (F75, F88)
    ===================================================== */
-function timeline(o) {
-  const lg = logOf(o), d = fmtDate(TODAY);
-  const step = (cls, ic, title, sub) =>
-    `<li class="${cls}"><span class="dot">${ic ? icon(ic) : ''}</span><div><b>${title}</b><small>${sub}</small></div></li>`;
-  let items = step('done', 'check', 'Đã gửi', `${d} · ${lg.sent}`);
-  if (o.status === 'pending') {
-    items += step('done', 'clock', 'Đang xét duyệt', 'Yêu cầu đang được xử lý');
-    items += step('todo', '', 'Đã duyệt / Bị từ chối', 'Bạn sẽ nhận được thông báo kết quả');
+function buildTicketSteps(t) {
+  const row = (state, iconName, label, timeText) => `
+    <li class="${state}">
+      <span class="dot">${iconName ? renderIcon(iconName) : ''}</span>
+      <div><b>${label}</b><small>${timeText}</small></div>
+    </li>`;
+
+  let html = row('done', 'bell', 'Tiếp nhận báo hỏng', `${t.createdAt} · ${t.reporter}`);
+
+  if (t.status === 'pending') {
+    html += row('todo', '', 'Đánh giá & phân loại mức độ', 'Chưa phân công xử lý');
+    html += row('todo', '', 'Nghiệm thu & đóng phiếu', 'Cần ảnh/biên bản xác nhận (BR4)');
+  } else if (t.status === 'processing' || t.status === 'waiting_parts') {
+    html += row('done', 'wrench', 'Đang khắc phục sự cố', t.planNote || 'Kỹ thuật viên đang kiểm tra tại phòng');
+    html += row('todo', '', 'Nghiệm thu & đóng phiếu', 'Chờ cập nhật ảnh sau sửa chữa');
   } else {
-    items += step('done', 'check', 'Đang xét duyệt', `${d} · ${lg.review}`);
-    items += o.status === 'rejected'
-      ? step('bad', 'x', 'Bị từ chối', `${d} · ${lg.result}`)
-      : step('done', 'check', 'Đã duyệt', `${d} · ${lg.result}`);
+    html += row('done', 'wrench', 'Đã khắc phục', t.planNote || 'Hoàn tất sửa chữa');
+    html += row('done', 'check', 'Đã nghiệm thu & đóng phiếu', `${t.resolvedAt || 'Vừa xong'} · Đã báo người gửi`);
   }
-  return `<h4 class="sec">Tiến trình yêu cầu</h4><ol class="tl">${items}</ol>`;
+
+  return `<h4 class="sec">Tiến trình xử lý sự cố</h4><ol class="tl">${html}</ol>`;
 }
 
-function openDetail(code, flash) {
-  const o = getOrder(code);
-  const r = getRoom(o.room);
-  const isOk = o.status === 'approved' || o.status === 'soon';
-  const lg = logOf(o);
-
-  let sub = `#${o.code} · Gửi lúc ${lg.sent}, ${fmtDate(TODAY)}`;
-  if (flash && flash.type === 'reschedule') sub = `#${o.code} · Lịch mượn đã được cập nhật`;
+function openTicketDrawer(ticketId, bannerMsg = '') {
+  const t = findTicket(ticketId);
+  if (!t) return;
 
   let body = '';
-  if (flash && flash.type === 'reschedule') {
-    body += alertBox('ok', 'Đổi lịch thành công', `Đơn #${o.code} đã được cập nhật sang ${o.room}.`, 'check');
+  if (bannerMsg) {
+    body += `<div class="alert ok">${renderIcon('check')} <span>${bannerMsg}</span></div>`;
   }
 
-  body += `<div class="status-line"><span class="badge ${STATUS_CLASS[o.status]}">${STATUS_TEXT[o.status]}</span></div>`;
+  body += `
+    <div class="status-line">
+      <span class="badge st-${t.status}">${TICKET_STATUS_TEXT[t.status]}</span>
+      <span class="badge pri-${t.priority}">${PRIORITY_TEXT[t.priority]}</span>
+    </div>
 
-  if (isOk && !flash) {
-    body += alertBox('ok', 'Lịch mượn đã được xác nhận', `Phòng ${o.room} đã được giữ cho bạn theo thời gian bên dưới.`, 'check');
+    <div class="sum">
+      <h3>Phòng ${t.room} · ${t.campus}</h3>
+      <p><b>Thiết bị:</b> ${t.deviceName} (<code>${t.assetCode}</code>)</p>
+      <p><b>Mô tả lỗi:</b> ${t.description}</p>
+      <small>Người báo: ${t.reporter} · Lúc ${t.createdAt}</small>
+    </div>
+
+    <div class="kv">
+      <p><b>Lịch sử bảo trì gần nhất của ${t.assetCode}:</b></p>
+      <p class="muted">${t.lastMaintenance || 'Chưa ghi nhận lần sửa chữa nào trước đó.'}</p>
+    </div>`;
+
+  if (t.deviceLocked) {
+    body += `
+      <div class="alert warn">
+        ${renderIcon('lock')}
+        <span>Thiết bị <b>${t.assetCode}</b> đang ở trạng thái <b>Đang bảo trì / Hỏng</b> (tự động khóa mượn theo BR3).</span>
+      </div>`;
   }
 
-  body += sumBox(`${o.room} · ${r.type}`, o, `${esc(o.purpose)} · ${r.cap} chỗ`);
-
-  if (o.file) {
-    body += `<div class="file-row">${icon('file')} ${esc(o.file)}</div>`;
-  }
-  if (o.status === 'rejected') {
-    body += alertBox('err', 'Lý do từ chối', esc(o.reason || 'Không có lý do cụ thể.'));
+  if (t.acceptProof) {
+    body += `<div class="file-row">${renderIcon('check')} Minh chứng nghiệm thu: <b>${t.acceptProof}</b></div>`;
   }
 
-  if (isOk) {
-    body += `<div class="kv"><p><b>Mã xác nhận: ${o.code}</b></p><p>Người mượn: Nguyễn Đình Thuần</p><p>${r.eq}</p></div>`;
-  }
-  if (flash && flash.type === 'reschedule') {
-    const old = flash.old;
-    body += `<hr class="line"><h4 class="sec">Thay đổi vừa thực hiện</h4>`;
-    body += old.room !== o.room
-      ? `<div class="chg muted"><span>${old.room}</span><span>→</span><b>${o.room}</b></div>`
-      : `<p class="muted">Giữ nguyên phòng ${o.room}</p>`;
-    body += old.date !== o.date
-      ? `<p class="muted">Ngày ${fmtShort(old.date)} → ${fmtShort(o.date)}</p>`
-      : `<p class="muted">Giữ nguyên ngày ${fmtShort(o.date)}</p>`;
-    body += (old.start !== o.start || old.end !== o.end)
-      ? `<p class="muted">Thời gian ${old.start} – ${old.end} → ${o.start} – ${o.end}</p>`
-      : `<p class="muted">Giữ nguyên thời gian ${o.start} – ${o.end}</p>`;
-    body += alertBox('ok', 'Lịch cũ đã được giải phóng', `${old.room} · ${fmtDate(old.date)} · ${old.start} – ${old.end}`, 'check');
-  } else if (o.status !== 'cancelled') {
-    body += `<hr class="line">`;
+  body += `<hr class="line">${buildTicketSteps(t)}`;
+
+  let footerBtns = '<button type="button" class="btn btn-outline" data-dismiss>Đóng</button>';
+  if (t.status === 'pending') {
+    footerBtns = `
+      <button type="button" class="btn btn-outline" data-dismiss>Để sau</button>
+      <button type="button" class="btn btn-primary" id="btnStartTriage">Tiếp nhận &amp; Phân loại</button>`;
+  } else if (t.status === 'processing' || t.status === 'waiting_parts') {
+    footerBtns = `
+      <button type="button" class="btn btn-outline" id="btnUpdatePlan">Cập nhật phương án</button>
+      <button type="button" class="btn btn-primary" id="btnCloseTicket">Nghiệm thu &amp; Đóng phiếu</button>`;
   }
 
-  if (o.status === 'cancelled') {
-    body += alertBox('gray', '', 'Không còn lịch mượn cho yêu cầu này.', 'info');
-  } else {
-    body += timeline(o);
-  }
+  const dlg = openModalBox(
+    `${modalHeader(`Phiếu sự cố #${t.id}`, `Cơ sở phụ trách: ${t.campus}`)}
+     <div class="m-body">${body}</div>
+     ${modalFooter(footerBtns)}`,
+    'drawer'
+  );
 
-  if (o.status === 'pending') body += alertBox('brand', 'Hệ thống tự chuyển đơn đến đúng bộ phận duyệt', '', 'info');
-  if (isOk) body += alertBox('brand', 'Nhận và trả phòng trực tiếp tại Phòng CSVC', 'Vui lòng cung cấp mã xác nhận khi nhận phòng.', 'info');
-  if (o.status === 'rejected') {
-    body += `<hr class="line"><h4 class="sec">Tìm một khung giờ phù hợp hơn</h4>
-             <p class="muted">Chọn lại để trở về bộ lọc Tìm phòng. Điều chỉnh ngày, giờ hoặc sức chứa và gửi một yêu cầu mới.</p>`;
-    body += alertBox('info', 'Đơn này không giữ phòng', 'Chỉ các phòng còn trống trong thời gian mới được hiển thị.', 'info');
-  }
+  const bind = (selector, handler) => {
+    const el = dlg.querySelector(selector);
+    if (el) el.addEventListener('click', handler);
+  };
 
-  let foot = '';
-  if (o.status === 'approved') foot = mFoot(`<button class="btn btn-outline" id="dCancel">Hủy lịch</button><button class="btn btn-primary" id="dResched">${icon('calendar')} Đổi lịch</button>`);
-  else if (o.status === 'soon') foot = mFoot('<button class="btn btn-outline" data-close>Đóng</button>', 'full');
-  else if (o.status === 'rejected') foot = mFoot(`<button class="btn btn-primary" id="dRetry">${icon('search')} Chọn lại phòng/thời gian</button>`, 'full');
-  else if (o.status === 'cancelled') foot = mFoot('<button class="btn btn-outline" data-close>Đóng</button>', 'full');
-
-  const m = setModal(`${mHead('Chi tiết yêu cầu', sub)}<div class="m-body">${body}</div>${foot}`, 'drawer');
-
-  const on = (id, fn) => { const el = m.querySelector(id); if (el) el.addEventListener('click', fn); };
-  on('#dCancel', () => openCancel(o.code));
-  on('#dResched', () => openReschedule(o.code));
-  on('#dRetry', () => { closeModal(); reSearchFrom(o); });
+  bind('#btnStartTriage', () => openTriageModal(t.id));
+  bind('#btnUpdatePlan', () => openPlanModal(t.id));
+  bind('#btnCloseTicket', () => openAcceptModal(t.id));
 }
 
 /* =====================================================
-   3. ĐỔI LỊCH
+   2. TIẾP NHẬN & PHÂN LOẠI MỨC ĐỘ ƯU TIÊN (F75, BR1, BR2)
    ===================================================== */
-function openReschedule(code) {
-  const o = getOrder(code);
-  renderReschedule(o, { date: o.date, start: o.start, end: o.end, room: null });
-}
+function openTriageModal(ticketId) {
+  const t = findTicket(ticketId);
+  if (!t) return;
 
-function renderReschedule(o, st) {
-  const validTime = st.date && st.start && st.end && toMin(st.end) > toMin(st.start);
-  const same = st.date === o.date && st.start === o.start && st.end === o.end;
-  const list = validTime
-    ? ROOMS.filter(r => !findConflict(r.name, st.date, st.start, st.end, o.code) && !(same && r.name === o.room))
-    : [];
-  if (!list.find(r => r.name === st.room)) st.room = list.length ? list[0].name : null;
-  const pick = st.room ? getRoom(st.room) : null;
-
-  const m = setModal(`
-    ${mHead('Đổi lịch mượn phòng', `Đơn #${o.code} · ${esc(o.purpose)}`)}
+  const dlg = openModalBox(`
+    ${modalHeader('Tiếp nhận & Phân loại sự cố', `#${t.id} · Phòng ${t.room} (${t.assetCode})`)}
     <div class="m-body">
-      ${sumBox(`Lịch hiện tại · ${o.room}`, o)}
-      <hr class="line">
-      <h4 class="sec">Lịch mượn mới</h4>
-      <div class="f-group"><label>Ngày mượn mới *</label><input type="date" id="rDate" value="${st.date}"></div>
-      <div class="f-row">
-        <div class="f-group"><label>Giờ bắt đầu *</label><input type="time" id="rStart" value="${st.start}"></div>
-        <div class="f-group"><label>Giờ kết thúc *</label><input type="time" id="rEnd" value="${st.end}"></div>
+      <div class="alert info">
+        ${renderIcon('alert')}
+        <span><b>Quy tắc BR2:</b> Sự cố mức <b>Khẩn cấp</b> (ảnh hưởng ca học đang diễn ra) phải được tiếp nhận và phản hồi trong vòng <b>15 phút</b>.</span>
       </div>
-      ${!validTime ? alertBox('err', '', 'Giờ kết thúc phải sau giờ bắt đầu.') : ''}
+
       <div class="f-group">
-        <label>Phòng còn trống *</label>
-        <select id="rRoom" ${list.length ? '' : 'disabled'}>
-          ${list.length
-            ? list.map(r => `<option value="${r.name}" ${r.name === st.room ? 'selected' : ''}>${r.name} · ${r.type} · ${r.cap} chỗ</option>`).join('')
-            : '<option>Không có phòng trống</option>'}
+        <label for="tPriority">Mức độ ưu tiên xử lý *</label>
+        <select id="tPriority">
+          <option value="urgent" ${t.priority === 'urgent' ? 'selected' : ''}>Khẩn cấp (Phòng đang có lớp học)</option>
+          <option value="medium" ${t.priority === 'medium' ? 'selected' : ''}>Trung bình (Xử lý trong buổi)</option>
+          <option value="low" ${t.priority === 'low' ? 'selected' : ''}>Thấp (Bảo trì bổ sung)</option>
         </select>
       </div>
-      ${pick ? alertBox('ok', `${pick.name} còn trống trong thời gian đã chọn`, pick.eq, 'check') : ''}
-      ${validTime && !list.length ? alertBox('err', 'Không có phòng trống', 'Hãy chọn ngày hoặc khung giờ khác.') : ''}
-      <p class="req-note">Hệ thống kiểm tra lịch trùng khi xác nhận. Lịch hiện tại chỉ được thay thế khi đổi lịch thành công.</p>
+
+      <div class="f-group">
+        <label for="tInitialNote">Ghi chú kiểm tra ban đầu</label>
+        <textarea id="tInitialNote" placeholder="VD: Đã tiếp nhận phiếu, mang theo cáp HDMI và bóng đèn dự phòng lên phòng ${t.room}"></textarea>
+      </div>
     </div>
-    ${mFoot(`
-      <button class="btn btn-outline" data-close>Quay lại</button>
-      <button class="btn btn-primary" id="rOk" ${pick ? '' : 'disabled'}>Xác nhận đổi lịch</button>`)}
+    ${modalFooter(`
+      <button type="button" class="btn btn-outline" id="tBack">Quay lại</button>
+      <button type="button" class="btn btn-primary" id="tConfirm">Xác nhận tiếp nhận</button>`)}
   `);
 
-  const upd = (key, id) => m.querySelector(id).addEventListener('change', ev => { st[key] = ev.target.value; renderReschedule(o, st); });
-  upd('date', '#rDate'); upd('start', '#rStart'); upd('end', '#rEnd');
-  m.querySelector('#rRoom').addEventListener('change', ev => { st.room = ev.target.value; renderReschedule(o, st); });
+  dlg.querySelector('#tBack').addEventListener('click', () => openTicketDrawer(t.id));
 
-  m.querySelector('#rOk').addEventListener('click', () => {
-    if (!pick) return;
-    const old = { room: o.room, date: o.date, start: o.start, end: o.end };
-    Object.assign(o, { room: st.room, date: st.date, start: st.start, end: st.end });
-    renderOrders(); renderRooms(); renderNotifs();
-    openDetail(o.code, { type: 'reschedule', old });
+  const confirmBtn = dlg.querySelector('#tConfirm');
+  confirmBtn.addEventListener('click', () => {
+    const chosenPriority = dlg.querySelector('#tPriority').value;
+    const note = dlg.querySelector('#tInitialNote').value.trim();
+
+    runWithLock(confirmBtn, () => {
+      t.priority = chosenPriority;
+      t.status = 'processing';
+      t.planNote = note || 'Kỹ thuật viên đã tiếp nhận và đang di chuyển kiểm tra';
+      if (typeof renderTickets === 'function') renderTickets();
+      notifyToast(`Đã tiếp nhận phiếu #${t.id}`);
+      openTicketDrawer(t.id, 'Đã chuyển trạng thái sang "Đang xử lý" và gửi phản hồi cho người báo.');
+    });
   });
 }
 
 /* =====================================================
-   4. HỦY LỊCH
+   3. CẬP NHẬT PHƯƠNG ÁN & ĐỔI THIẾT BỊ DỰ PHÒNG (F76, F77, BR3)
    ===================================================== */
-function openCancel(code) {
-  const o = getOrder(code);
-  const r = getRoom(o.room);
-  const m = setModal(`
-    ${mHead('Hủy lịch mượn phòng?', `Đơn #${o.code}`)}
+function openPlanModal(ticketId) {
+  const t = findTicket(ticketId);
+  if (!t) return;
+
+  const dlg = openModalBox(`
+    ${modalHeader('Cập nhật tiến trình & Phương án xử lý', `#${t.id} · ${t.deviceName} (${t.assetCode})`)}
     <div class="m-body">
-      <div class="cancel-ico">${icon('calx')}</div>
-      ${sumBox(`${o.room} · ${r.type}`, o, esc(o.purpose))}
-      <p class="cancel-text">Sau khi hủy, phòng sẽ được giải phóng cho người khác. Bạn cần gửi yêu cầu mới nếu muốn mượn lại.</p>
+      <div class="f-group">
+        <label for="pAction">Phương án kỹ thuật *</label>
+        <select id="pAction">
+          <option value="onsite">Sửa chữa / hiệu chỉnh trực tiếp tại phòng</option>
+          <option value="replace_part">Thay thế linh kiện từ kho vật tư</option>
+          <option value="swap_backup">Lỗi nặng – Khóa thiết bị &amp; đề xuất đổi máy dự phòng</option>
+        </select>
+      </div>
+
+      <div class="alert warn" id="br3Hint" hidden>
+        ${renderIcon('lock')}
+        <span><b>Quy tắc BR3:</b> Hệ thống sẽ tự động khóa trạng thái <b>${t.assetCode}</b> sang <b>"Đang bảo trì / Hỏng"</b> để chặn lượt mượn mới và tạo phiếu xuất thiết bị dự phòng.</span>
+      </div>
+
+      <div class="f-group">
+        <label for="pDetail">Nội dung thực hiện / Linh kiện cần cấp *</label>
+        <textarea id="pDetail" placeholder="Nhập chi tiết phương án xử lý hoặc mã thiết bị dự phòng thay thế..."></textarea>
+        <p class="err" id="pErr" hidden>Vui lòng nhập nội dung phương án xử lý.</p>
+      </div>
     </div>
-    ${mFoot(`<button class="btn btn-outline" data-close>Giữ lịch</button><button class="btn btn-danger" id="cOk">Xác nhận hủy</button>`)}
+    ${modalFooter(`
+      <button type="button" class="btn btn-outline" id="pBack">Quay lại</button>
+      <button type="button" class="btn btn-primary" id="pSave">Lưu tiến trình</button>`)}
   `);
 
-  const okBtn = m.querySelector('#cOk');
-  okBtn.addEventListener('click', () => submitWithLoading(okBtn, () => {
-    o.status = 'cancelled';
-    dropNotif(o.code);
-    renderOrders(); renderNotifs(); renderRooms();
+  const actionSelect = dlg.querySelector('#pAction');
+  const br3Hint = dlg.querySelector('#br3Hint');
+  const errEl = dlg.querySelector('#pErr');
 
-    const res = setModal(`
-      ${mHead('Hủy lịch thành công', `Đơn #${o.code}`)}
-      <div class="m-body">
-        ${alertBox('ok', 'Hủy lịch thành công', `Đã hủy đơn #${o.code}. Phòng ${o.room} ngày ${fmtDate(o.date)}, ${o.start} – ${o.end} không còn được giữ.`, 'check')}
-        <div class="mini">
-          <div class="mini-top"><b>#${o.code} · ${o.room}</b><span class="badge cancelled">Đã hủy</span></div>
-          <p>Không còn lịch mượn cho yêu cầu này.</p>
-        </div>
-        <button class="btn btn-outline" id="cBack" style="width:100%">${icon('search')} Trở về tìm phòng</button>
-      </div>
-    `);
-    res.querySelector('#cBack').addEventListener('click', () => {
-      closeModal();
-      document.getElementById('searchCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  actionSelect.addEventListener('change', () => {
+    br3Hint.hidden = actionSelect.value !== 'swap_backup';
+  });
+
+  dlg.querySelector('#pBack').addEventListener('click', () => openTicketDrawer(t.id));
+
+  const saveBtn = dlg.querySelector('#pSave');
+  saveBtn.addEventListener('click', () => {
+    const detail = dlg.querySelector('#pDetail').value.trim();
+    if (!detail) {
+      errEl.hidden = false;
+      return;
+    }
+    errEl.hidden = true;
+
+    const isHeavyFault = actionSelect.value === 'swap_backup';
+    runWithLock(saveBtn, () => {
+      t.status = isHeavyFault ? 'waiting_parts' : 'processing';
+      t.deviceLocked = isHeavyFault;
+      t.planNote = detail;
+      if (typeof renderTickets === 'function') renderTickets();
+      notifyToast(isHeavyFault ? `Đã khóa thiết bị ${t.assetCode} & tạo phiếu đổi máy` : 'Đã cập nhật tiến độ xử lý');
+      openTicketDrawer(
+        t.id,
+        isHeavyFault
+          ? `Đã khóa cho mượn đối với ${t.assetCode} và gửi yêu cầu cấp thiết bị dự phòng.`
+          : 'Đã lưu phương án xử lý lên hệ thống.'
+      );
     });
-  }));
+  });
+}
+
+/* =====================================================
+   4. NGHIỆM THU & ĐÓNG PHIẾU SỰ CỐ (F78, BR4)
+   ===================================================== */
+function openAcceptModal(ticketId) {
+  const t = findTicket(ticketId);
+  if (!t) return;
+  let uploadedFile = null;
+
+  const dlg = openModalBox(`
+    ${modalHeader('Nghiệm thu & Đóng phiếu sự cố', `#${t.id} · Phòng ${t.room}`)}
+    <div class="m-body">
+      <div class="alert info">
+        ${renderIcon('check')}
+        <span><b>Quy tắc BR4:</b> Phiếu sự cố chỉ được đóng khi có ảnh chụp nghiệm thu sau sửa chữa hoặc biên bản xác nhận của giảng viên/quản lý phòng.</span>
+      </div>
+
+      <div class="f-group">
+        <label for="aFile">Ảnh nghiệm thu / Biên bản xác nhận *</label>
+        <input type="file" id="aFile" accept=".jpg,.jpeg,.png,.pdf">
+        <small class="muted" id="aFileName">Chưa chọn tệp (Hỗ trợ JPG, PNG, PDF)</small>
+        <p class="err" id="aFileErr" hidden>Bắt buộc đính kèm ảnh nghiệm thu hoặc biên bản trước khi đóng phiếu (BR4).</p>
+      </div>
+
+      <div class="f-group">
+        <label for="aSummary">Kết quả khắc phục lưu hồ sơ thiết bị *</label>
+        <textarea id="aSummary" placeholder="VD: Đã thay cáp tín hiệu HDMI và kiểm tra hình ảnh máy chiếu hoạt động ổn định."></textarea>
+      </div>
+    </div>
+    ${modalFooter(`
+      <button type="button" class="btn btn-outline" id="aBack">Quay lại</button>
+      <button type="button" class="btn btn-primary" id="aFinish">Hoàn tất &amp; Đóng phiếu</button>`)}
+  `);
+
+  const fileInput = dlg.querySelector('#aFile');
+  const fileLabel = dlg.querySelector('#aFileName');
+  const fileErr = dlg.querySelector('#aFileErr');
+
+  fileInput.addEventListener('change', () => {
+    uploadedFile = fileInput.files[0] || null;
+    fileLabel.textContent = uploadedFile ? `Đã chọn: ${uploadedFile.name}` : 'Chưa chọn tệp (Hỗ trợ JPG, PNG, PDF)';
+    if (uploadedFile) fileErr.hidden = true;
+  });
+
+  dlg.querySelector('#aBack').addEventListener('click', () => openTicketDrawer(t.id));
+
+  const finishBtn = dlg.querySelector('#aFinish');
+  finishBtn.addEventListener('click', () => {
+    if (!uploadedFile) {
+      fileErr.hidden = false;
+      return;
+    }
+
+    const summary = dlg.querySelector('#aSummary').value.trim();
+    runWithLock(finishBtn, () => {
+      t.status = 'resolved';
+      t.deviceLocked = false;
+      t.acceptProof = uploadedFile.name;
+      t.resolvedAt = 'Hôm nay';
+      if (summary) {
+        t.planNote = summary;
+        t.lastMaintenance = `Hôm nay – ${summary}`;
+      }
+      if (typeof renderTickets === 'function') renderTickets();
+      notifyToast(`Đã đóng phiếu #${t.id} & mở lại trạng thái Sẵn sàng`);
+      openTicketDrawer(t.id, `Thiết bị ${t.assetCode} đã chuyển về trạng thái "Sẵn sàng sử dụng" và gửi thông báo cho ${t.reporter}.`);
+    });
+  });
 }
