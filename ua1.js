@@ -1,337 +1,385 @@
-/* ===== Icon bổ sung (dùng chung hàm icon() trong main.js) ===== */
-Object.assign(ICONS, {
-  x: '<path d="M18 6 6 18M6 6l12 12"/>',
-  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
-  alarm: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3 2 6M22 6l-3-3M6 19l-2 2M18 19l2 2"/>',
-  file: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M14 2v6h6"/>',
-  upload: '<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/>',
-  calx: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M10 14l4 4M14 14l-4 4"/>',
-  xcircle: '<circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>',
-  door: '<path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56z"/>',
-  sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>'
+/* js/ua1.js — Logic chính trang Tiếp nhận & xử lý sự cố (UA1 - Đội ngũ Kỹ thuật) */
+
+Object.assign(TECH_ICONS, {
+  building: '<path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  bolt: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  filter: '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>'
 });
 
-/* ===== Dữ liệu mock (ngày dạng yyyy-mm-dd) ===== */
-const TODAY = '2026-10-26';
+/* ===== Dữ liệu mẫu phiếu báo sự cố (Khớp schema với ua1-modals.js) ===== */
+const ASSIGNED_CAMPUS = 'Cơ sở chính'; // Quy tắc BR1: chỉ hiển thị phiếu thuộc cơ sở phụ trách
 
-const ROOMS = [
-  { name: 'A.301',        cap: 40,  type: 'Phòng học',  building: 'Tòa A', floor: 'Tầng 3', eq: 'Máy chiếu · Điều hòa · Bảng viết', icon: 'board' },
-  { name: 'B.205',        cap: 15,  type: 'Phòng họp',  building: 'Tòa B', floor: 'Tầng 2', eq: 'Màn hình · Điều hòa · Bảng viết',  icon: 'users' },
-  { name: 'Hội trường A', cap: 300, type: 'Hội trường', building: 'Tòa A', floor: 'Tầng 1', eq: 'Âm thanh · Máy chiếu · Sân khấu',  icon: 'hall' },
-  { name: 'A.302',        cap: 60,  type: 'Phòng học',  building: 'Tòa A', floor: 'Tầng 3', eq: 'Máy chiếu · Điều hòa · Bảng viết', icon: 'board' },
-  { name: 'C.402',        cap: 50,  type: 'Phòng học',  building: 'Tòa C', floor: 'Tầng 4', eq: 'Máy chiếu · Điều hòa · Bảng viết', icon: 'board' },
-  { name: 'B.206',        cap: 20,  type: 'Phòng họp',  building: 'Tòa B', floor: 'Tầng 2', eq: 'Màn hình · Điều hòa · Mic họp',    icon: 'users' }
+const TICKETS = [
+  {
+    id: 'SC-204',
+    room: 'A.04-02',
+    building: 'Tòa A',
+    campus: 'Cơ sở chính',
+    deviceName: 'Máy chiếu Epson EB-X51',
+    assetCode: 'VLU-MC-102',
+    description: 'Máy chiếu bật không lên hình, đèn báo nguồn nhấp nháy đỏ giữa ca học.',
+    reporter: 'GV. Lê Gia Hiếu',
+    createdAt: '09:45 · Hôm nay',
+    slaMinutesLeft: 7,
+    status: 'pending',
+    priority: 'urgent',
+    planNote: '',
+    lastMaintenance: '10/09/2026 – Vệ sinh lưới lọc bụi định kỳ',
+    deviceLocked: false,
+    acceptProof: null,
+    resolvedAt: null
+  },
+  {
+    id: 'SC-203',
+    room: 'B.02-05',
+    building: 'Tòa B',
+    campus: 'Cơ sở chính',
+    deviceName: 'Bộ Micro không dây Shure BLX288',
+    assetCode: 'VLU-AT-209',
+    description: 'Micro cầm tay số 1 mất sóng liên tục dù đã thay pin mới.',
+    reporter: 'SV. Nguyễn Đình Thuần',
+    createdAt: '08:50 · Hôm nay',
+    slaMinutesLeft: null,
+    status: 'processing',
+    priority: 'medium',
+    planNote: 'Đang kiểm tra bộ thu sóng tại tủ kỹ thuật phòng B.02-05',
+    lastMaintenance: '22/08/2026 – Thay đầu chụp micro',
+    deviceLocked: false,
+    acceptProof: null,
+    resolvedAt: null
+  },
+  {
+    id: 'SC-202',
+    room: 'Lab CNTT 02',
+    building: 'Khu Lab',
+    campus: 'Cơ sở chính',
+    deviceName: 'Switch mạng Cisco 24-Port',
+    assetCode: 'VLU-NW-014',
+    description: 'Mất kết nối mạng LAN toàn bộ dãy máy thực hành số 2.',
+    reporter: 'GV. Trần Minh Tâm',
+    createdAt: '08:15 · Hôm nay',
+    slaMinutesLeft: null,
+    status: 'waiting_parts',
+    priority: 'urgent',
+    planNote: 'Hỏng nguồn bo mạch chính, đã khóa mượn và đề xuất cấp Switch dự phòng',
+    lastMaintenance: '05/05/2026 – Kiểm tra port RJ45',
+    deviceLocked: true,
+    acceptProof: null,
+    resolvedAt: null
+  },
+  {
+    id: 'SC-201',
+    room: 'A.02-08',
+    building: 'Tòa A',
+    campus: 'Cơ sở chính',
+    deviceName: 'Màn hình tương tác 75 inch',
+    assetCode: 'VLU-TV-088',
+    description: 'Cảm ứng lệch điểm chạm ở góc phải màn hình.',
+    reporter: 'Phòng CSVC',
+    createdAt: '07:40 · Hôm nay',
+    slaMinutesLeft: null,
+    status: 'resolved',
+    priority: 'low',
+    planNote: 'Đã hiệu chỉnh lại tọa độ cảm ứng và cập nhật driver',
+    lastMaintenance: 'Hôm nay – Hiệu chỉnh cảm ứng màn hình',
+    deviceLocked: false,
+    acceptProof: 'nghiem-thu-A0208.jpg',
+    resolvedAt: '08:25 · Hôm nay'
+  },
+  {
+    id: 'SC-199',
+    room: 'C.03-01',
+    building: 'Tòa C',
+    campus: 'Cơ sở 1',
+    deviceName: 'Loa treo tường JBL',
+    assetCode: 'VLU-AT-051',
+    description: 'Loa rè khi mở âm lượng trên 60%.',
+    reporter: 'SV. Trần Khánh Hưng',
+    createdAt: 'Hôm qua',
+    slaMinutesLeft: null,
+    status: 'pending',
+    priority: 'low',
+    planNote: '',
+    lastMaintenance: '',
+    deviceLocked: false,
+    acceptProof: null,
+    resolvedAt: null
+  }
 ];
 
-// Lịch đã có người đặt sẵn (ngoài các đơn của mình)
-const BOOKED = [
-  { room: 'Hội trường A', date: '2026-10-30', start: '15:00', end: '16:00' },
-  { room: 'B.205',        date: '2026-10-26', start: '11:30', end: '12:30' }
+const TECH_NOTIFS = [
+  { id: 'N1', ticketId: 'SC-204', title: 'Sự cố khẩn cấp tại A.04-02', desc: 'Máy chiếu không lên hình · Còn 7 phút phản hồi (BR2)', time: '2 phút trước', unread: true, urgent: true },
+  { id: 'N2', ticketId: 'SC-203', title: 'Phiếu mới #SC-203 · B.02-05', desc: 'SV. Nguyễn Đình Thuần báo lỗi Micro không dây', time: '35 phút trước', unread: true, urgent: false },
+  { id: 'N3', ticketId: 'SC-202', title: 'Đã khóa thiết bị VLU-NW-014', desc: 'Chờ xuất Switch dự phòng cho Lab CNTT 02', time: '1 giờ trước', unread: false, urgent: false }
 ];
 
-const ORDERS = [
-  { code: 'MT1024', room: 'B.205',        date: '2026-10-26', start: '10:00', end: '11:00', purpose: 'Họp nhóm đồ án CNTT',      status: 'soon' },
-  { code: 'MT1025', room: 'A.301',        date: '2026-10-29', start: '09:00', end: '11:00', purpose: 'Ôn tập môn Cơ sở dữ liệu', status: 'approved' },
-  { code: 'MT1026', room: 'Hội trường A', date: '2026-10-28', start: '14:00', end: '16:00', purpose: 'Sinh hoạt CLB Công nghệ',  status: 'pending', sent: '10:30', file: 'Quyet-dinh-CLB-Cong-nghe.pdf' },
-  { code: 'MT1023', room: 'C.402',        date: '2026-10-27', start: '14:00', end: '16:00', purpose: 'Thảo luận bài tập nhóm',   status: 'rejected', reason: 'Phòng bảo trì thiết bị trong khung giờ đã chọn.' },
-  { code: 'MT1022', room: 'A.302',        date: '2026-10-29', start: '08:00', end: '10:00', purpose: 'Sinh hoạt lớp CNTT',       status: 'pending', sent: '10:05' }
-];
+const PRI_LABELS = { urgent: 'Khẩn cấp', medium: 'Trung bình', low: 'Thấp' };
+const STATUS_LABELS = {
+  pending: 'Chờ tiếp nhận',
+  processing: 'Đang xử lý',
+  waiting_parts: 'Chờ linh kiện',
+  resolved: 'Đã hoàn tất'
+};
 
-const NOTIFS = [
-  { type: 'soon',     code: 'MT1024', time: 'Hôm nay, 10:50', unread: true },
-  { type: 'approved', code: 'MT1025', time: 'Hôm nay, 09:40', unread: true },
-  { type: 'rejected', code: 'MT1023', time: 'Hôm nay, 09:20', unread: false }
-];
+let statusFilter = 'all';
+let slaDismissed = false;
 
-const STATUS_TEXT  = { soon: 'Sắp hết giờ', approved: 'Đã duyệt', pending: 'Chờ duyệt', rejected: 'Bị từ chối', cancelled: 'Đã hủy' };
-const STATUS_CLASS = { soon: 'soon', approved: 'ok', pending: 'pending', rejected: 'rejected', cancelled: 'cancelled' };
+const escapeHtml = (str) =>
+  String(str ?? '').replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
-let currentFilter = 'all';
-let highlightCode = null;
-let reminderDismissed = false;
+/* ===== 1. Thống kê nhanh đầu trang ===== */
+function renderTicketStats(scopedList) {
+  const setVal = (id, num) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = num;
+  };
 
-/* ===== Tiện ích ===== */
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmtDate  = iso => { const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; };   // 2026-10-27 -> 27/10/2026
-const fmtShort = iso => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;                          // 2026-10-27 -> 27/10
-const toMin  = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
-const toTime = n => String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
-const getRoom = name => ROOMS.find(r => r.name === name);
-const logOf = o => ({ sent: o.sent || '09:15', review: o.review || '09:20', result: o.result || '09:40' });
-
-function alertBox(kind, title, text, ic = 'alert') {
-  const liveRegion = kind === 'err' ? ' role="alert"' : '';
-  return `<div class="alert ${kind}"${liveRegion}>${icon(ic)}<div>${title ? `<b>${title}</b>` : ''}${text || ''}</div></div>`;
+  setVal('statPending', scopedList.filter((t) => t.status === 'pending').length);
+  setVal('statActive', scopedList.filter((t) => t.status === 'processing' || t.status === 'waiting_parts').length);
+  setVal('statUrgent', scopedList.filter((t) => t.priority === 'urgent' && t.status !== 'resolved').length);
+  setVal('statDone', scopedList.filter((t) => t.status === 'resolved').length);
 }
 
-// Tìm lịch trùng của 1 phòng trong khoảng giờ (bỏ qua đơn ignoreCode). Trả về lịch trùng đầu tiên hoặc null
-function findConflict(room, date, start, end, ignoreCode) {
-  const s = toMin(start), e = toMin(end);
-  const slots = BOOKED.concat(
-    ORDERS.filter(o => ['approved', 'pending', 'soon'].includes(o.status) && o.code !== ignoreCode)
-  );
-  return slots
-    .filter(x => x.room === room && x.date === date && s < toMin(x.end) && e > toMin(x.start))
-    .sort((a, b) => toMin(a.start) - toMin(b.start))[0] || null;
+/* ===== 2. Danh sách phiếu báo sự cố (BR1, BR2, BR3) ===== */
+function setStatusTab(nextStatus) {
+  statusFilter = nextStatus;
+  document.querySelectorAll('#ticketTabs .tab').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.status === nextStatus);
+  });
+  renderTickets();
 }
 
-/* ===== Danh sách phòng ===== */
-function renderRooms() {
-  const minCap = Number(document.getElementById('fCap').value);
-  const date = document.getElementById('fDate').value;
-  const start = document.getElementById('fStart').value;
-  const end = document.getElementById('fEnd').value;
+function renderTickets() {
+  // BR1: Chỉ lọc các phiếu thuộc cơ sở kỹ thuật viên được phân công
+  const campusTickets = TICKETS.filter((t) => t.campus === ASSIGNED_CAMPUS);
+  renderTicketStats(campusTickets);
 
-  const list = ROOMS.filter(r => r.cap >= minCap && !findConflict(r.name, date, start, end));
+  const keyword = (document.getElementById('qSearch')?.value || '').trim().toLowerCase();
+  const building = document.getElementById('qBuilding')?.value || 'all';
+  const priority = document.getElementById('qPriority')?.value || 'all';
 
-  document.getElementById('resCount').textContent = `${list.length} phòng phù hợp`;
-  document.getElementById('resTime').textContent = `${fmtDate(date)} · ${start} – ${end}`;
+  const filtered = campusTickets
+    .filter((t) => statusFilter === 'all' || t.status === statusFilter)
+    .filter((t) => building === 'all' || t.building === building)
+    .filter((t) => priority === 'all' || t.priority === priority)
+    .filter((t) => {
+      if (!keyword) return true;
+      const haystack = `${t.id} ${t.room} ${t.deviceName} ${t.assetCode} ${t.reporter}`.toLowerCase();
+      return haystack.includes(keyword);
+    })
+    .sort((a, b) => {
+      // Ưu tiên phiếu Chờ tiếp nhận & Khẩn cấp lên đầu danh sách
+      const score = (x) => (x.status === 'pending' ? 0 : x.status === 'resolved' ? 2 : 1) * 10 + (x.priority === 'urgent' ? 0 : 1);
+      return score(a) - score(b);
+    });
 
-  const grid = document.getElementById('roomGrid');
-  if (list.length === 0) {
-    const capTxt = minCap ? `đáp ứng ${minCap} chỗ ` : '';
-    grid.innerHTML = `
+  const countEl = document.getElementById('ticketCount');
+  if (countEl) countEl.textContent = `${filtered.length} / ${campusTickets.length} phiếu (${ASSIGNED_CAMPUS})`;
+
+  const listBox = document.getElementById('ticketList');
+  if (!listBox) return;
+
+  if (!filtered.length) {
+    listBox.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">${icon('door')}</div>
-        <h3>Chưa có phòng phù hợp</h3>
-        <p>Không có phòng còn trống ${capTxt}trong khung giờ đã chọn. Hãy giảm sức chứa hoặc chọn ngày, giờ khác.</p>
-        <button type="button" class="btn btn-primary" id="btnRefilter">${icon('sliders')} Chọn lại</button>
-        ${alertBox('info', 'Chỉ hiển thị phòng còn trống', 'Chọn lại để điều chỉnh ngày, giờ và sức chứa trong bộ lọc Tìm phòng.', 'info')}
+        <div class="empty-icon">${renderIcon('wrench')}</div>
+        <h3>Không có phiếu sự cố phù hợp</h3>
+        <p>Thử đổi bộ lọc tòa nhà, mức độ ưu tiên hoặc từ khóa mã thiết bị.</p>
       </div>`;
     return;
   }
 
-  grid.innerHTML = list.map(r => `
-    <article class="room-card">
-      <div class="room-top">
-        <div class="room-icon">${icon(r.icon)}</div>
-        <span class="badge ok">Còn trống</span>
-      </div>
-      <div class="room-title">
-        <h3>${r.name}</h3>
-        <span class="room-cap">${icon('users')} ${r.cap} chỗ</span>
-      </div>
-      <div class="room-loc">${r.type} · ${r.building} · ${r.floor}</div>
-      <div class="room-eq">${r.eq}</div>
-      <button class="btn btn-primary" data-book="${r.name}">${icon('plus')} Đặt phòng</button>
-    </article>
-  `).join('');
+  listBox.innerHTML = filtered
+    .map((t) => {
+      const isUrgentPending = t.priority === 'urgent' && t.status === 'pending';
+      const primaryBtn =
+        t.status === 'pending'
+          ? `<button type="button" class="btn btn-primary btn-sm" data-triage="${t.id}">Tiếp nhận ngay</button>`
+          : `<button type="button" class="btn btn-outline btn-sm" data-drawer="${t.id}">Chi tiết &amp; Xử lý</button>`;
+
+      return `
+        <article class="ticket-card ${isUrgentPending ? 'is-urgent' : ''}">
+          <div class="ticket-top">
+            <div class="ticket-id-group">
+              <span class="ticket-code">#${escapeHtml(t.id)}</span>
+              <span class="badge pri-${t.priority}">${PRI_LABELS[t.priority]}</span>
+              ${t.deviceLocked ? `<span class="badge locked">${renderIcon('lock')} Đã khóa mượn (BR3)</span>` : ''}
+            </div>
+            <span class="badge st-${t.status}">${STATUS_LABELS[t.status]}</span>
+          </div>
+
+          <div class="ticket-main">
+            <div>
+              <h3>Phòng ${escapeHtml(t.room)} · ${escapeHtml(t.deviceName)} <code>${escapeHtml(t.assetCode)}</code></h3>
+              <p class="ticket-desc">${escapeHtml(t.description)}</p>
+            </div>
+            <div class="ticket-actions">
+              ${primaryBtn}
+            </div>
+          </div>
+
+          <div class="ticket-meta">
+            <span>${renderIcon('building')} ${escapeHtml(t.building)} (${escapeHtml(t.campus)})</span>
+            <span>${renderIcon('clock')} ${escapeHtml(t.createdAt)} · Báo bởi: ${escapeHtml(t.reporter)}</span>
+            ${
+              isUrgentPending && t.slaMinutesLeft
+                ? `<span class="sla-warn">${renderIcon('bolt')} Cần phản hồi trong ${t.slaMinutesLeft} phút (BR2)</span>`
+                : ''
+            }
+          </div>
+
+          ${t.planNote ? `<div class="ticket-note"><b>Tiến độ:</b> ${escapeHtml(t.planNote)}</div>` : ''}
+        </article>`;
+    })
+    .join('');
+
+  renderSlaBanner();
 }
 
-/* ===== Đơn của tôi ===== */
-function setOrderFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('#orderTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
-  renderOrders();
-}
+/* ===== 3. Cảnh báo SLA 15 phút cho ca Khẩn cấp (BR2) ===== */
+function renderSlaBanner() {
+  const holder = document.getElementById('slaAlert');
+  if (!holder) return;
 
-function renderOrders() {
-  const list = currentFilter === 'all' ? ORDERS : ORDERS.filter(o => o.status === currentFilter);
-  document.getElementById('orderCount').textContent = `${ORDERS.length} đơn`;
-
-  const box = document.getElementById('orderList');
-  if (list.length === 0) {
-    box.innerHTML = '<div class="empty">Chưa có đơn nào ở trạng thái này.</div>';
-    return;
-  }
-
-  box.innerHTML = list.map(o => `
-    <article class="order ${o.status === 'soon' ? 'soon' : ''} ${o.code === highlightCode ? 'new' : ''}">
-      <div class="order-top">
-        <span class="order-code">#${o.code}</span>
-        <span class="badge ${STATUS_CLASS[o.status]}">${STATUS_TEXT[o.status]}</span>
-      </div>
-      <div class="order-row">
-        <h3>${o.room}</h3>
-        <button class="detail-link" data-detail="${o.code}">Chi tiết ${icon('chevron')}</button>
-      </div>
-      <div class="order-meta">${icon('calendar')} ${fmtDate(o.date)} · ${o.start} – ${o.end}</div>
-      <p class="order-purpose">${esc(o.purpose)}</p>
-      ${o.reason ? `<p class="order-reason">Lý do: ${esc(o.reason)}</p>` : ''}
-      ${o.status === 'soon' ? `
-        <div class="order-foot">
-          <span class="warn-text">Còn 10 phút là hết giờ</span>
-        </div>` : ''}
-    </article>
-  `).join('');
-}
-
-function showOrderBanner(kind, title, text) {
-  document.getElementById('orderBanner').innerHTML = alertBox(kind, title, text, 'check');
-}
-
-/* Từ đơn bị từ chối -> mở lại bộ lọc Tìm phòng */
-function reSearchFrom(o) {
-  document.getElementById('fDate').value = o.date;
-  document.getElementById('fStart').value = o.start;
-  document.getElementById('fEnd').value = o.end;
-  const caps = [...document.querySelectorAll('#fCap option')].map(x => Number(x.value)).filter(v => v > 0 && v <= getRoom(o.room).cap);
-  document.getElementById('fCap').value = caps.length ? String(Math.max(...caps)) : '0';
-  renderRooms();
-  document.getElementById('searchBanner').innerHTML = alertBox(
-    'brand', `Chọn lại từ đơn bị từ chối #${o.code}`,
-    `Bộ lọc Tìm phòng được mở lại với ${fmtDate(o.date)}, ${o.start} – ${o.end}. Bạn có thể thay đổi thời gian để tìm phòng khác.`
+  const urgentTicket = TICKETS.find(
+    (t) => t.campus === ASSIGNED_CAMPUS && t.priority === 'urgent' && t.status === 'pending'
   );
-  document.getElementById('searchCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (!urgentTicket || slaDismissed) {
+    holder.innerHTML = '';
+    return;
+  }
+
+  holder.innerHTML = `
+    <div class="sla-banner" role="alert">
+      <div class="sla-ico">${renderIcon('bolt')}</div>
+      <div class="sla-copy">
+        <b>Cảnh báo khẩn cấp (BR2): Phòng ${escapeHtml(urgentTicket.room)} đang có tiết học</b>
+        <p>#${escapeHtml(urgentTicket.id)} · ${escapeHtml(urgentTicket.deviceName)} (${escapeHtml(urgentTicket.assetCode)}) cần tiếp nhận trong vòng 15 phút.</p>
+      </div>
+      <button type="button" class="btn btn-primary btn-sm" data-quick-triage="${urgentTicket.id}">Tiếp nhận</button>
+      <button type="button" class="sla-close" data-sla-dismiss aria-label="Ẩn cảnh báo">${renderIcon('x')}</button>
+    </div>`;
 }
 
-/* ===== Thông báo (chuông) + nhắc nhở nổi ===== */
-function dropNotif(code) {
-  for (let i = NOTIFS.length - 1; i >= 0; i--) if (NOTIFS[i].code === code) NOTIFS.splice(i, 1);
-}
-
-function renderNotifs() {
-  const panel = document.getElementById('notifPanel');
+/* ===== 4. Bảng thông báo gắn vào chuông trên Header ===== */
+function renderBellPopover() {
+  const panel = document.getElementById('techNotifPanel');
   if (!panel) return;
-  const unread = NOTIFS.filter(n => n.unread).length;
 
-  const badge = document.querySelector('.bell-badge');
-  if (badge) { badge.textContent = unread; badge.style.display = unread ? 'flex' : 'none'; }
+  const unreadCount = TECH_NOTIFS.filter((n) => n.unread).length;
+  const badge = document.querySelector('.vlu-topbar .notif-count');
+  if (badge) {
+    badge.textContent = unreadCount;
+    badge.style.display = unreadCount ? 'inline-block' : 'none';
+  }
 
-  const items = NOTIFS.map(n => {
-    const o = ORDERS.find(x => x.code === n.code);
-    if (!o) return '';
-    if (n.type === 'soon') {
-      return `
-        <div class="np-item soon">
-          <div class="np-ico">${icon('alarm')}</div>
-          <div class="np-main">
-            <b>Còn 10 phút là hết giờ</b>
-            <p>${o.room} · #${o.code} · Kết thúc lúc ${o.end}</p>
-            <small>${n.time}</small>
-          </div>
-        </div>`;
-    }
-    if (n.type === 'rejected') {
-      return `
-        <div class="np-item">
-          <div class="np-ico bad">${icon('xcircle')}</div>
-          <div class="np-main">
-            <b>Yêu cầu #${o.code} bị từ chối</b>
-            <p>${o.room} · ${fmtDate(o.date)} · ${o.start} – ${o.end}</p>
-            <p class="np-reason">Lý do: ${esc(o.reason || 'Không có lý do cụ thể.')}</p>
-            <small>${n.time} · <button class="link-btn" data-np-detail="${o.code}">Xem chi tiết</button></small>
-          </div>
-        </div>`;
-    }
-    return `
-      <div class="np-item">
-        <div class="np-ico ok">${icon('check')}</div>
-        <div class="np-main">
-          <b>Yêu cầu #${o.code} đã được duyệt</b>
-          <p>${o.room} · ${fmtDate(o.date)} · ${o.start} – ${o.end}</p>
-          <small>${n.time} · <button class="link-btn" data-np-detail="${o.code}">Xem chi tiết</button></small>
+  const listHtml = TECH_NOTIFS.map(
+    (n) => `
+      <div class="np-item ${n.unread ? 'unread' : ''} ${n.urgent ? 'urgent' : ''}" data-open-ticket="${n.ticketId}">
+        <div class="np-ico">${renderIcon(n.urgent ? 'bolt' : 'bell')}</div>
+        <div class="np-body">
+          <b>${escapeHtml(n.title)}</b>
+          <p>${escapeHtml(n.desc)}</p>
+          <small>${escapeHtml(n.time)}</small>
         </div>
-      </div>`;
-  }).join('');
+      </div>`
+  ).join('');
 
   panel.innerHTML = `
     <div class="np-head">
-      <h3>Thông báo</h3>
-      ${unread ? `<span class="np-pill">${unread} thông báo mới</span>` : ''}
+      <strong>Thông báo sự cố kỹ thuật</strong>
+      ${unreadCount ? `<span class="np-badge">${unreadCount} mới</span>` : ''}
     </div>
-    ${items || '<div class="np-empty">Không có thông báo nào.</div>'}`;
+    <div class="np-list">${listHtml || '<div class="np-empty">Không có thông báo mới.</div>'}</div>`;
 }
 
-function initBell() {
-  const bell = document.querySelector('.bell');
-  const holder = document.querySelector('.header-inner');
-  if (!bell || !holder) return;
+function initHeaderBell() {
+  const bellBtn = document.querySelector('.vlu-topbar .notif-trigger');
+  const actionsWrap = document.querySelector('.vlu-topbar .topbar-actions');
+  if (!bellBtn || !actionsWrap) return;
+
+  actionsWrap.style.position = 'relative';
 
   const panel = document.createElement('div');
-  panel.id = 'notifPanel';
-  panel.className = 'notif-panel';
+  panel.id = 'techNotifPanel';
+  panel.className = 'notif-popover';
   panel.hidden = true;
-  holder.appendChild(panel);
-  renderNotifs();
+  actionsWrap.appendChild(panel);
+  renderBellPopover();
 
-  bell.addEventListener('click', e => { e.stopPropagation(); panel.hidden = !panel.hidden; });
-  document.addEventListener('click', e => { if (!panel.contains(e.target)) panel.hidden = true; });
+  bellBtn.addEventListener('click', (e) => {
+    e.stopImmediatePropagation();
+    panel.hidden = !panel.hidden;
+  });
 
-  panel.addEventListener('click', e => {
-    const det = e.target.closest('[data-np-detail]');
-    if (det) {
-      const n = NOTIFS.find(x => x.code === det.dataset.npDetail);
-      if (n) n.unread = false;
-      panel.hidden = true;
-      renderNotifs();
-      openDetail(det.dataset.npDetail);
-    }
+  document.addEventListener('click', (e) => {
+    if (!panel.contains(e.target) && e.target !== bellBtn) panel.hidden = true;
+  });
+
+  panel.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-open-ticket]');
+    if (!item) return;
+
+    const found = TECH_NOTIFS.find((x) => x.ticketId === item.dataset.openTicket);
+    if (found) found.unread = false;
+    panel.hidden = true;
+    renderBellPopover();
+    if (typeof openTicketDrawer === 'function') openTicketDrawer(item.dataset.openTicket);
   });
 }
 
-function hideReminder() { document.getElementById('reminder').innerHTML = ''; }
-
-function showReminder() {
-  const o = ORDERS.find(x => x.status === 'soon');
-  if (!o || reminderDismissed) return;
-  const box = document.getElementById('reminder');
-  box.innerHTML = `
-    <div class="reminder">
-      <div class="rm-ico">${icon('alarm')}</div>
-      <div class="rm-main">
-        <b>Còn 10 phút là hết giờ</b>
-        <p>${o.room} · Hôm nay · Kết thúc lúc ${o.end}</p>
-      </div>
-      <button class="rm-x" data-rm-close aria-label="Đóng">${icon('x')}</button>
-    </div>`;
-  box.querySelector('[data-rm-close]').onclick = () => { reminderDismissed = true; hideReminder(); };
-}
-
-/* ===== Khởi tạo ===== */
+/* ===== 5. Khởi tạo trang UA1 ===== */
 function initUA1() {
-  document.getElementById('dateChip').innerHTML = `${icon('calendar')} Thứ Hai, 26/10/2026`;
-  document.getElementById('hintOk').innerHTML = `${icon('check')} Chỉ hiển thị phòng còn trống`;
-  document.getElementById('btnSearch').innerHTML = `${icon('search')} Tìm phòng trống`;
-  document.getElementById('noteCheck').innerHTML = `${icon('info')} Phòng trống được kiểm tra lại khi bạn gửi yêu cầu.`;
-  document.getElementById('noteKey').innerHTML = `${icon('key')} Nhận và trả phòng trực tiếp tại Phòng CSVC`;
+  renderTickets();
 
-  renderRooms();
-  renderOrders();
-  setTimeout(showReminder, 1200);
-
-  // Tìm phòng trống
-  document.getElementById('searchForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const date = document.getElementById('fDate').value;
-    const start = document.getElementById('fStart').value;
-    const end = document.getElementById('fEnd').value;
-    if (!date) {
-      showToast('Vui lòng chọn ngày mượn');
-      return;
-    }
-    if (!start || !end || end <= start) {
-      showToast('Giờ kết thúc phải sau giờ bắt đầu');
-      return;
-    }
-    document.getElementById('searchBanner').innerHTML = '';
-    renderRooms();
-  });
-
-  // Tab lọc đơn
-  document.getElementById('orderTabs').addEventListener('click', e => {
+  document.getElementById('ticketTabs')?.addEventListener('click', (e) => {
     const tab = e.target.closest('.tab');
-    if (tab) setOrderFilter(tab.dataset.filter);
+    if (tab) setStatusTab(tab.dataset.status);
   });
 
-  // Đặt phòng / Chọn lại bộ lọc
-  document.getElementById('roomGrid').addEventListener('click', e => {
-    const btn = e.target.closest('[data-book]');
-    if (btn) openBooking(btn.dataset.book);
-    if (e.target.closest('#btnRefilter')) {
-      document.getElementById('searchForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      document.getElementById('fCap').focus();
+  document.getElementById('filterForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    renderTickets();
+  });
+
+  ['qSearch', 'qBuilding', 'qPriority'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener(id === 'qSearch' ? 'input' : 'change', renderTickets);
+  });
+
+  document.getElementById('ticketList')?.addEventListener('click', (e) => {
+    const triageBtn = e.target.closest('[data-triage]');
+    if (triageBtn && typeof openTriageModal === 'function') {
+      openTriageModal(triageBtn.dataset.triage);
+      return;
+    }
+
+    const drawerBtn = e.target.closest('[data-drawer]');
+    if (drawerBtn && typeof openTicketDrawer === 'function') {
+      openTicketDrawer(drawerBtn.dataset.drawer);
     }
   });
 
-  // Chi tiết
-  document.getElementById('orderList').addEventListener('click', e => {
-    const detail = e.target.closest('[data-detail]');
-    if (detail) openDetail(detail.dataset.detail);
+  document.getElementById('slaAlert')?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-sla-dismiss]')) {
+      slaDismissed = true;
+      renderSlaBanner();
+      return;
+    }
+    const quickBtn = e.target.closest('[data-quick-triage]');
+    if (quickBtn && typeof openTriageModal === 'function') {
+      openTriageModal(quickBtn.dataset.quickTriage);
+    }
   });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   initUA1();
-  layoutReady.then(initBell);
+  if (typeof appLayoutReady !== 'undefined') {
+    appLayoutReady.then(initHeaderBell);
+  }
 });
