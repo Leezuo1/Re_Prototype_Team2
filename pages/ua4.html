@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hồ sơ kỹ thuật &amp; giám sát thiết bị | Đội ngũ Kỹ thuật – VLU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/tech-equipment.css">
+</head>
+<body data-page="tech-equipment">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="ua4-head">
+          <div class="ua4-title">
+            <h1>Hồ sơ kỹ thuật &amp; Giám sát trạng thái thiết bị</h1>
+            <p>Tra cứu thông số, điều chuyển vị trí phòng học và trích xuất báo cáo kỹ thuật gửi Phòng CSVC (UA4).</p>
+          </div>
+
+          <!-- Trích xuất báo cáo kỹ thuật (F90, PB-90) -->
+          <div class="ua4-export-group">
+            <select id="reportPeriod" class="ua4-select" aria-label="Kỳ báo cáo">
+              <option value="Học kỳ 1 (2026–2027)">Học kỳ 1 (2026–2027)</option>
+              <option value="Tháng 11/2026">Tháng 11/2026</option>
+              <option value="Tháng 10/2026">Tháng 10/2026</option>
+            </select>
+            <button type="button" class="btn btn-outline" id="btnExportPdf">Xuất PDF</button>
+            <button type="button" class="btn btn-red" id="btnExportExcel">Xuất Excel gửi CSVC</button>
+          </div>
+        </div>
+
+        <!-- Thẻ thống kê nhanh tình trạng thiết bị (F90) -->
+        <section class="ua4-stats" aria-label="Thống kê thiết bị kỹ thuật">
+          <article class="stat-card">
+            <div class="stat-label">Tổng thiết bị quản lý</div>
+            <div class="stat-value" id="statTotal">0</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Sẵn sàng hoạt động</div>
+            <div class="stat-value" id="statReady">0</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Đang bảo trì / Hỏng</div>
+            <div class="stat-value red" id="statMaint">0</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-label">Tỷ lệ thiết bị khả dụng</div>
+            <div class="stat-value" id="statRate">100%</div>
+          </article>
+        </section>
+
+        <!-- Danh mục thiết bị & Bộ lọc tra cứu (F88, F89) -->
+        <section class="ua4-card">
+          <div class="card-head" style="margin-bottom:14px;">
+            <h2>Danh mục hồ sơ kỹ thuật thiết bị</h2>
+            <span class="count" id="assetCount">Hiển thị 0 thiết bị</span>
+          </div>
+
+          <div class="ua4-toolbar">
+            <input type="text" id="qAsset" class="ua4-input" placeholder="Tìm theo mã tài sản (VD: VLU-MC-102), tên thiết bị hoặc phòng...">
+            <select id="qBuilding" class="ua4-select" aria-label="Lọc theo tòa nhà">
+              <option value="">Tất cả tòa nhà / khu vực</option>
+              <option value="Cơ sở chính – Tòa A">Cơ sở chính – Tòa A</option>
+              <option value="Cơ sở chính – Tòa B">Cơ sở chính – Tòa B</option>
+              <option value="Khu Lab Công nghệ">Khu Lab Công nghệ</option>
+            </select>
+            <select id="qStatus" class="ua4-select" aria-label="Lọc theo trạng thái">
+              <option value="">Tất cả trạng thái</option>
+              <option value="ready">Sẵn sàng</option>
+              <option value="busy">Đang mượn</option>
+              <option value="maint">Đang bảo trì / Hỏng</option>
+            </select>
+            <button type="button" class="btn btn-red" id="btnSearchAsset">Tra cứu</button>
+          </div>
+
+          <div class="ua4-table-wrap">
+            <table class="ua4-table">
+              <thead>
+                <tr>
+                  <th>Mã tài sản</th>
+                  <th>Tên &amp; Cấu hình kỹ thuật</th>
+                  <th>Vị trí phòng</th>
+                  <th>Hạn bảo hành</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác kỹ thuật</th>
+                </tr>
+              </thead>
+              <!-- Vùng render danh sách thiết bị từ ua4.js -->
+              <tbody id="assetTableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="ua4-note">
+            <strong>Quy định nghiệp vụ (BR1 &amp; BR2):</strong> Đội ngũ Kỹ thuật chỉ được cập nhật thông số, trạng thái và điều chuyển vị trí phòng học; không có quyền xóa vĩnh viễn tài sản khỏi hệ thống (quyền thanh lý thuộc Phòng CSVC/Admin). Mọi luân chuyển phòng nguồn – phòng đích được cập nhật tức thì trên sơ đồ thiết bị.
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer: nạp từ main.js -->
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <!-- Khung Modal xem lịch sử, cập nhật thông số & điều chuyển thiết bị (ua4.js) -->
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua4.js"></script>
+</body>
+</html>
