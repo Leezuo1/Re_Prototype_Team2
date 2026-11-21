@@ -1,426 +1,609 @@
-/* ===== Icon bổ sung (dùng chung hàm icon() trong main.js) ===== */
-Object.assign(ICONS, {
-  x: '<path d="M18 6 6 18M6 6l12 12"/>',
-  alert: '<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
-  door: '<path d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3M13 20h9M10 12v.01"/><path d="M13 4.56v16.16a1 1 0 0 1-1.24.97L5 20V5.56a2 2 0 0 1 1.52-1.94l4-1A2 2 0 0 1 13 4.56z"/>',
-  plug: '<path d="M12 22v-5M9 8V2M15 8V2M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
-  imagePlus: '<path d="M16 5h6M19 2v6"/><path d="M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/><circle cx="9" cy="9" r="2"/>',
-  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
-  send: '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
-  wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
-  clipboard: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
-  clipboardCheck: '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>'
+/* js/ua3.js — Nghiệp vụ Bảo trì định kỳ phòng học & hạ tầng (UA3 - Đội ngũ Kỹ thuật) */
+
+Object.assign(TECH_ICONS, {
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  unlock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+  package: '<path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
+  plus: '<path d="M5 12h14M12 5v14"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>'
 });
 
-/* ===== Dữ liệu mock ===== */
-const TODAY = '2026-10-26';
-const ROOMS = ['Phòng A.301', 'Phòng A.302'];
-const DEVICES = ['Máy chiếu B.205', 'Ổ điện kéo dài số 07', 'Hub USB-C số 03', 'Dây cáp HDMI số 05'];
-
-// Các bước xử lý theo thứ tự
-const STAGES = ['sent', 'received', 'repairing', 'done'];
-const STAGE_TITLE = { sent: 'Đã gửi', received: 'Đã tiếp nhận', repairing: 'Đang sửa', done: 'Đã xử lý' };
-const STAGE_CLASS = { sent: 'gray', received: 'pending', repairing: 'blue', done: 'ok' };
-const OFFSET = { received: 10, repairing: 30, done: 210 }; // phút kể từ lúc gửi (dùng khi giả lập)
-
-// kind: 'room' | 'device'; result (khi xong): 'repair' | 'replace'
-const INCIDENTS = [
-  { code: 'SC1040', kind: 'device', title: 'Dây cáp HDMI số 05',   desc: 'Đầu cáp lỏng, hình ảnh bị ngắt khi trình chiếu.',   status: 'sent',
-    times: { sent: { date: '2026-10-26', time: '10:05' } } },
-  { code: 'SC1039', kind: 'room',   title: 'Phòng A.301',          desc: 'Điều hòa không làm mát dù đã bật khoảng 20 phút.', status: 'received',
-    times: { sent: { date: '2026-10-26', time: '09:10' }, received: { date: '2026-10-26', time: '09:25' } } },
-  { code: 'SC1038', kind: 'device', title: 'Máy chiếu B.205',      desc: 'Máy chiếu không lên nguồn khi bật công tắc.',       status: 'repairing',
-    times: { sent: { date: '2026-10-26', time: '08:20' }, received: { date: '2026-10-26', time: '08:40' }, repairing: { date: '2026-10-26', time: '09:00' } } },
-  { code: 'SC1037', kind: 'room',   title: 'Phòng A.302',          desc: 'Tay nắm cửa bị lỏng, khó đóng cửa phòng.',          status: 'done', result: 'repair',
-    times: { sent: { date: '2026-10-23', time: '14:00' }, received: { date: '2026-10-23', time: '14:20' }, repairing: { date: '2026-10-23', time: '15:00' }, done: { date: '2026-10-23', time: '16:00' } } },
-  { code: 'SC1036', kind: 'device', title: 'Ổ điện kéo dài số 07', desc: 'Công tắc không sáng, các ổ cắm không có điện.',     status: 'done', result: 'replace',
-    img: { name: 'o-dien-07.jpg', size: '1,1 MB', url: null },
-    times: { sent: { date: '2026-10-22', time: '09:00' }, received: { date: '2026-10-22', time: '09:20' }, repairing: { date: '2026-10-22', time: '10:00' }, done: { date: '2026-10-23', time: '15:00' } } }
+/* ===== 1. Lịch giảng dạy chính khóa (Dùng kiểm tra tránh trùng lịch theo BR1) ===== */
+const CLASS_TIMETABLE = [
+  { room: 'A.04-02', date: '2026-11-23', start: '07:00', end: '11:30', subject: 'Công nghệ phần mềm (Ca sáng)' },
+  { room: 'A.04-02', date: '2026-11-23', start: '13:00', end: '17:00', subject: 'Phân tích thiết kế HTTT (Ca chiều)' },
+  { room: 'Lab CNTT 02', date: '2026-11-23', start: '07:30', end: '11:30', subject: 'Thực hành Mạng máy tính' },
+  { room: 'Hội trường Trịnh Công Sơn', date: '2026-11-24', start: '08:00', end: '11:30', subject: 'Hội thảo Khoa CNTT' }
 ];
 
-const NOTIFS = [
-  { code: 'SC1039', stage: 'received',  title: 'Đã tiếp nhận · Phòng A.301',   text: 'Phòng CSVC đã tiếp nhận báo cáo điều hòa không làm mát.',   time: '09:25 · 26/10/2026', unread: true },
-  { code: 'SC1038', stage: 'repairing', title: 'Đang sửa · Máy chiếu B.205',   text: 'Sự cố máy chiếu không lên nguồn đang được khắc phục.',      time: '09:00 · 26/10/2026', unread: true },
-  { code: 'SC1037', stage: 'done',      title: 'Đã xử lý · Phòng A.302',       text: 'Sự cố đã được xử lý, bạn có thể sử dụng lại',               time: '16:00 · 23/10/2026', unread: true }
-];
-
-const f = { kind: 'device', target: '', desc: '', file: null, show: false };   // biểu mẫu
-let tab = 'all';       // all | doing | done
-let hl = null;         // phiếu vừa gửi
-
-/* ===== Tiện ích ===== */
-const $ = id => document.getElementById(id);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmtDate = iso => { const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; };
-const fmtDT = o => `${o.time} · ${fmtDate(o.date)}`;
-const num = c => Number(c.slice(2));
-const sorted = () => [...INCIDENTS].sort((a, b) => num(b.code) - num(a.code));
-const getInc = code => INCIDENTS.find(i => i.code === code);
-const nextCode = () => 'SC' + (Math.max(...INCIDENTS.map(i => num(i.code))) + 1);
-const addMin = (t, m) => {
-  const n = Math.min(Number(t.slice(0, 2)) * 60 + Number(t.slice(3)) + m, 23 * 60 + 59);
-  return String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0');
+/* ===== 2. Mẫu Checklist kỹ thuật theo từng loại phòng (BR3) ===== */
+const CHECKLIST_TEMPLATES = {
+  'Phòng lý thuyết': [
+    'Máy chiếu & màn chiếu (độ sáng, cổng HDMI/VGA)',
+    'Hệ thống âm thanh & micro trợ giảng',
+    'Kết nối mạng LAN / Wi-Fi giảng viên',
+    'Hệ thống điều hòa & đèn chiếu sáng'
+  ],
+  'Phòng Lab máy tính': [
+    'Dàn máy tính thực hành PC Lab (khởi động, phần mềm)',
+    'Hệ thống mạng LAN nội bộ & tủ Switch',
+    'Máy chiếu / Màn hình trung tâm phòng Lab',
+    'Hệ thống ổ cắm điện & điều hòa công suất lớn'
+  ],
+  'Hội trường': [
+    'Hệ thống âm thanh hội trường & bàn Mixer',
+    'Máy chiếu công suất lớn / Màn hình LED sân khấu',
+    'Bộ micro không dây & pin dự phòng',
+    'Hạ tầng Wi-Fi mật độ cao & nguồn điện sân khấu'
+  ]
 };
 
-function alertBox(kind, title, text, ic = 'info') {
-  return `<div class="alert ${kind}">${icon(ic)}<div>${title ? `<b>${title}</b>` : ''}${text || ''}</div></div>`;
+const CONSUMABLE_ITEMS = [
+  'Bóng đèn máy chiếu Epson',
+  'Pin AA Micro không dây (Hộp)',
+  'Dây cáp HDMI 2m chống nhiễu',
+  'Dây cáp mạng Cat6 bấm sẵn',
+  'Ổ cắm điện kéo dài 6 lỗ'
+];
+
+/* ===== 3. Dữ liệu mẫu kế hoạch bảo trì định kỳ ===== */
+const MAINT_PLANS = [
+  {
+    code: 'BT-304',
+    room: 'Lab CNTT 02',
+    roomType: 'Phòng Lab máy tính',
+    building: 'Khu Lab',
+    cycle: 'Định kỳ tháng',
+    date: '2026-11-23',
+    start: '13:30',
+    end: '16:30',
+    status: 'locked', // scheduled | locked | completed
+    checks: [
+      { id: 1, name: 'Dàn máy tính thực hành PC Lab (khởi động, phần mềm)', state: 'pass', note: '40/40 máy hoạt động ổn định' },
+      { id: 2, name: 'Hệ thống mạng LAN nội bộ & tủ Switch', state: 'fix', note: '2 dây mạng bàn số 12 đứt ngầm đầu bấm' },
+      { id: 3, name: 'Máy chiếu / Màn hình trung tâm phòng Lab', state: null, note: '' },
+      { id: 4, name: 'Hệ thống ổ cắm điện & điều hòa công suất lớn', state: null, note: '' }
+    ],
+    unlockedAt: null
+  },
+  {
+    code: 'BT-303',
+    room: 'A.04-02',
+    roomType: 'Phòng lý thuyết',
+    building: 'Tòa A',
+    cycle: 'Định kỳ tuần',
+    date: '2026-11-23',
+    start: '17:30',
+    end: '19:30',
+    status: 'scheduled',
+    checks: CHECKLIST_TEMPLATES['Phòng lý thuyết'].map((name, idx) => ({ id: idx + 1, name, state: null, note: '' })),
+    unlockedAt: null
+  },
+  {
+    code: 'BT-302',
+    room: 'Hội trường Trịnh Công Sơn',
+    roomType: 'Hội trường',
+    building: 'Tòa A',
+    cycle: 'Định kỳ tháng',
+    date: '2026-11-24',
+    start: '13:30',
+    end: '17:00',
+    status: 'scheduled',
+    checks: CHECKLIST_TEMPLATES['Hội trường'].map((name, idx) => ({ id: idx + 1, name, state: null, note: '' })),
+    unlockedAt: null
+  },
+  {
+    code: 'BT-301',
+    room: 'B.02-05',
+    roomType: 'Phòng lý thuyết',
+    building: 'Tòa B',
+    cycle: 'Định kỳ tuần',
+    date: '2026-11-21',
+    start: '13:00',
+    end: '15:00',
+    status: 'completed',
+    checks: CHECKLIST_TEMPLATES['Phòng lý thuyết'].map((name, idx) => ({ id: idx + 1, name, state: 'pass', note: 'Đạt chuẩn' })),
+    unlockedAt: '14:50 · Hôm nay'
+  }
+];
+
+const SUPPLY_PROPOSALS = [
+  { id: 'VT-101', planCode: 'BT-304', room: 'Lab CNTT 02', item: 'Dây cáp mạng Cat6 bấm sẵn', qty: 3, reason: 'Thay thế dây mạng đứt ngầm dãy máy 12', status: 'Chờ CSVC duyệt' }
+];
+
+const MAINT_STATUS_TEXT = {
+  scheduled: 'Đã lên lịch',
+  locked: 'Tạm khóa để bảo trì (BR2)',
+  completed: 'Đã hoàn thành & Mở khóa'
+};
+
+let maintTab = 'all';
+let drawerTrapCloser = null;
+let modalTrapCloser = null;
+
+const esc = (s) =>
+  String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+const toMin = (hhmm) => {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+};
+
+const fmtDate = (iso) => {
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+};
+
+const getPlan = (code) => MAINT_PLANS.find((p) => p.code === code);
+
+/* Kiểm tra trùng lịch học chính khóa (BR1) */
+function findClassConflict(room, date, start, end) {
+  const s = toMin(start);
+  const e = toMin(end);
+  return CLASS_TIMETABLE.find(
+    (c) => c.room === room && c.date === date && s < toMin(c.end) && e > toMin(c.start)
+  ) || null;
 }
 
-const sentText = i => i.kind === 'device'
-  ? 'Hệ thống đã tạo phiếu sự cố, đánh dấu thiết bị Đang hỏng và thông báo Phòng CSVC'
-  : 'Hệ thống đã tạo phiếu sự cố và thông báo Phòng CSVC';
-
-/* ===== Biểu mẫu báo cáo (cột trái) ===== */
-function renderForm() {
-  const dev = f.kind === 'device';
-  const opts = dev ? DEVICES : ROOMS;
-  $('formCard').innerHTML = `
-    <h2>Báo cáo sự cố mới</h2>
-    <p class="fsub">Chọn đối tượng và mô tả vấn đề bạn gặp phải. <span class="req">*</span> là thông tin bắt buộc.</p>
-
-    <div class="fl">
-      <label>Đối tượng báo sự cố <span class="req">*</span></label>
-      <div class="kinds">
-        <button type="button" class="kind ${dev ? '' : 'on'}" data-kind="room"><span class="rad"></span>${icon('door')} Phòng</button>
-        <button type="button" class="kind ${dev ? 'on' : ''}" data-kind="device"><span class="rad"></span>${icon('plug')} Thiết bị</button>
-      </div>
-    </div>
-
-    <div class="fl">
-      <label for="fSel">${dev ? 'Thiết bị gặp sự cố' : 'Phòng gặp sự cố'} <span class="req">*</span></label>
-      <select id="fSel" aria-describedby="eSel">
-        <option value="">${dev ? 'Chọn thiết bị gặp sự cố' : 'Chọn phòng gặp sự cố'}</option>
-        ${opts.map(o => `<option value="${o}" ${f.target === o ? 'selected' : ''}>${o}</option>`).join('')}
-      </select>
-      <p class="err" id="eSel" hidden>Vui lòng chọn phòng hoặc thiết bị gặp sự cố.</p>
-    </div>
-
-    <div class="fl">
-      <label for="fDesc">Mô tả sự cố <span class="req">*</span></label>
-      <textarea id="fDesc" maxlength="1000" aria-describedby="eDesc" placeholder="Mô tả hiện tượng, vị trí và tình trạng bạn quan sát được...">${esc(f.desc)}</textarea>
-      <p class="err" id="eDesc" hidden>Vui lòng nhập mô tả sự cố.</p>
-    </div>
-
-    <div class="fl">
-      <div class="lbl-row"><label>Ảnh đính kèm</label><small>Không bắt buộc</small></div>
-      <div class="drop" id="fDrop" role="button" tabindex="0" aria-label="Chọn ảnh đính kèm">
-        ${icon('imagePlus')}
-        <p>Kéo thả ảnh vào đây hoặc <b>Chọn ảnh</b></p>
-        <small>Có thể gửi báo cáo mà không cần đính kèm ảnh.</small>
-      </div>
-      <input type="file" id="fFile" accept="image/*" hidden>
-      ${f.file ? `
-        <div class="file-card">
-          <div class="thumb">${f.file.url ? `<img src="${f.file.url}" alt="">` : icon('image')}</div>
-          <div class="fc-info"><b>${esc(f.file.name)}</b><small>Đã thêm · ${f.file.size}</small></div>
-          <button type="button" class="fc-x" id="fRemove" aria-label="Xóa ảnh">${icon('x')}</button>
-        </div>` : ''}
-    </div>
-
-    <div id="fAlert" hidden>${alertBox('err', '', 'Chưa thể gửi báo cáo. Vui lòng bổ sung các thông tin bắt buộc ở trên.', 'alert')}</div>
-    <button type="button" class="btn btn-primary btn-block" id="fBtn">${icon('send')} Gửi báo cáo</button>
-    <p class="note">${icon('info')} Phiếu sự cố được tự động chuyển đến Phòng CSVC. Bạn không cần liên hệ người xử lý.</p>`;
-
-  const sel = $('fSel'), desc = $('fDesc');
-  sel.addEventListener('change', () => { f.target = sel.value; syncForm(); });
-  desc.addEventListener('input', () => { f.desc = desc.value; syncForm(); });
-  document.querySelectorAll('[data-kind]').forEach(b => b.addEventListener('click', () => {
-    if (f.kind === b.dataset.kind) return;
-    f.kind = b.dataset.kind; f.target = '';
-    renderForm(); syncForm();
-  }));
-
-  const input = $('fFile'), drop = $('fDrop');
-  const take = file => {
-    if (!file) return;
-    if (!/^image\//.test(file.type || 'image/')) { showToast('Chỉ nhận tệp ảnh'); return; }
-    if (file.size > 10 * 1024 * 1024) { showToast('Ảnh tối đa 10 MB'); return; }
-    const url = typeof URL !== 'undefined' && URL.createObjectURL ? URL.createObjectURL(file) : null;
-    f.file = { name: file.name, size: (file.size / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB', url };
-    renderForm(); syncForm();
+/* ===== 1. Thống kê nhanh & Danh sách kế hoạch bảo trì (F84) ===== */
+function updateMaintStats() {
+  const setVal = (id, n) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = n;
   };
-  drop.addEventListener('click', () => input.click());
-  drop.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      input.click();
-    }
+  setVal('stScheduled', MAINT_PLANS.filter((p) => p.status === 'scheduled').length);
+  setVal('stLocked', MAINT_PLANS.filter((p) => p.status === 'locked').length);
+  setVal('stDone', MAINT_PLANS.filter((p) => p.status === 'completed').length);
+  setVal('stSupplies', SUPPLY_PROPOSALS.length);
+}
+
+function setMaintTab(nextTab) {
+  maintTab = nextTab;
+  document.querySelectorAll('#maintTabs .tab').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.tab === nextTab);
   });
-  input.addEventListener('change', () => take(input.files[0]));
-  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
-  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('over'); take(e.dataTransfer.files[0]); });
-  if ($('fRemove')) $('fRemove').addEventListener('click', () => { f.file = null; renderForm(); syncForm(); });
-
-  $('fBtn').addEventListener('click', submitForm);
-  syncForm();
+  renderMaintList();
 }
 
-function syncForm() {
-  if (!f.show) return;
-  const okS = !!f.target, okD = !!f.desc.trim();
-  $('eSel').hidden = okS;   $('fSel').classList.toggle('invalid', !okS);
-  $('eDesc').hidden = okD;  $('fDesc').classList.toggle('invalid', !okD);
-  $('fAlert').hidden = okS && okD;
-  $('fBtn').classList.toggle('is-disabled', !(okS && okD));
-}
+function renderMaintList() {
+  updateMaintStats();
 
-function submitForm() {
-  if (!f.target || !f.desc.trim()) { f.show = true; syncForm(); return; }
+  const keyword = (document.getElementById('mSearch')?.value || '').trim().toLowerCase();
+  const typeFilter = document.getElementById('mRoomType')?.value || 'all';
 
-  // Thông tin đủ -> khóa nút, hiện loading rồi tạo phiếu (mô phỏng máy chủ)
-  submitWithLoading($('fBtn'), () => {
-    const code = nextCode();
-    const inc = {
-      code, kind: f.kind, title: f.target, desc: f.desc.trim(), status: 'sent',
-      img: f.file ? { ...f.file } : null,
-      times: { sent: { date: TODAY, time: '10:30' } }
-    };
-    INCIDENTS.push(inc);
-    NOTIFS.unshift({ code, stage: 'sent', title: `Đã gửi · ${inc.title}`, text: sentText(inc), time: fmtDT(inc.times.sent), unread: true });
-    hl = code; tab = 'all';
-    f.target = ''; f.desc = ''; f.file = null; f.show = false;
-    $('pageNotice').innerHTML = `
-      <div class="alert ok with-x">${icon('check')}<div><b>Gửi báo cáo thành công · #${code}</b>${sentText(inc)}</div>
-        <button type="button" class="notice-x" id="noticeX" aria-label="Đóng">${icon('x')}</button></div>`;
-    $('noticeX').onclick = () => { $('pageNotice').innerHTML = ''; };
-    renderForm(); renderList(); renderNotifs();
-  });
-}
+  const list = MAINT_PLANS
+    .filter((p) => maintTab === 'all' || p.status === maintTab)
+    .filter((p) => typeFilter === 'all' || p.roomType === typeFilter)
+    .filter((p) => {
+      if (!keyword) return true;
+      return `${p.code} ${p.room} ${p.roomType} ${p.building}`.toLowerCase().includes(keyword);
+    });
 
-/* ===== Sự cố của tôi (cột phải) ===== */
-function renderList() {
-  const all = sorted();
-  const list = tab === 'all' ? all : all.filter(i => (tab === 'done') === (i.status === 'done'));
-  $('incCount').textContent = tab === 'all' ? `${all.length} sự cố` : `${list.length} phù hợp`;
-  document.querySelectorAll('#incTabs .tab').forEach(t => t.classList.toggle('active', t.dataset.filter === tab));
+  const countEl = document.getElementById('maintCount');
+  if (countEl) countEl.textContent = `Hiển thị ${list.length} / ${MAINT_PLANS.length} đợt bảo trì`;
+
+  const container = document.getElementById('maintList');
+  if (!container) return;
 
   if (!list.length) {
-    $('incList').innerHTML = !all.length
-      ? `<div class="empty-block"><div class="empty-ico">${icon('clipboard')}</div><h3>Bạn chưa gửi báo cáo sự cố nào</h3><p>Khi gặp vấn đề với phòng học hoặc thiết bị, hãy gửi báo cáo ở biểu mẫu bên cạnh.</p></div>`
-      : `<div class="empty-block"><div class="empty-ico">${icon('clipboardCheck')}</div><h3>Không có sự cố ${tab === 'done' ? 'đã' : 'đang'} xử lý</h3><p>Hiện không có phiếu trong trạng thái này. Chọn Tất cả để xem các sự cố của bạn.</p><button type="button" class="btn btn-outline" data-all>Xem tất cả sự cố</button></div>`;
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${renderIcon('calendar')}</div>
+        <h3>Không có lịch bảo trì phù hợp</h3>
+        <p>Thử đổi bộ lọc loại phòng hoặc bấm "Lập lịch bảo trì" để tạo kế hoạch mới.</p>
+      </div>`;
     return;
   }
 
-  $('incList').innerHTML = list.map(i => `
-    <article class="inc ${i.code === hl ? 'new' : ''}">
-      <div class="inc-top">
-        <span class="order-code">#${i.code}${i.code === hl ? ' · Vừa gửi' : ''}</span>
-        <span class="badge ${STAGE_CLASS[i.status]}">${STAGE_TITLE[i.status]}</span>
-      </div>
-      <div class="inc-title"><h3>${esc(i.title)}</h3><button type="button" class="detail-link" data-detail="${i.code}">Chi tiết ${icon('chevron')}</button></div>
-      <p class="inc-desc">${esc(i.desc)}</p>
-      <p class="inc-time">${icon('clock')} Đã gửi: ${fmtDT(i.times.sent)}</p>
-      ${i.status === 'done' && i.result === 'replace' ? `<div class="inc-res"><span>Kết quả xử lý</span><span class="badge orange">Thay thế / bảo hành</span></div>` : ''}
-    </article>`).join('');
+  container.innerHTML = list
+    .map((p) => {
+      const doneCount = p.checks.filter((c) => c.state !== null).length;
+      const totalCount = p.checks.length;
+
+      let actionBtn = '';
+      if (p.status === 'scheduled') {
+        actionBtn = `<button type="button" class="btn btn-primary btn-sm" data-lock="${p.code}">${renderIcon('lock')} Khóa phòng &amp; Bảo trì</button>`;
+      } else if (p.status === 'locked') {
+        actionBtn = `<button type="button" class="btn btn-primary btn-sm" data-checklist="${p.code}">${renderIcon('checklist')} Thực hiện Checklist (${doneCount}/${totalCount})</button>`;
+      } else {
+        actionBtn = `<button type="button" class="btn btn-outline btn-sm" data-checklist="${p.code}">Xem kết quả bảo trì</button>`;
+      }
+
+      return `
+        <article class="mt-card st-${p.status}">
+          <div class="mt-top">
+            <div class="mt-codes">
+              <span class="order-code">#${esc(p.code)}</span>
+              <span class="type-tag">${esc(p.roomType)}</span>
+              <span class="cycle-tag">${esc(p.cycle)}</span>
+            </div>
+            <span class="badge badge-${p.status}">${MAINT_STATUS_TEXT[p.status]}</span>
+          </div>
+
+          <div class="mt-body">
+            <div>
+              <h3>Phòng ${esc(p.room)} · ${esc(p.building)}</h3>
+              <p class="mt-time">${renderIcon('calendar')} ${fmtDate(p.date)} · ${renderIcon('clock')} ${p.start} – ${p.end}</p>
+            </div>
+            <div class="mt-actions">${actionBtn}</div>
+          </div>
+
+          <div class="mt-foot">
+            <span>Tiến độ Checklist: <b>${doneCount}/${totalCount}</b> hạng mục</span>
+            ${p.status === 'locked' ? '<span class="lock-warn">Đang chặn đặt phòng mới trên hệ thống (BR2)</span>' : ''}
+            ${p.unlockedAt ? `<span class="ok-txt">Đã mở khóa vận hành lúc ${esc(p.unlockedAt)}</span>` : ''}
+          </div>
+        </article>`;
+    })
+    .join('');
 }
 
 /* =====================================================
-   NGĂN CHI TIẾT SỰ CỐ (trượt từ bên phải)
+   2. LẬP LỊCH BẢO TRÌ ĐỊNH KỲ & KIỂM TRA TRÙNG LỊCH HỌC (F84, BR1)
    ===================================================== */
-function closeDrawer() { $('drawerRoot').innerHTML = ''; document.body.classList.remove('no-scroll'); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDrawer(); closeSim(); } });
-
-function noteOf(i) {
-  const dev = i.kind === 'device';
-  if (i.status === 'sent') return 'Phiếu sự cố đã được tạo và chuyển đến Phòng CSVC.';
-  if (i.status === 'received') return 'Phòng CSVC đã tiếp nhận và đang kiểm tra sự cố.';
-  if (i.status === 'repairing') return dev ? 'Đang khắc phục sự cố của thiết bị.' : 'Đang khắc phục sự cố tại phòng.';
-  return i.result === 'replace' ? 'Đã thay thiết bị và thông báo kết quả cho sinh viên.' : 'Đã khắc phục sự cố và kiểm tra hoạt động ổn định.';
+function closePlanModal() {
+  if (typeof modalTrapCloser === 'function') {
+    modalTrapCloser();
+    modalTrapCloser = null;
+  }
+  const root = document.getElementById('modalRoot');
+  if (root) root.innerHTML = '';
+  document.body.classList.remove('no-scroll');
 }
 
-function openDetail(code) {
-  const i = getInc(code);
-  const idx = STAGES.indexOf(i.status);
+function openCreatePlanModal() {
+  const root = document.getElementById('modalRoot');
+  if (!root) return;
 
-  const steps = STAGES.map((s, n) => {
-    const done = n <= idx;
-    const link = done && n < idx ? 'line-on' : '';
-    return `<li class="${done ? 'done' : 'todo'} ${link}"><span class="dot">${done ? icon('check') : ''}</span>
-      <div><b>${STAGE_TITLE[s]}</b><small>${done ? fmtDT(i.times[s]) : 'Chờ cập nhật'}</small></div></li>`;
-  }).join('');
+  root.innerHTML = `
+    <div class="overlay">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
+        <div class="m-head">
+          <div>
+            <h2 id="planModalTitle">Lập lịch bảo trì định kỳ</h2>
+            <p>Hệ thống tự động đối chiếu thời khóa biểu chính khóa (BR1)</p>
+          </div>
+          <button type="button" class="m-x" data-close-plan aria-label="Đóng">${renderIcon('x')}</button>
+        </div>
+        <div class="m-body">
+          <div class="alert err" id="br1Alert" hidden></div>
 
-  let doneBox = '';
-  if (i.status === 'done') {
-    doneBox = i.result === 'replace'
-      ? `<div class="alert ok flat">${icon('check')}<div><b>Sự cố đã được xử lý, bạn có thể sử dụng lại</b><span class="orange-text">Thiết bị được thay thế, vui lòng nhận tại Phòng CSVC</span></div></div>`
-      : `<div class="alert ok flat">${icon('check')}<div><b>Sự cố đã được xử lý, bạn có thể sử dụng lại</b>Đã sửa chữa · ${i.kind === 'device' ? 'Thiết bị' : 'Phòng'} hoạt động bình thường.</div></div>`;
+          <div class="f-row">
+            <div class="f-group">
+              <label for="pRoom">Phòng học / Khu vực *</label>
+              <select id="pRoom">
+                <option value="A.04-02" data-type="Phòng lý thuyết" data-bld="Tòa A">A.04-02 (Tòa A)</option>
+                <option value="Lab CNTT 02" data-type="Phòng Lab máy tính" data-bld="Khu Lab">Lab CNTT 02 (Khu Lab)</option>
+                <option value="Hội trường Trịnh Công Sơn" data-type="Hội trường" data-bld="Tòa A">Hội trường Trịnh Công Sơn</option>
+                <option value="B.02-05" data-type="Phòng lý thuyết" data-bld="Tòa B">B.02-05 (Tòa B)</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label for="pCycle">Chu kỳ kiểm tra *</label>
+              <select id="pCycle">
+                <option value="Định kỳ tuần">Định kỳ tuần</option>
+                <option value="Định kỳ tháng">Định kỳ tháng</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label for="pDate">Ngày bảo trì *</label>
+            <input type="date" id="pDate" value="2026-11-23">
+          </div>
+
+          <div class="f-row">
+            <div class="f-group">
+              <label for="pStart">Giờ bắt đầu *</label>
+              <input type="time" id="pStart" value="08:00">
+            </div>
+            <div class="f-group">
+              <label for="pEnd">Giờ kết thúc *</label>
+              <input type="time" id="pEnd" value="10:30">
+            </div>
+          </div>
+
+          <div class="alert info">
+            ${renderIcon('alert')}
+            <span><b>Quy tắc BR1:</b> Không được xếp lịch bảo trì trùng khung giờ giảng dạy chính khóa đã có trên hệ thống.</span>
+          </div>
+        </div>
+        <div class="m-foot">
+          <button type="button" class="btn btn-outline" data-close-plan>Hủy</button>
+          <button type="button" class="btn btn-primary" id="btnSavePlan">Lưu kế hoạch bảo trì</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.classList.add('no-scroll');
+  const dlg = root.querySelector('.modal');
+  if (typeof bindDialogFocus === 'function') {
+    modalTrapCloser = bindDialogFocus(dlg, closePlanModal);
   }
 
-  $('drawerRoot').innerHTML = `
-    <div class="drawer-overlay" id="dOverlay">
-      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-        <div class="d-head">
-          <div><h2 id="drawerTitle">Chi tiết sự cố</h2><p>#${i.code}</p></div>
-          <button type="button" class="d-x" id="dClose" aria-label="Đóng">${icon('x')}</button>
-        </div>
-        <div class="d-body">
-          <h3 class="d-title">${esc(i.title)}</h3>
-          <div class="d-badges">
-            <span class="badge ${STAGE_CLASS[i.status]}">${STAGE_TITLE[i.status]}</span>
-            ${i.status === 'done' && i.result === 'replace' ? '<span class="badge orange">Thay thế / bảo hành</span>' : ''}
+  root.querySelector('.overlay').addEventListener('mousedown', (e) => {
+    if (e.target.classList.contains('overlay')) closePlanModal();
+  });
+  root.querySelectorAll('[data-close-plan]').forEach((b) => b.addEventListener('click', closePlanModal));
+
+  const roomEl = dlg.querySelector('#pRoom');
+  const dateEl = dlg.querySelector('#pDate');
+  const startEl = dlg.querySelector('#pStart');
+  const endEl = dlg.querySelector('#pEnd');
+  const alertEl = dlg.querySelector('#br1Alert');
+  const saveBtn = dlg.querySelector('#btnSavePlan');
+
+  const checkScheduleRule = () => {
+    const s = startEl.value;
+    const e = endEl.value;
+    if (!dateEl.value || !s || !e || toMin(e) <= toMin(s)) {
+      alertEl.hidden = false;
+      alertEl.innerHTML = `${renderIcon('alert')} <span>Giờ kết thúc phải sau giờ bắt đầu.</span>`;
+      saveBtn.disabled = true;
+      return;
+    }
+
+    const conflict = findClassConflict(roomEl.value, dateEl.value, s, e);
+    if (conflict) {
+      alertEl.hidden = false;
+      alertEl.innerHTML = `${renderIcon('alert')} <div><b>Trùng lịch giảng dạy chính khóa (BR1):</b> Phòng <b>${esc(conflict.room)}</b> có tiết <i>${esc(conflict.subject)}</i> từ <b>${conflict.start} – ${conflict.end}</b> ngày ${fmtDate(conflict.date)}. Vui lòng chọn khung giờ trống khác (VD: sau 17:30).</div>`;
+      saveBtn.disabled = true;
+    } else {
+      alertEl.hidden = true;
+      saveBtn.disabled = false;
+    }
+  };
+
+  [roomEl, dateEl, startEl, endEl].forEach((el) => el.addEventListener('change', checkScheduleRule));
+  checkScheduleRule();
+
+  saveBtn.addEventListener('click', () => {
+    const opt = roomEl.selectedOptions[0];
+    const roomType = opt.dataset.type;
+    const building = opt.dataset.bld;
+
+    runWithLock(saveBtn, () => {
+      const nextNum = 301 + MAINT_PLANS.length;
+      const newCode = `BT-${nextNum}`;
+      MAINT_PLANS.unshift({
+        code: newCode,
+        room: roomEl.value,
+        roomType,
+        building,
+        cycle: dlg.querySelector('#pCycle').value,
+        date: dateEl.value,
+        start: startEl.value,
+        end: endEl.value,
+        status: 'scheduled',
+        checks: CHECKLIST_TEMPLATES[roomType].map((name, idx) => ({ id: idx + 1, name, state: null, note: '' })),
+        unlockedAt: null
+      });
+      closePlanModal();
+      renderMaintList();
+      notifyToast(`Đã lập lịch bảo trì #${newCode} cho phòng ${roomEl.value}`);
+    });
+  });
+}
+
+/* =====================================================
+   3. KHÓA TẠM THỜI PHÒNG HỌC (F85, BR2)
+   ===================================================== */
+function lockRoomForMaintenance(code) {
+  const plan = getPlan(code);
+  if (!plan) return;
+
+  plan.status = 'locked';
+  renderMaintList();
+  notifyToast(`Đã tạm khóa phòng ${plan.room} để bảo trì (BR2)`);
+  openChecklistDrawer(code);
+}
+
+/* =====================================================
+   4. NGĂN CHECKLIST KỸ THUẬT, ĐỀ XUẤT VẬT TƯ & MỞ KHÓA PHÒNG
+      (F86, F87, BR3, PB-88)
+   ===================================================== */
+function closeChecklistDrawer() {
+  if (typeof drawerTrapCloser === 'function') {
+    drawerTrapCloser();
+    drawerTrapCloser = null;
+  }
+  const root = document.getElementById('drawerRoot');
+  if (root) root.innerHTML = '';
+  document.body.classList.remove('no-scroll');
+}
+
+function openChecklistDrawer(code) {
+  const plan = getPlan(code);
+  if (!plan) return;
+
+  const root = document.getElementById('drawerRoot');
+  if (!root) return;
+
+  const isCompleted = plan.status === 'completed';
+  const allChecked = plan.checks.every((c) => c.state !== null);
+  const doneCount = plan.checks.filter((c) => c.state !== null).length;
+  const relatedSupplies = SUPPLY_PROPOSALS.filter((s) => s.planCode === plan.code);
+
+  const checklistHtml = plan.checks
+    .map(
+      (item) => `
+      <div class="chk-card ${item.state || ''}">
+        <div class="chk-row">
+          <b>${item.id}. ${esc(item.name)}</b>
+          <div class="chk-btns">
+            <button type="button" class="pill-btn pass ${item.state === 'pass' ? 'active' : ''}"
+              data-mark="${item.id}:pass" ${isCompleted ? 'disabled' : ''}>Đạt</button>
+            <button type="button" class="pill-btn fix ${item.state === 'fix' ? 'active' : ''}"
+              data-mark="${item.id}:fix" ${isCompleted ? 'disabled' : ''}>Cần khắc phục</button>
           </div>
-          <p class="d-sent">Đã gửi: ${fmtDT(i.times.sent)}</p>
-          ${doneBox}
-          <h4 class="d-sec">Mô tả sự cố</h4>
-          <p class="d-desc">${esc(i.desc)}</p>
-          <h4 class="d-sec">Ảnh đính kèm · ${i.img ? '1 ảnh' : '0 ảnh'}</h4>
-          ${i.img ? `
-            <div class="file-card">
-              <div class="thumb">${i.img.url ? `<img src="${i.img.url}" alt="">` : icon('image')}</div>
-              <div class="fc-info"><b>${esc(i.img.name)}</b><small>Ảnh đã gửi · ${i.img.size}</small></div>
-            </div>` : '<p class="muted small">Không có ảnh đính kèm.</p>'}
-          <h3 class="d-prog">Tiến độ xử lý</h3>
-          <ol class="tl4">${steps}</ol>
-          <div class="d-note"><b>Ghi chú xử lý</b><p>${noteOf(i)}</p></div>
-          ${i.status !== 'done' ? `<button type="button" class="btn btn-outline btn-block" id="dSim">Giả lập tiến độ</button>
-            <p class="d-foot">Minh họa: bấm để chuyển sang bước xử lý tiếp theo.</p>` : ''}
+        </div>
+        <input type="text" class="chk-note-input" data-note="${item.id}"
+          value="${esc(item.note)}" ${isCompleted ? 'disabled' : ''}
+          placeholder="Ghi chú dấu hiệu xuống cấp / thông số kiểm tra...">
+      </div>`
+    )
+    .join('');
+
+  root.innerHTML = `
+    <div class="overlay drawer">
+      <aside class="modal drawer" role="dialog" aria-modal="true" aria-labelledby="chkDrawerTitle">
+        <div class="m-head">
+          <div>
+            <h2 id="chkDrawerTitle">Checklist Bảo trì · Phòng ${esc(plan.room)}</h2>
+            <p>#${esc(plan.code)} · ${esc(plan.roomType)} · ${fmtDate(plan.date)} (${plan.start} – ${plan.end})</p>
+          </div>
+          <button type="button" class="m-x" data-close-drawer aria-label="Đóng">${renderIcon('x')}</button>
+        </div>
+
+        <div class="m-body">
+          ${
+            isCompleted
+              ? `<div class="alert ok">${renderIcon('check')} <span>Đợt bảo trì đã hoàn tất. Phòng <b>${esc(plan.room)}</b> đã được mở lại trạng thái <b>"Hoạt động bình thường"</b>.</span></div>`
+              : `<div class="alert warn">${renderIcon('lock')} <span><b>Đang tạm khóa phòng (BR2):</b> Hệ thống đang chặn lượt đặt phòng phát sinh. Cần hoàn thành <b>${doneCount}/${plan.checks.length}</b> hạng mục Checklist (BR3) trước khi mở khóa.</span></div>`
+          }
+
+          <h4 class="sec">Danh mục kiểm tra theo chuẩn ${esc(plan.roomType)} (F86)</h4>
+          <div class="chk-list">${checklistHtml}</div>
+
+          <hr class="line">
+          <h4 class="sec">Đề xuất cấp phát vật tư tiêu hao gửi CSVC (F87)</h4>
+          ${
+            relatedSupplies.length
+              ? `<div class="sup-list">${relatedSupplies
+                  .map(
+                    (s) =>
+                      `<div class="sup-item"><span><b>${esc(s.item)}</b> × ${s.qty} — ${esc(s.reason)}</span><span class="badge pending">${esc(s.status)}</span></div>`
+                  )
+                  .join('')}</div>`
+              : '<p class="muted small">Chưa có phiếu đề xuất vật tư nào cho đợt bảo trì này.</p>'
+          }
+
+          ${
+            !isCompleted
+              ? `
+            <div class="sup-form">
+              <div class="f-row">
+                <select id="supItem">
+                  ${CONSUMABLE_ITEMS.map((name) => `<option value="${esc(name)}">${esc(name)}</option>`).join('')}
+                </select>
+                <input type="number" id="supQty" min="1" max="50" value="1" style="max-width:84px" aria-label="Số lượng">
+              </div>
+              <div class="f-row" style="margin-top:8px">
+                <input type="text" id="supReason" placeholder="Lý do đề xuất (VD: Bóng đèn máy chiếu yếu, hết pin micro)...">
+                <button type="button" class="btn btn-outline btn-sm" id="btnAddSupply">${renderIcon('package')} Tạo phiếu đề xuất</button>
+              </div>
+            </div>`
+              : ''
+          }
+        </div>
+
+        <div class="m-foot">
+          <button type="button" class="btn btn-outline" data-close-drawer>Đóng</button>
+          ${
+            !isCompleted
+              ? `<button type="button" class="btn btn-primary" id="btnUnlockRoom" ${allChecked ? '' : 'disabled'}>
+                  ${renderIcon('unlock')} Hoàn tất &amp; Mở khóa phòng
+                </button>`
+              : ''
+          }
         </div>
       </aside>
     </div>`;
+
   document.body.classList.add('no-scroll');
-  trapDialog($('drawerRoot').querySelector('.drawer'), closeDrawer);
-  $('dClose').onclick = closeDrawer;
-  $('dOverlay').addEventListener('mousedown', e => { if (e.target.id === 'dOverlay') closeDrawer(); });
-  if ($('dSim')) $('dSim').onclick = () => simulate(i.code);
-}
-
-/* ===== Giả lập tiến độ xử lý ===== */
-function closeSim() { $('simRoot').innerHTML = ''; }
-
-function simulate(code) {
-  const i = getInc(code);
-  const next = STAGES[STAGES.indexOf(i.status) + 1];
-  // Bước cuối của thiết bị: 2 kết quả thay thế nhau
-  if (next === 'done' && i.kind === 'device') {
-    $('simRoot').innerHTML = `
-      <div class="sim-overlay" id="sOverlay"><div class="sim-box">
-        <h3>Giả lập kết quả xử lý</h3>
-        <p>#${i.code} · ${esc(i.title)}. Chọn một trong hai kết quả hoàn tất (thay thế nhau).</p>
-        <div class="sim-btns">
-          <button type="button" class="btn btn-primary" id="sRepair">Sửa chữa xong</button>
-          <button type="button" class="btn btn-outline" id="sReplace">Thay thế / bảo hành</button>
-          <button type="button" class="btn btn-outline" id="sCancel">Quay lại</button>
-        </div></div></div>`;
-    $('sRepair').onclick = () => { closeSim(); advance(i, next, 'repair'); };
-    $('sReplace').onclick = () => { closeSim(); advance(i, next, 'replace'); };
-    $('sCancel').onclick = closeSim;
-    $('sOverlay').addEventListener('mousedown', e => { if (e.target.id === 'sOverlay') closeSim(); });
-    return;
+  const drawerEl = root.querySelector('.drawer');
+  if (typeof bindDialogFocus === 'function') {
+    drawerTrapCloser = bindDialogFocus(drawerEl, closeChecklistDrawer);
   }
-  advance(i, next, next === 'done' ? 'repair' : null);
-}
 
-function advance(i, next, result) {
-  const s = i.times.sent;
-  i.times[next] = { date: s.date, time: addMin(s.time, OFFSET[next]) };
-  i.status = next;
-  if (result) i.result = result;
-
-  const dev = i.kind === 'device';
-  const text = {
-    received: 'Phòng CSVC đã tiếp nhận và đang kiểm tra sự cố.',
-    repairing: dev ? 'Đang khắc phục sự cố của thiết bị.' : 'Đang khắc phục sự cố tại phòng.',
-    done: result === 'replace' ? 'Thiết bị được thay thế, vui lòng nhận tại Phòng CSVC' : 'Sự cố đã được xử lý, bạn có thể sử dụng lại'
-  }[next];
-  NOTIFS.unshift({ code: i.code, stage: next, title: `${STAGE_TITLE[next]} · ${i.title}`, text, time: fmtDT(i.times[next]), unread: true });
-
-  renderList(); renderNotifs();
-  openDetail(i.code);
-}
-
-/* =====================================================
-   THÔNG BÁO (chuông)
-   ===================================================== */
-const N_ICON = { sent: 'send', received: 'clipboard', repairing: 'wrench', done: 'check' };
-
-function renderNotifs() {
-  const panel = $('notifPanel');
-  if (!panel) return;
-  const unread = NOTIFS.filter(n => n.unread).length;
-  const badge = document.querySelector('.bell-badge');
-  if (badge) { badge.textContent = unread; badge.style.display = unread ? 'flex' : 'none'; }
-
-  panel.innerHTML = `
-    <div class="np-head">
-      <h3>Thông báo ${unread ? `<span class="np-pill">${unread} mới</span>` : ''}</h3>
-      <button type="button" class="m-x" data-np-close aria-label="Đóng">${icon('x')}</button>
-    </div>
-    ${NOTIFS.length ? NOTIFS.map((n, k) => `
-      <div class="n4 ${n.unread ? 'unread' : ''}" data-n="${k}">
-        <div class="n4-ico ${n.stage}">${icon(N_ICON[n.stage])}</div>
-        <div class="n4-main">
-          <b>${esc(n.title)}</b>
-          <p>${esc(n.text)}</p>
-          <div class="n4-bot"><small>${n.time}</small><span class="n4-link">#${n.code} · Chi tiết ›</span></div>
-        </div>
-        ${n.unread ? '<i class="n4-dot"></i>' : ''}
-      </div>`).join('') : `
-      <div class="np-empty4">${icon('bell')}<b>Chưa có thông báo</b><p>Các cập nhật về báo cáo sự cố sẽ hiển thị tại đây.</p></div>`}`;
-}
-
-function initBell() {
-  const bell = document.querySelector('.bell');
-  const holder = document.querySelector('.header-inner');
-  if (!bell || !holder) return;
-
-  const panel = document.createElement('div');
-  panel.id = 'notifPanel';
-  panel.className = 'notif-panel wide';
-  panel.hidden = true;
-  holder.appendChild(panel);
-  renderNotifs();
-
-  bell.addEventListener('click', e => { e.stopPropagation(); panel.hidden = !panel.hidden; });
-  document.addEventListener('click', e => { if (!panel.contains(e.target)) panel.hidden = true; });
-  panel.addEventListener('click', e => {
-    if (e.target.closest('[data-np-close]')) { panel.hidden = true; return; }
-    const item = e.target.closest('[data-n]');
-    if (item) {
-      const n = NOTIFS[Number(item.dataset.n)];
-      n.unread = false;
-      panel.hidden = true;
-      renderNotifs();
-      openDetail(n.code);
-    }
+  root.querySelector('.overlay').addEventListener('mousedown', (e) => {
+    if (e.target.classList.contains('overlay')) closeChecklistDrawer();
   });
+  root.querySelectorAll('[data-close-drawer]').forEach((b) => b.addEventListener('click', closeChecklistDrawer));
+
+  // Đánh dấu Đạt / Cần khắc phục cho từng hạng mục Checklist
+  drawerEl.querySelectorAll('[data-mark]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const [idStr, state] = btn.dataset.mark.split(':');
+      const target = plan.checks.find((c) => c.id === Number(idStr));
+      if (target) {
+        target.state = state;
+        renderMaintList();
+        openChecklistDrawer(code);
+      }
+    });
+  });
+
+  // Lưu ghi chú từng hạng mục
+  drawerEl.querySelectorAll('[data-note]').forEach((input) => {
+    input.addEventListener('input', () => {
+      const target = plan.checks.find((c) => c.id === Number(input.dataset.note));
+      if (target) target.note = input.value;
+    });
+  });
+
+  // Tạo phiếu đề xuất vật tư tiêu hao (F87 / PB-87)
+  const addSupBtn = drawerEl.querySelector('#btnAddSupply');
+  if (addSupBtn) {
+    addSupBtn.addEventListener('click', () => {
+      const item = drawerEl.querySelector('#supItem').value;
+      const qty = Math.max(1, Number(drawerEl.querySelector('#supQty').value) || 1);
+      const reason = drawerEl.querySelector('#supReason').value.trim() || 'Bổ sung vật tư tiêu hao sau kiểm tra định kỳ';
+
+      runWithLock(addSupBtn, () => {
+        SUPPLY_PROPOSALS.unshift({
+          id: `VT-${101 + SUPPLY_PROPOSALS.length}`,
+          planCode: plan.code,
+          room: plan.room,
+          item,
+          qty,
+          reason,
+          status: 'Chờ CSVC duyệt'
+        });
+        renderMaintList();
+        notifyToast(`Đã gửi phiếu đề xuất ${item} (×${qty}) về Phòng CSVC`);
+        openChecklistDrawer(code);
+      });
+    });
+  }
+
+  // Hoàn tất đợt bảo trì & mở khóa vận hành phòng học (PB-88)
+  const unlockBtn = drawerEl.querySelector('#btnUnlockRoom');
+  if (unlockBtn) {
+    unlockBtn.addEventListener('click', () => {
+      if (!plan.checks.every((c) => c.state !== null)) return;
+
+      runWithLock(unlockBtn, () => {
+        plan.status = 'completed';
+        plan.unlockedAt = 'Vừa xong · Hôm nay';
+        closeChecklistDrawer();
+        renderMaintList();
+        notifyToast(`Đã mở lại trạng thái "Hoạt động bình thường" cho phòng ${plan.room}`);
+      });
+    });
+  }
 }
 
-/* =====================================================
-   KHỞI TẠO
-   ===================================================== */
+/* ===== 5. Khởi tạo trang UA3 ===== */
 function initUA3() {
-  $('dateChip').innerHTML = `${icon('calendar')} Thứ Hai, 26/10/2026`;
-  $('pageAlert').innerHTML = alertBox('brand', '', 'Báo sự cố trực tiếp trên hệ thống để không bị trôi tin nhắn. Hệ thống tự chuyển đến bộ phận xử lý, bạn không cần liên hệ ai.');
-  $('noteInc').innerHTML = `${icon('bell')} Bạn sẽ nhận thông báo khi sự cố được tiếp nhận, đang sửa hoặc đã xử lý.`;
+  renderMaintList();
 
-  const fr = document.querySelector('.footer-inner span:last-child');
-  if (fr) fr.textContent = 'Theo dõi kết quả trực tiếp trên hệ thống';
+  document.getElementById('btnOpenPlanModal')?.addEventListener('click', openCreatePlanModal);
 
-  // Quét mã QR dán tại phòng: trang mở với ?room=A.301 -> chọn sẵn "Phòng" và phòng đó
-  const qrRoom = new URLSearchParams(location.search).get('room');
-  const matched = qrRoom && ROOMS.find(r => r === qrRoom || r === 'Phòng ' + qrRoom);
-  if (matched) {
-    f.kind = 'room';
-    f.target = matched;
-    $('pageNotice').innerHTML = alertBox('info', `Bạn đang báo sự cố cho ${matched}`, 'Phòng được chọn sẵn từ mã QR dán tại phòng. Bạn vẫn có thể đổi nếu cần.');
-  }
-
-  renderForm();
-  renderList();
-
-  $('incTabs').addEventListener('click', e => {
-    const t = e.target.closest('.tab');
-    if (t) { tab = t.dataset.filter; renderList(); }
+  document.getElementById('maintTabs')?.addEventListener('click', (e) => {
+    const tab = e.target.closest('.tab');
+    if (tab) setMaintTab(tab.dataset.tab);
   });
-  $('incList').addEventListener('click', e => {
-    const d = e.target.closest('[data-detail]');
-    if (d) openDetail(d.dataset.detail);
-    if (e.target.closest('[data-all]')) { tab = 'all'; renderList(); }
-  });
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-  initUA3();
-  layoutReady.then(initBell);
-});
+  ['mSearch', 'mRoomType'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener(id === 'mSearch' ? 'input' : 'change', renderMaintList);
+  });
+
+  document.getElementById('maintList')?.addEventListener('click', (e) => {
+    const lockBtn = e.target.closest('[data-lock]');
+    if (lockBtn) return lockRoomForMaintenance(lockBtn.dataset.lock);
+
+    const chkBtn = e.target.closest('[data-checklist]');
