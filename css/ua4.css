@@ -1,0 +1,245 @@
+/* css/tech-equipment.css | UA4 - Hồ sơ kỹ thuật & giám sát thiết bị */
+:root {
+  --vlu-red: #d71920;
+  --vlu-red-dark: #b31218;
+  --vlu-red-soft: #fff5f5;
+  --vlu-border: #f3d1d3;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --bg-page: #f9fafb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Vùng nội dung chính khớp Header (64px) và Sidebar (250px) */
+.ua4-main {
+  margin-left: 250px;
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+}
+
+.ua4-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ua4-title h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  color: var(--vlu-red);
+}
+
+.ua4-title p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ua4-export-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* Thẻ thống kê nhanh (F90 / PB-90) */
+.ua4-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid var(--vlu-border);
+  border-top: 3px solid var(--vlu-red);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.stat-value.red { color: var(--vlu-red); }
+
+/* Khối nội dung & Thanh tra cứu (F88 / PB-89) */
+.ua4-card {
+  background: #ffffff;
+  border: 1px solid var(--vlu-border);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.ua4-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ua4-input, .ua4-select {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #ffffff;
+}
+
+.ua4-input { flex: 1; min-width: 220px; }
+
+.ua4-input:focus, .ua4-select:focus {
+  outline: none;
+  border-color: var(--vlu-red);
+}
+
+/* Nút bấm Đỏ - Trắng */
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: 0.15s ease;
+}
+
+.btn-red {
+  background: var(--vlu-red);
+  color: #ffffff;
+}
+.btn-red:hover { background: var(--vlu-red-dark); }
+
+.btn-outline {
+  background: #ffffff;
+  color: var(--vlu-red);
+  border-color: var(--vlu-border);
+}
+.btn-outline:hover { background: var(--vlu-red-soft); }
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* Bảng danh mục thiết bị */
+.ua4-table-wrap { overflow-x: auto; }
+
+.ua4-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ua4-table th {
+  background: var(--vlu-red-soft);
+  color: var(--vlu-red);
+  text-align: left;
+  padding: 11px 12px;
+  border-bottom: 2px solid var(--vlu-red);
+  font-weight: 700;
+}
+
+.ua4-table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.ua4-table tr:hover td { background: #fffafa; }
+
+/* Nhãn trạng thái thiết bị */
+.status-pill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.status-ready { background: #ecfdf5; color: #047857; }
+.status-busy  { background: #fef3c7; color: #b45309; }
+.status-maint { background: #fee2e2; color: var(--vlu-red); }
+
+.action-group {
+  display: flex;
+  gap: 6px;
+}
+
+/* Ghi chú Business Rule (BR1 & BR2) */
+.ua4-note {
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--vlu-red-soft);
+  border-left: 3px solid var(--vlu-red);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #7f1d1d;
+}
+
+/* Modal cập nhật thông số / điều chuyển phòng */
+.ua4-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.45);
+  display: none;
+  place-items: center;
+  z-index: 200;
+  padding: 16px;
+}
+.ua4-modal.open { display: grid; }
+
+.modal-box {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 12px;
+  border-top: 4px solid var(--vlu-red);
+  padding: 20px;
+}
+
+.modal-box h3 {
+  margin: 0 0 14px;
+  font-size: 16px;
+  color: var(--vlu-red);
+}
+
+.form-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.form-row label { font-weight: 600; }
+
+.modal-foot {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .ua4-stats { grid-template-columns: repeat(2, 1fr); }
+}
