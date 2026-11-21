@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Mượn – trả phòng | Văn Lang</title>
+  <title>Tiếp nhận &amp; xử lý sự cố | Đội ngũ Kỹ thuật – VLU</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../css/ua1.css">
   <link rel="stylesheet" href="../css/ua1-modal.css">
 </head>
-<body data-page="ua1">
+<body data-page="tech-incident">
 
   <!-- Header: nạp từ components/header.html -->
   <div id="app-header"></div>
@@ -24,89 +24,92 @@
       <main class="page">
         <div class="page-head">
           <div>
-            <h1>Mượn – trả phòng</h1>
-            <p class="sub">Tìm không gian phù hợp, gửi yêu cầu và theo dõi lịch mượn của bạn.</p>
+            <h1>Tiếp nhận &amp; xử lý sự cố phòng học / thiết bị</h1>
+            <p class="sub">Theo dõi phiếu báo hỏng thuộc cơ sở phụ trách, phân loại mức độ ưu tiên và nghiệm thu sau sửa chữa (UA1).</p>
           </div>
-          <div class="date-chip" id="dateChip"></div>
+          <div class="date-chip">Phạm vi phụ trách: <strong>Cơ sở chính (BR1)</strong></div>
         </div>
 
-        <div class="layout">
-          <!-- Cột trái: Tìm phòng -->
-          <section class="card" id="searchCard">
-            <div class="card-head">
-              <h2>Tìm phòng</h2>
-              <span class="hint-ok" id="hintOk"></span>
+        <!-- Cảnh báo tự động cho ca Khẩn cấp cần phản hồi trong 15 phút (BR2) -->
+        <div id="slaAlert"></div>
+
+        <!-- Thống kê nhanh trạng thái xử lý sự cố -->
+        <section class="stats-grid" aria-label="Thống kê phiếu sự cố">
+          <article class="stat-card">
+            <span class="stat-label">Chờ tiếp nhận</span>
+            <strong class="stat-val" id="statPending">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Đang xử lý / Chờ linh kiện</span>
+            <strong class="stat-val" id="statActive">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Khẩn cấp chưa hoàn tất</span>
+            <strong class="stat-val urgent" id="statUrgent">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Đã nghiệm thu hôm nay</span>
+            <strong class="stat-val ok" id="statDone">0</strong>
+          </article>
+        </section>
+
+        <!-- Danh sách phiếu báo sự cố & Bộ lọc (F75 - F78) -->
+        <section class="card">
+          <div class="card-head">
+            <h2>Danh sách phiếu sự cố kỹ thuật</h2>
+            <span class="count" id="ticketCount">0 phiếu</span>
+          </div>
+
+          <!-- Tab lọc theo trạng thái phiếu -->
+          <div class="tabs" id="ticketTabs" role="tablist">
+            <button type="button" class="tab active" data-status="all">Tất cả</button>
+            <button type="button" class="tab" data-status="pending">Chờ tiếp nhận</button>
+            <button type="button" class="tab" data-status="processing">Đang xử lý</button>
+            <button type="button" class="tab" data-status="waiting_parts">Chờ linh kiện / Đổi máy</button>
+            <button type="button" class="tab" data-status="resolved">Đã hoàn tất</button>
+          </div>
+
+          <!-- Thanh tìm kiếm & lọc theo tòa nhà, mức độ ưu tiên -->
+          <form class="filter" id="filterForm">
+            <div class="field wide">
+              <label for="qSearch">Tìm kiếm phiếu / thiết bị</label>
+              <input type="text" id="qSearch" placeholder="Nhập mã phiếu (SC-204), phòng học, mã tài sản hoặc người báo...">
             </div>
-
-            <form class="filter" id="searchForm">
-              <div class="field">
-                <label for="fDate">Ngày mượn</label>
-                <input type="date" id="fDate" value="2026-10-27" required>
-              </div>
-              <div class="field">
-                <label for="fStart">Giờ bắt đầu</label>
-                <input type="time" id="fStart" value="09:00" required>
-              </div>
-              <div class="field">
-                <label for="fEnd">Giờ kết thúc</label>
-                <input type="time" id="fEnd" value="11:00" required>
-              </div>
-              <div class="field wide">
-                <label for="fCap">Sức chứa tối thiểu</label>
-                <select id="fCap">
-                  <option value="0">Tất cả sức chứa</option>
-                  <option value="20">Từ 20 chỗ</option>
-                  <option value="40">Từ 40 chỗ</option>
-                  <option value="50">Từ 50 chỗ</option>
-                  <option value="100">Từ 100 chỗ</option>
-                  <option value="350">Từ 350 chỗ</option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary" id="btnSearch"></button>
-            </form>
-
-            <div id="searchBanner"></div>
-
-            <div class="result-bar">
-              <strong id="resCount"></strong>
-              <span id="resTime"></span>
+            <div class="field">
+              <label for="qBuilding">Tòa nhà / Khu vực</label>
+              <select id="qBuilding">
+                <option value="all">Tất cả khu vực</option>
+                <option value="Tòa A">Tòa A</option>
+                <option value="Tòa B">Tòa B</option>
+                <option value="Khu Lab">Khu Lab</option>
+              </select>
             </div>
-
-            <div class="room-grid" id="roomGrid"></div>
-
-            <p class="note" id="noteCheck"></p>
-          </section>
-
-          <!-- Cột phải: Đơn của tôi -->
-          <aside class="card">
-            <div class="card-head">
-              <h2>Đơn của tôi</h2>
-              <span class="count" id="orderCount"></span>
+            <div class="field">
+              <label for="qPriority">Mức độ ưu tiên</label>
+              <select id="qPriority">
+                <option value="all">Tất cả mức độ</option>
+                <option value="urgent">Khẩn cấp (Đang có tiết)</option>
+                <option value="medium">Trung bình</option>
+                <option value="low">Thấp</option>
+              </select>
             </div>
+          </form>
 
-            <div id="orderBanner"></div>
+          <!-- Vùng render danh sách phiếu sự cố từ ua1.js -->
+          <div class="ticket-list" id="ticketList"></div>
 
-            <div class="tabs" id="orderTabs">
-              <button class="tab active" data-filter="all">Tất cả</button>
-              <button class="tab" data-filter="pending">Chờ duyệt</button>
-              <button class="tab" data-filter="approved">Đã duyệt</button>
-              <button class="tab" data-filter="rejected">Bị từ chối</button>
-              <button class="tab" data-filter="soon">Sắp hết giờ</button>
-            </div>
-
-            <div class="order-list" id="orderList"></div>
-
-            <p class="note key-note" id="noteKey"></p>
-          </aside>
-        </div>
+          <p class="note">
+            <strong>Quy định vận hành (BR1 – BR4):</strong> Chỉ tiếp nhận phiếu thuộc cơ sở được phân công; ca <b>Khẩn cấp</b> phản hồi trong 15 phút; thiết bị lỗi nặng tự động khóa mượn và bắt buộc đính kèm ảnh/biên bản nghiệm thu trước khi đóng phiếu.
+          </p>
+        </section>
       </main>
 
+      <!-- Footer: nạp từ main.js -->
       <div id="app-footer"></div>
     </div>
   </div>
 
-  <!-- Nhắc nhở nổi + khung modal -->
-  <div id="reminder"></div>
+  <!-- Khung hiển thị Modal & Drawer chi tiết phiếu (ua1-modals.js) -->
   <div id="modalRoot"></div>
 
   <script src="../js/main.js"></script>
