@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Thống kê sử dụng phòng | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="manager-stats">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Thống kê sử dụng phòng</h1>
+            <p class="sub">Số liệu chỉ gồm yêu cầu đã duyệt và sự kiện của trường. Chọn khoảng thời gian rồi xuất báo cáo Excel hoặc PDF.</p>
+          </div>
+          <div class="page-actions"><button type="button" class="btn btn-outline" id="btnXlsx"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Xuất Excel</button><button type="button" class="btn btn-primary" id="btnPdf"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Xuất PDF</button></div>
+        </div>
+
+        <section class="card" style="margin-bottom:20px">
+          <div class="toolbar toolbar-card" style="border-bottom:none">
+            <div class="chips" id="typeChips" role="group" aria-label="Loại phòng"></div>
+            <span class="spacer"></span>
+            <label class="mono-note" for="sFrom">Từ</label><input class="input" type="date" id="sFrom" value="2026-09-01">
+            <label class="mono-note" for="sTo">đến</label><input class="input" type="date" id="sTo" value="2026-11-23">
+          </div>
+        </section>
+        <div id="statErr"></div>
+        <section class="card kpi-strip three" id="kpis" aria-label="Chỉ số chính"></section>
+        <div class="grid-2">
+          <section class="card" aria-labelledby="mTitle"><div class="card-head"><h2 id="mTitle">Số sự kiện theo tháng</h2></div><div class="card-body" id="monthChart" role="img" aria-label="Biểu đồ cột số sự kiện theo tháng"></div></section>
+          <section class="card" aria-labelledby="uTitle"><div class="card-head"><h2 id="uTitle">Tỷ lệ sử dụng từng phòng</h2></div><div class="card-body"><div class="hbars" id="roomChart"></div></div></section>
+        </div>
+        <section class="card" style="margin-top:20px" aria-labelledby="tTitle">
+          <div class="card-head"><h2 id="tTitle" >Đơn vị mượn nhiều nhất</h2></div>
+          <div class="tbl-wrap"><table class="tbl"><thead><tr><th scope="col">Đơn vị</th><th scope="col" class="num">Số lượt mượn</th><th scope="col" class="num">Tổng giờ</th><th scope="col">Loại phòng thường mượn</th></tr></thead><tbody id="topRows"></tbody></table></div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/manager-stats.js"></script>
+</body>
+</html>

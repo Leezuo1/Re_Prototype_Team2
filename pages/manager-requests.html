@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Duyệt yêu cầu mượn phòng | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="manager-requests">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Duyệt yêu cầu mượn phòng</h1>
+            <p class="sub">Phòng học do Phòng Đào tạo duyệt, hội trường do TT Hỗ trợ SV, phòng họp do Quản lý CSVC. Mỗi yêu cầu được kiểm tra trùng lịch trước khi duyệt.</p>
+          </div>
+        </div>
+
+        <div class="inbox">
+          <section class="card inbox-list" aria-label="Danh sách yêu cầu">
+            <div class="inbox-tools">
+              <div class="chips" id="typeChips" role="group" aria-label="Loại phòng"></div>
+              <div class="search" style="max-width:none">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input class="input" id="q" type="search" placeholder="Tìm người mượn, đơn vị, phòng" aria-label="Tìm yêu cầu">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <select class="select" id="fStatus" aria-label="Trạng thái"></select>
+                <input class="input" type="date" id="fDate" aria-label="Ngày mượn">
+              </div>
+            </div>
+            <div class="req-items" id="reqItems" role="listbox" aria-label="Yêu cầu mượn phòng"></div>
+          </section>
+
+          <section class="card detail" id="detail" aria-label="Chi tiết yêu cầu"></section>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/manager-requests.js"></script>
+</body>
+</html>
