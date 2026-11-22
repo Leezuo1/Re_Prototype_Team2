@@ -72,7 +72,7 @@
     renderRequests();
     renderRooms();
   });
-  const occupied = ignore => sharedBookings.concat(state.schedule,state.requests.filter(r=>['approved','pending'].includes(r.status)&&r.id!==ignore));
+  const occupied = ignore => sharedBookings.concat(state.schedule,state.requests.filter(r=>['approved','pending'].includes(r.status)&&r.id!==ignore),state.requests.filter(r=>r.pendingChange&&r.id!==ignore).map(r=>r.pendingChange));
   function conflict(room,date,start,end,ignore) {
     return occupied(ignore).find(r=>r.room===room&&r.date===date&&mins(start)<mins(r.end)&&mins(end)>mins(r.start));
   }
@@ -81,8 +81,10 @@
     if(stamp(date,start)<Date.now()) return 'Chọn thời gian bắt đầu trong tương lai.';
     return '';
   }
-  function canChange(r) { return ['pending','approved'].includes(r.status)&&stamp(r.date,r.start)>Date.now(); }
-  function canExtend(r) { return r.status==='approved'&&Date.now()<stamp(r.date,r.end); }
+  function canChange(r) { return ['pending','approved'].includes(r.status)&&!r.pendingChange&&stamp(r.date,r.start)>Date.now(); }
+  function canExtend(r) { return r.status==='approved'&&!r.pendingChange&&Date.now()<stamp(r.date,r.end); }
+  // Giá trị minh họa cho cấu hình của Admin, đơn vị là phút.
+  const extensionLimitMinutes = 240;
   const shifts = [
     ['07:00', '09:25', 'Tiết 1–3'],
     ['09:35', '12:00', 'Tiết 4–6'],
@@ -183,19 +185,47 @@
   }
   function detailBody(r) {
     const room=roomById(r.room);
-    return '<dl class="teacher-detail-grid"><dt>Phòng</dt><dd>'+esc(r.room)+' · '+types[room.type]+'</dd><dt>Thời gian</dt><dd>'+fmt(r.date)+' · '+r.start+' – '+r.end+'</dd><dt>Mục đích</dt><dd>'+esc(r.purpose)+'</dd><dt>Trạng thái</dt><dd>'+labels[r.status]+'</dd><dt>Đơn vị duyệt</dt><dd>'+esc(r.approver)+'</dd><dt>Tờ trình</dt><dd>'+esc(r.proposal||'—')+'</dd>'+(r.decision?'<dt>Quyết định</dt><dd>'+esc(r.decision)+'</dd>':'')+'</dl><ol class="teacher-history">'+r.history.map(h=>'<li><small>'+esc(h.at)+'</small><p>'+esc(h.text)+'</p></li>').join('')+'</ol>';
+    return '<dl class="teacher-detail-grid"><dt>Phòng</dt><dd>'+esc(r.room)+' · '+types[room.type]+'</dd><dt>Thời gian</dt><dd>'+fmt(r.date)+' · '+r.start+' – '+r.end+'</dd><dt>Mục đích</dt><dd>'+esc(r.purpose)+'</dd><dt>Trạng thái</dt><dd>'+labels[r.status]+'</dd><dt>Đơn vị duyệt</dt><dd>'+esc(r.approver)+'</dd><dt>Tờ trình</dt><dd>'+esc(r.proposal||'—')+'</dd>'+(r.decision?'<dt>Quyết định</dt><dd>'+esc(r.decision)+'</dd>':'')+'</dl>'+(r.pendingChange?'<p>Đang chờ duyệt đổi sang '+esc(r.pendingChange.room)+' · '+fmt(r.pendingChange.date)+' · '+r.pendingChange.start+' – '+r.pendingChange.end+'. Lịch cũ vẫn được giữ.</p><button class="teacher-button" id="approveChange">Giả lập duyệt đổi lịch</button> <button class="teacher-button" id="rejectChange">Giả lập từ chối</button>':'')+'<ol class="teacher-history">'+r.history.map(h=>'<li><small>'+esc(h.at)+'</small><p>'+esc(h.text)+'</p></li>').join('')+'</ol>';
   }
   function actionModal(r,mode) {
     $('teacherActionTitle').textContent=mode==='extend'?'Gia hạn sử dụng phòng':mode==='cancel'?'Hủy lịch mượn':'Chi tiết '+r.id;
     let body=detailBody(r);
+    if(mode==='detail' && r.status==='approved' && Date.now()>=stamp(r.date,r.start)) {
+      body+='<button class="teacher-button" id="simulateReturn">Giả lập Bảo vệ xác nhận trả phòng</button>';
+    }
     if(mode==='extend') {
       const next=occupied(r.id).filter(x=>x.room===r.room&&x.date===r.date&&x.start>=r.end).sort((a,b)=>a.start.localeCompare(b.start))[0];
       const nextShift = roomById(r.room).type === 'classroom' ? shifts.find(([start]) => start >= r.end) : null;
-      body='<p class="teacher-action-summary">'+esc(r.room)+' · '+fmt(r.date)+' · Kết thúc hiện tại: '+r.end+'</p><form id="teacherExtensionForm"><label class="teacher-field"><span>Giờ kết thúc mới *</span><input type="time" id="teacherExtensionEnd" required value="'+clock(Math.min(mins(r.end)+15,1439))+'"></label>'+(nextShift ? '<button type="button" class="teacher-text-button" id="teacherNextShift" data-end="'+nextShift[1]+'">Gia hạn đến hết ca '+(shifts.indexOf(nextShift)+1)+' · '+nextShift[1]+'</button>' : '')+'<label class="teacher-field"><span>Lý do gia hạn *</span><textarea id="teacherExtensionReason" required rows="3"></textarea></label>'+(next?'<p>Lịch kế tiếp bắt đầu lúc <b>'+next.start+'</b>.</p>':'')+'<p id="teacherExtensionError" class="teacher-form-error" role="alert"></p><button class="teacher-button teacher-button-primary">Gửi yêu cầu gia hạn</button></form>';
+      body='<p class="teacher-action-summary">'+esc(r.room)+' · '+fmt(r.date)+' · Kết thúc hiện tại: '+r.end+'</p><form id="teacherExtensionForm"><label class="teacher-field"><span>Giờ kết thúc mới *</span><input type="time" id="teacherExtensionEnd" required value="'+clock(Math.min(mins(r.end)+15,1439))+'"></label>'+(nextShift ? '<button type="button" class="teacher-text-button" id="teacherNextShift" data-end="'+nextShift[1]+'">Gia hạn đến hết ca '+(shifts.indexOf(nextShift)+1)+' · '+nextShift[1]+'</button>' : '')+'<p>Giới hạn minh họa: '+extensionLimitMinutes+' phút mỗi lần.</p><label class="teacher-field"><span>Lý do gia hạn *</span><textarea id="teacherExtensionReason" required rows="3"></textarea></label>'+(next?'<p>Lịch kế tiếp bắt đầu lúc <b>'+next.start+'</b>.</p>':'')+'<p id="teacherExtensionError" class="teacher-form-error" role="alert"></p><button class="teacher-button teacher-button-primary">Gửi yêu cầu gia hạn</button></form>';
     }
     if(mode==='cancel') body+='<form id="teacherCancellationForm"><label class="teacher-field"><span>Lý do hủy *</span><textarea id="teacherCancellationReason" required rows="2"></textarea></label><p id="teacherCancellationError" class="teacher-form-error" role="alert"></p><button class="teacher-button teacher-button-primary">Xác nhận hủy lịch</button></form>';
     $('teacherActionBody').innerHTML=body;
     openLayer('teacherActionModal');
+    $('simulateReturn')?.addEventListener('click',withCurrentSchedule(()=>{
+      const current=state.requests.find(item=>item.id===r.id);
+      if(!current || current.status!=='approved' || Date.now()<stamp(current.date,current.start))return;
+      current.status='returned';
+      delete current.pendingChange;
+      log(current,'Bảo vệ xác nhận trả phòng (giả lập).');
+      save();renderRequests();renderRooms();closeLayer('teacherActionModal');toast('Đã giả lập xác nhận trả phòng.');
+    }));
+    $('approveChange')?.addEventListener('click',withCurrentSchedule(()=>{
+      const current=state.requests.find(item=>item.id===r.id);
+      if(!current?.pendingChange)return;
+      const change=current.pendingChange;
+      if(conflict(change.room,change.date,change.start,change.end,current.id)){toast('Lịch mới không còn trống.');return;}
+      Object.assign(current,change);
+      delete current.pendingChange;
+      log(current,'Yêu cầu đổi lịch đã được duyệt, lịch cũ được giải phóng.');
+      save();renderRequests();renderRooms();closeLayer('teacherActionModal');toast('Đã duyệt đổi lịch.');
+    }));
+    $('rejectChange')?.addEventListener('click',withCurrentSchedule(()=>{
+      const current=state.requests.find(item=>item.id===r.id);
+      if(!current?.pendingChange)return;
+      delete current.pendingChange;
+      log(current,'Yêu cầu đổi lịch bị từ chối, lịch cũ được giữ.');
+      save();renderRequests();renderRooms();closeLayer('teacherActionModal');toast('Đã từ chối đổi lịch, lịch cũ vẫn được giữ.');
+    }));
     const shiftButton = $('teacherNextShift');
     if (shiftButton) shiftButton.onclick = () => { $('teacherExtensionEnd').value = shiftButton.dataset.end; };
     $('teacherExtensionForm')?.addEventListener('submit',withCurrentSchedule(()=>{
@@ -203,6 +233,11 @@
       if (!r) return;
       const end=$('teacherExtensionEnd').value,reason=$('teacherExtensionReason').value.trim();
       let error=!canExtend(r)?'Chỉ có thể gia hạn lịch đã duyệt và chưa hết giờ.':!reason?'Nhập lý do gia hạn.':!end||end<=r.end?'Giờ mới phải sau giờ kết thúc hiện tại.':'';
+      if(!error && mins(end)-mins(r.end)>extensionLimitMinutes) error='Mỗi lần gia hạn tối đa '+extensionLimitMinutes+' phút.';
+      if(!error && roomById(r.room).type==='classroom') {
+        const nextShift=shifts.find(([start])=>start>=r.end);
+        if(!nextShift || end!==nextShift[1]) error='Chọn gia hạn đến hết ca học kế tiếp.';
+      }
       const hit=!error&&conflict(r.room,r.date,r.end,end,r.id);
       if(hit) error='Không thể gia hạn: phòng có lịch '+hit.start+' – '+hit.end+'. Giờ kết thúc vẫn là '+r.end+'.';
       if(error) {
@@ -219,7 +254,7 @@
       if (!r) return;
       const reason=$('teacherCancellationReason').value.trim();
       if(!canChange(r)||!reason) { $('teacherCancellationError').textContent='Cần lý do hủy và lịch chưa bắt đầu.';return; }
-      r.status='cancelled'; log(r,'Đã hủy lịch, giải phóng phòng và thông báo Bảo vệ. Lý do: '+reason);
+      r.status='cancelled'; delete r.pendingChange; log(r,'Đã hủy lịch, giải phóng phòng và thông báo Bảo vệ. Lý do: '+reason);
       save();renderRequests();renderRooms();closeLayer('teacherActionModal');toast('Đã hủy lịch '+r.id+'.');
     }));
   }
@@ -247,8 +282,14 @@
     if(hit)error='Phòng có lịch '+hit.start+' – '+hit.end+'. Chọn khung giờ khác.';
     if(error){$('teacherFormError').textContent=error;return;}
     const r=old||base('GV-'+Date.now(),room.id,date,start,end,purpose,'pending');
-    if(old)log(r,'Đã gửi đổi lịch từ '+fmt(r.date)+' '+r.start+' – '+r.end+'. Giải phóng lịch cũ và thông báo Bảo vệ; lịch mới chờ '+room.approver+' duyệt.');
-    Object.assign(r,{room:room.id,approver:room.approver,date,start,end,purpose,status:'pending',proposal:$('teacherProposal').files[0]?.name||r.proposal,decision:room.type==='hall'?($('teacherDecision').files[0]?.name||r.decision):''});
+    const updated={room:room.id,approver:room.approver,date,start,end,purpose,proposal:$('teacherProposal').files[0]?.name||r.proposal,decision:room.type==='hall'?($('teacherDecision').files[0]?.name||r.decision):''};
+    if(old?.status==='approved') {
+      r.pendingChange=updated;
+      log(r,'Đã gửi yêu cầu đổi lịch. Lịch cũ được giữ trong khi chờ '+room.approver+' duyệt.');
+    } else {
+      Object.assign(r,updated,{status:'pending'});
+      if(old)log(r,'Đã cập nhật yêu cầu chờ duyệt.');
+    }
     if(!old)state.requests.unshift(r);
     save();filter='all';renderRequests();closeLayer('teacherModal');booking=null;renderRooms();
     toast('Đã gửi trực tiếp đến '+room.approver+'.');
