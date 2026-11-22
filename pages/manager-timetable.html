@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Thời khóa biểu | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="manager-timetable">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Thời khóa biểu học kỳ</h1>
+            <p class="sub">Phòng Đào tạo nhập thời khóa biểu để khóa khung giờ học trên lịch phòng. Thời khóa biểu được ưu tiên hơn lịch mượn.</p>
+          </div>
+          <div class="page-actions"><button type="button" class="btn btn-outline" id="btnTemplate"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Tải file mẫu</button></div>
+        </div>
+
+        <div id="ttBanner"></div>
+        <section class="card card-pad">
+          <div class="stepper" id="stepper" aria-label="Các bước nhập thời khóa biểu"></div>
+          <div id="stepBody"></div>
+        </section>
+
+        <section class="card" style="margin-top:20px">
+          <div class="card-head"><h2>Lịch sử nhập</h2></div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th scope="col">Thời điểm</th><th scope="col">Học kỳ</th><th scope="col">Người nhập</th><th scope="col">Tệp</th><th scope="col" class="num">Buổi đã tạo</th><th scope="col">Chế độ</th></tr></thead>
+              <tbody id="histRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/manager-timetable.js"></script>
+</body>
+</html>

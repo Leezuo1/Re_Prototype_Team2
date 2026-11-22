@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Phân công người duyệt | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="admin-approvers">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Phân công người duyệt</h1>
+            <p class="sub">Mỗi loại phòng có một đơn vị quản lý. Yêu cầu mượn phòng được hệ thống tự chuyển đến người duyệt theo bảng này.</p>
+          </div>
+        </div>
+
+        <div id="assignBanner"></div>
+        <section class="card" aria-label="Bảng phân công người duyệt">
+          <div class="assign-head" aria-hidden="true"><span>Loại phòng</span><span>Người duyệt chính (bắt buộc)</span><span>Người duyệt dự phòng</span></div>
+          <div id="assignRows"></div>
+        </section>
+        <div class="savebar" id="savebar" hidden>
+          <span id="saveText">Có thay đổi chưa lưu</span>
+          <div style="display:flex;gap:10px"><button type="button" class="btn btn-outline" id="btnReset">Hoàn tác</button><button type="button" class="btn btn-primary" id="btnSave">Lưu phân công</button></div>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/admin-approvers.js"></script>
+</body>
+</html>

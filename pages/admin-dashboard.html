@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tổng quan hệ thống | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="admin-dashboard">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Tổng quan hệ thống</h1>
+            <p class="sub">Tình hình sử dụng phòng, thiết bị và các việc cần xử lý.</p>
+          </div>
+          <div class="live-chip" title="Số liệu tự cập nhật"><span class="dot"></span>Cập nhật lúc <b id="liveTime">--:--</b></div>
+        </div>
+
+        <section class="card kpi-strip" id="kpis" aria-label="Chỉ số chính"></section>
+
+        <div class="grid-2">
+          <section class="card" aria-labelledby="attnTitle">
+            <div class="card-head">
+              <h2 id="attnTitle">Cần chú ý</h2>
+              <span class="hint" id="attnCount"></span>
+            </div>
+            <div class="card-body" style="padding-bottom:14px">
+              <div class="chips" id="attnChips"></div>
+            </div>
+            <ul class="attn" id="attnList"></ul>
+          </section>
+
+          <div class="stack">
+            <section class="card" aria-labelledby="usageTitle">
+              <div class="card-head">
+                <h2 id="usageTitle">Tỷ lệ sử dụng phòng học theo tuần</h2>
+              </div>
+              <div class="card-body" id="usageChart" role="img" aria-label="Biểu đồ cột tỷ lệ sử dụng phòng học 8 tuần gần nhất"></div>
+            </section>
+            <section class="card" aria-labelledby="typeTitle">
+              <div class="card-head">
+                <h2 id="typeTitle">Yêu cầu theo loại phòng</h2>
+                <span class="hint">Tháng 11/2026</span>
+              </div>
+              <div class="card-body">
+                <div class="hbars" id="typeChart"></div>
+                <div class="legend">
+                  <span><i style="background:var(--primary)"></i>Đã duyệt</span>
+                  <span><i style="background:#b9bec9"></i>Chờ duyệt</span>
+                  <span><i style="background:#dfe2e8"></i>Từ chối</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/admin-dashboard.js"></script>
+</body>
+</html>

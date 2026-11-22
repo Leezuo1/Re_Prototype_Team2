@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Duyệt dạy bù | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="manager-makeup">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Duyệt đăng ký dạy bù</h1>
+            <p class="sub">Kiểm tra buổi đã nghỉ, sĩ số và lịch của lớp trước khi xếp phòng bù. Buổi bù được duyệt sẽ thêm vào thời khóa biểu với nhãn “Dạy bù”.</p>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="toolbar toolbar-card">
+            <div class="chips" id="stChips" role="group" aria-label="Trạng thái"></div>
+            <span class="spacer"></span>
+            <div class="search" style="flex:0 1 280px"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input class="input" id="q" type="search" placeholder="Tìm giảng viên, môn, lớp" aria-label="Tìm đăng ký dạy bù"></div>
+          </div>
+          <div id="mkList"></div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/manager-makeup.js"></script>
+</body>
+</html>
