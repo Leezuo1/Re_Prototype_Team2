@@ -23,8 +23,10 @@ function icon(name, cls = '') {
    Trang vẫn khởi tạo trong khi các thành phần dùng chung được tải.
    Lưu ý: phải mở web bằng Live Server (không bấm đúp file .html)
    ===================================================== */
+/* Trang trong pages/ tải từ ../components/; trang ở thư mục gốc (index.html) đặt <body data-root> */
+const IS_ROOT = document.body.hasAttribute('data-root');
 async function loadPartial(file) {
-  const response = await fetch('../components/' + file);
+  const response = await fetch((IS_ROOT ? '' : '../') + 'components/' + file);
   if (!response.ok) return null;
   return response.text();
 }
@@ -36,6 +38,17 @@ function showLayoutError() {
     'Hãy mở web bằng <b>Live Server</b> (VS Code) hoặc chạy <code>python -m http.server</code> trong thư mục project, ' +
     'đừng bấm đúp mở file .html trực tiếp.';
   document.body.prepend(box);
+}
+
+/* Đường dẫn trong header/sidebar viết cho trang trong pages/. Ở thư mục gốc thì đổi lại cho đúng. */
+function fixRootPaths(root) {
+  if (!IS_ROOT) return;
+  root.querySelectorAll('a[href]').forEach(a => {
+    const h = a.getAttribute('href');
+    if (/^(https?:|#|mailto:)/.test(h)) return;
+    a.setAttribute('href', h.startsWith('../') ? h.slice(3) : 'pages/' + h);
+  });
+  root.querySelectorAll('img[src^="../"]').forEach(i => i.setAttribute('src', i.getAttribute('src').slice(3)));
 }
 
 function setGroupOpen(group, open) {
@@ -79,8 +92,8 @@ async function mountLayout() {
   }
 
   if (headerHtml === null || sideHtml === null) { showLayoutError(); return false; }
-  if (headerHolder) headerHolder.innerHTML = headerHtml;
-  if (sideHolder) { sideHolder.innerHTML = sideHtml; initSidebar(sideHolder); }
+  if (headerHolder) { headerHolder.innerHTML = headerHtml; fixRootPaths(headerHolder); }
+  if (sideHolder) { sideHolder.innerHTML = sideHtml; fixRootPaths(sideHolder); initSidebar(sideHolder); }
   return true;
 }
 

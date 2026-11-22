@@ -2,10 +2,96 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=pages/ua1.html">
-  <title>Hệ thống Quản lý phòng học & thiết bị</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trang chủ | Hệ thống Quản lý phòng học &amp; thiết bị</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
-<body>
-  <a href="pages/ua1.html">Vào trang Mượnn – trả phòng</a>
+<body data-page="home" data-root>
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page hub">
+    <div class="hub-head"
+      <h1>Hệ thống Quản lý phòng học &amp; thiết bị</h1>
+      <p class="sub">Chọn vai trò và chức năng để mở màn hình tương ứng. Nhận và trả trực tiếp tại Phòng CSVC.</p>
+    </div>
+
+    <div class="hub-grid">
+
+      <section class="role" aria-labelledby="r-sv">
+        <div class="role-head">
+          <h2 id="r-sv">Sinh viên</h2>
+          <span class="count">3 màn hình</span>
+        </div>
+        <p class="role-desc">Mượn phòng, mượn thiết bị và báo cáo sự cố.</p>
+        <ul class="links">
+          <li><a href="pages/ua1.html"><span><b>Mượn – trả phòng</b><small>Tìm phòng theo ngày, gửi yêu cầu và theo dõi đơn của tôi</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/ua2.html"><span><b>Mượn – trả thiết bị</b><small>Mượn theo danh mục, nhận mã QR và theo dõi phiếu mượn</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/ua3.html"><span><b>Báo cáo sự cố</b><small>Báo sự cố của phòng hoặc thiết bị và xem tiến độ xử lý</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+        </ul>
+      </section>
+
+      <section class="role" aria-labelledby="r-gv">
+        <div class="role-head">
+          <h2 id="r-gv">Giảng viên</h2>
+          <span class="count">3 màn hình</span>
+        </div>
+        <p class="role-desc">Đặt phòng giảng dạy, mượn thiết bị và báo sự cố tại lớp.</p>
+        <ul class="links">
+          <li><a href="pages/teacher.html"><span><b>Mượn – trả phòng</b><small>Tìm phòng theo ca học, đặt phòng và xem lịch dạy</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/teacher-equipment.html"><span><b>Mượn – trả thiết bị</b><small>Mượn thiết bị cho buổi dạy và theo dõi phiếu mượn</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/teacher-incident.html"><span><b>Báo cáo sự cố</b><small>Báo sự cố phòng, thiết bị và theo dõi xử lý</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+        </ul>
+      </section>
+
+      <section class="role" aria-labelledby="r-ql">
+        <div class="role-head">
+          <h2 id="r-ql">Người quản lý phòng</h2>
+          <span class="count">5 màn hình</span>
+        </div>
+        <p class="role-desc">Phòng Đào tạo, Quản lý CSVC và TT Hỗ trợ Sinh viên: duyệt yêu cầu theo loại phòng.</p>
+        <ul class="links">
+          <li><a href="pages/manager-requests.html"><span><b>Duyệt yêu cầu mượn phòng</b><small>Phòng học, hội trường, phòng họp; kiểm tra trùng lịch trước khi duyệt</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/manager-calendar.html"><span><b>Lịch phòng</b><small>Xem phòng có lớp, đã mượn hoặc còn trống; giữ chỗ, hủy, đổi lịch</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/manager-timetable.html"><span><b>Thời khóa biểu</b><small>Nhập thời khóa biểu học kỳ từ Excel, xem lỗi và trùng lịch</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/manager-makeup.html"><span><b>Duyệt dạy bù</b><small>Kiểm tra buổi nghỉ, sĩ số và xếp phòng bù</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/manager-stats.html"><span><b>Thống kê sử dụng phòng</b><small>Số lượt mượn, tỷ lệ sử dụng; xuất Excel hoặc PDF</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+        </ul>
+      </section>
+
+      <section class="role" aria-labelledby="r-ad">
+        <div class="role-head">
+          <h2 id="r-ad">Admin</h2>
+          <span class="count">6 màn hình</span>
+        </div>
+        <p class="role-desc">Quản trị tài khoản, danh mục, quy định và theo dõi hoạt động hệ thống.</p>
+        <ul class="links">
+          <li><a href="pages/admin-dashboard.html"><span><b>Tổng quan</b><small>Chỉ số chính, việc cần chú ý và biểu đồ sử dụng phòng</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/admin-accounts.html"><span><b>Tài khoản &amp; phân quyền</b><small>Đồng bộ tài khoản trường, gán vai trò, khóa / mở khóa</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/admin-catalog.html"><span><b>Danh mục phòng &amp; thiết bị</b><small>Thêm, sửa, import Excel và đổi trạng thái</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/admin-approvers.html"><span><b>Phân công người duyệt</b><small>Người duyệt chính và dự phòng theo loại phòng</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/admin-settings.html"><span><b>Cấu hình quy định</b><small>Số thiết bị tối đa, thời hạn mượn, nhắc giờ, gia hạn</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+          <li><a href="pages/admin-audit.html"><span><b>Nhật ký &amp; báo cáo</b><small>Tra cứu nhật ký hoạt động và xuất báo cáo thống kê</small></span><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></a></li>
+        </ul>
+      </section>
+
+    </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <script src="js/main.js?v=2"></script>
 </body>
 </html>
