@@ -107,3 +107,15 @@ html { scroll-padding-top: var(--header-h); }
   .app-footer { padding-bottom: env(safe-area-inset-bottom); }
   .sb-list { padding-bottom: 8px; }
 }
+/* ===== Mục "Trang chủ" đứng riêng trên cùng sidebar ===== */
+.sb-home {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 18px; margin-bottom: 2px;
+  font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+  color: var(--muted);
+}
+.sb-home .icon { width: 16px; height: 16px; color: #6a737b; }
+.sb-home:hover { background: var(--border); color: var(--text); }
+.sb-home.active { color: #1d2125; background: #e9ecef; }
+.sb-home.active .icon { color: var(--primary); }
+@media (max-width: 900px) { .sb-home { min-height: 48px; } }
