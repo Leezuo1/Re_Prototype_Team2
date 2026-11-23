@@ -4,7 +4,7 @@
 
 .notif-panel {
   position: absolute;
-  right: 32px; top: calc(100% + 6px);
+  right: 32px; top: calc(100% + 6px); 
   width: 380px; max-width: calc(100vw - 24px);
   background: #fff;
   border: 1px solid var(--border);
