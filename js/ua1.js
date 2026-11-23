@@ -7,7 +7,7 @@ Object.assign(TECH_ICONS, {
   filter: '<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>'
 });
-
+ 
 /* ===== Dữ liệu mẫu phiếu báo sự cố (Khớp schema với ua1-modals.js) ===== */
 const ASSIGNED_CAMPUS = 'Cơ sở chính'; // Quy tắc BR1: chỉ hiển thị phiếu thuộc cơ sở phụ trách
 
