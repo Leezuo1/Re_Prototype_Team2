@@ -1,4 +1,4 @@
-/* ===== Khung trang: header trên (cố định), sidebar trái, nội dung phải ===== */
+/* ===== Khung trang: header trên (cố định), sidebar trái, nội dung phải ===== */ 
 
 /* Chiều cao header = 68px nội dung + 1px viền. Nếu sửa header thì sửa số này cho khớp */
 :root { --header-h: 69px; }
