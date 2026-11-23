@@ -1,0 +1,80 @@
+<!-- ua1-modals.html - Vùng mount và cấu trúc các modal của UA1 -->
+<div id="ua1-modal-root"></div>
+
+<!-- Modal 1: Chi tiết & phân loại mức độ ưu tiên (BR1, BR2) -->
+<template id="tpl-ua1-detail-modal">
+  <div class="vlu-modal-backdrop">
+    <div class="vlu-modal-box">
+      <div class="vlu-modal-head">
+        <h3>Chi tiết sự cố</h3>
+        <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="vlu-modal-body">
+        <label class="vlu-label" for="modal-priority-select">Phân loại mức độ ưu tiên (SLA 15p cho Khẩn cấp):</label>
+        <select id="modal-priority-select" class="vlu-input">
+          <option value="Khẩn cấp">Khẩn cấp (Ảnh hưởng ca học)</option>
+          <option value="Trung bình">Trung bình</option>
+          <option value="Thấp">Thấp</option>
+        </select>
+      </div>
+      <div class="vlu-modal-foot">
+        <button type="button" class="btn-secondary btn-close-modal">Đóng</button>
+        <button type="button" class="btn-vlu" id="btn-save-priority">Lưu phân loại</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Modal 2: Cập nhật tiến trình & phương án khắc phục (BR3) -->
+<template id="tpl-ua1-process-modal">
+  <div class="vlu-modal-backdrop">
+    <div class="vlu-modal-box">
+      <div class="vlu-modal-head">
+        <h3>Cập nhật tiến trình xử lý</h3>
+        <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="vlu-modal-body">
+        <label class="vlu-label" for="modal-status-select">Trạng thái xử lý:</label>
+        <select id="modal-status-select" class="vlu-input">
+          <option value="Đang xử lý">Đang xử lý</option>
+          <option value="Chờ linh kiện">Chờ linh kiện / Đổi thiết bị dự phòng</option>
+        </select>
+        <label class="vlu-label" for="modal-method-select">Phương án kỹ thuật:</label>
+        <select id="modal-method-select" class="vlu-input">
+          <option value="Sửa tại chỗ">Sửa tại chỗ</option>
+          <option value="Thay linh kiện">Thay linh kiện</option>
+          <option value="Đề xuất đổi thiết bị dự phòng">Lỗi nặng - Khóa mượn &amp; Đề xuất đổi thiết bị dự phòng</option>
+        </select>
+        <label class="vlu-label" for="modal-tech-note">Ghi chú kỹ thuật:</label>
+        <textarea id="modal-tech-note" class="vlu-input" rows="3" placeholder="Nhập chi tiết tình trạng và hướng xử lý..."></textarea>
+      </div>
+      <div class="vlu-modal-foot">
+        <button type="button" class="btn-secondary btn-close-modal">Hủy</button>
+        <button type="button" class="btn-vlu" id="btn-confirm-process">Cập nhật tiến độ</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Modal 3: Nghiệm thu & đóng phiếu sự cố (BR4) -->
+<template id="tpl-ua1-close-modal">
+  <div class="vlu-modal-backdrop">
+    <div class="vlu-modal-box">
+      <div class="vlu-modal-head">
+        <h3>Nghiệm thu đóng phiếu sự cố</h3>
+        <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="vlu-modal-body">
+        <label class="vlu-label" for="modal-proof-file">Ảnh / Biên bản nghiệm thu sau sửa chữa (*):</label>
+        <input type="file" id="modal-proof-file" class="vlu-input" accept="image/*,.pdf">
+        <label class="vlu-label" for="modal-close-note">Kết quả nghiệm thu:</label>
+        <input type="text" id="modal-close-note" class="vlu-input" value="Thiết bị đã hoạt động bình thường, mở lại trạng thái Sẵn sàng sử dụng.">
+        <p id="modal-close-error" style="color:#c8102e;font-size:12px;margin-top:6px;"></p>
+      </div>
+      <div class="vlu-modal-foot">
+        <button type="button" class="btn-secondary btn-close-modal">Quay lại</button>
+        <button type="button" class="btn-vlu" id="btn-finish-ticket">Hoàn tất &amp; Đóng phiếu</button>
+      </div>
+    </div>
+  </div>
+</template>
