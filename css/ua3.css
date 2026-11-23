@@ -6,7 +6,7 @@
 
 .layout.eq { grid-template-columns: 1fr 1fr; }
 .small { font-size: 12px; }
-.btn-block { width: 100%; }
+.btn-block { width: 100%; } 
 .btn.is-disabled, .btn.is-disabled:hover { background: var(--disabled-bg); color: var(--disabled-text); cursor: not-allowed; }
 .badge.gray   { background: var(--neutral-bg); color: var(--neutral-text); }
 .badge.blue   { background: var(--info-bg); color: var(--info-text); }
