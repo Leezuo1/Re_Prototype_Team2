@@ -8,7 +8,7 @@ Object.assign(TECH_ICONS, {
   shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>'
 });
-
+ 
 /* ===== Dữ liệu mẫu đơn mượn đã duyệt & trạng thái bàn giao (F79) ===== */
 const HANDOVER_LIST = [
   {
