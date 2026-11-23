@@ -7,7 +7,7 @@ function openModalBox(contentHtml, mode = '') {
   if (!host) return null;
 
   host.innerHTML = `
-    <div class="overlay ${mode}">
+    <div class="overlay ${mode}"> 
       <div class="modal ${mode}" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
         ${contentHtml}
       </div>
