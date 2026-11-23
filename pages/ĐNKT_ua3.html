@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>UA3 - Bảo trì định kỳ phòng học &amp; hạ tầng | VLU Kỹ thuật</title>
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="ua4.css">
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <div class="app-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="ua4-main">
+      <div class="ua4-topbar">
+        <h2>UA3 - Bảo trì định kỳ phòng học và hạ tầng công nghệ</h2>
+      </div>
+
+      <!-- Danh sách kế hoạch bảo trì & Checklist kiểm tra theo loại phòng -->
+      <section id="ua3-plan-list"></section>
+
+      <!-- Phiếu đề xuất cấp phát vật tư tiêu hao gửi Phòng CSVC -->
+      <section class="ua4-card">
+        <h3 style="font-size:15px;color:#c8102e;margin-bottom:12px;">Đề xuất cấp phát vật tư tiêu hao sau bảo trì</h3>
+        <form id="ua3-material-form" class="ua4-filter">
+          <input type="text" id="ua3-material-name" placeholder="Tên linh kiện / vật tư (VD: Bóng đèn máy chiếu, Pin micro...)" style="flex:1;" required>
+          <input type="number" id="ua3-material-qty" placeholder="Số lượng" min="1" style="width:120px;" required>
+          <button type="submit" class="btn-vlu">Gửi đề xuất vật tư</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="ua3.js"></script>
+</body>
+</html>
