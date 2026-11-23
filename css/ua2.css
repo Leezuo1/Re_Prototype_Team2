@@ -2,7 +2,7 @@
 
 #pageAlert, #pageNotice { margin-bottom: 20px; }
 #pageAlert .alert, #pageNotice .alert { margin-bottom: 0; padding: 14px 18px; }
-#pageNotice:empty { display: none; }
+#pageNotice:empty { display: none; } 
 
 .small { font-size: 12px; }
 .btn-block { width: 100%; }
