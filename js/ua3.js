@@ -1,5 +1,5 @@
 /* js/ua3.js — Nghiệp vụ Bảo trì định kỳ phòng học & hạ tầng (UA3 - Đội ngũ Kỹ thuật) */
-
+ 
 Object.assign(TECH_ICONS, {
   calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
   clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
