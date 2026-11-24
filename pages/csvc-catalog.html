@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Danh mục phòng & thiết bị | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-catalog">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Danh mục phòng &amp; thiết bị</h1>
+            <p class="sub">Quản lý phòng, thiết bị của 3 cơ sở: thêm, sửa, đổi trạng thái và điều chuyển thiết bị.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-primary" id="btnAdd"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg> Thêm mới</button>
+          </div>
+        </div>
+
+        <div class="campus-bar"><span class="mono-note">Cơ sở</span><div id="campusHost"></div></div>
+
+        <div class="tabs-line" id="tabs">
+          <button type="button" data-tab="rooms" class="active" aria-selected="true">Phòng<span class="n" id="nRooms"></span></button>
+          <button type="button" data-tab="devices" aria-selected="false">Thiết bị<span class="n" id="nDevices"></span></button>
+        </div>
+
+        <section class="card">
+          <div class="toolbar toolbar-card" id="toolbar"></div>
+          <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+          <div id="emptyHost"></div>
+          <div class="table-foot"><span id="countText" aria-live="polite"></span><span class="mono-note">Phòng, thiết bị đang có lịch đặt hoặc cho mượn chỉ được chuyển trạng thái, không xóa.</span></div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-catalog.js"></script>
+</body>
+</html>

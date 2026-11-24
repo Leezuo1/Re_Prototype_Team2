@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tổng quan Phòng CSVC | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-dashboard">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Tổng quan Phòng CSVC</h1>
+            <p class="sub">Tình trạng phòng, thiết bị, phiếu mượn và sự cố của cả 3 cơ sở. Bấm vào chỉ số để mở danh sách.</p>
+          </div>
+          <div class="live-chip" title="Số liệu tự cập nhật"><span class="dot"></span>Cập nhật lúc <b id="liveTime">--:--</b></div>
+        </div>
+
+        <div class="campus-bar"><span class="mono-note">Xem theo</span><div id="campusHost"></div></div>
+
+        <section class="card kpi-strip" id="kpis" aria-label="Chỉ số chính"></section>
+
+        <div class="grid-2">
+          <section class="card" aria-labelledby="attnTitle">
+            <div class="card-head">
+              <h2 id="attnTitle">Cần chú ý</h2>
+              <span class="hint" id="attnCount"></span>
+            </div>
+            <div class="card-body" style="padding-bottom:14px"><div class="chips" id="attnChips"></div></div>
+            <ul class="attn" id="attnList"></ul>
+          </section>
+
+          <div class="stack">
+            <section class="card" aria-labelledby="stockTitle">
+              <div class="card-head"><h2 id="stockTitle">Thiết bị mượn thêm</h2><span class="hint">Số lượng khả dụng</span></div>
+              <div class="card-body"><div class="stock-grid" id="stock"></div></div>
+            </section>
+            <section class="card" aria-labelledby="cmpTitle">
+              <div class="card-head"><h2 id="cmpTitle">So sánh 3 cơ sở</h2><span class="hint">Sự cố theo trạng thái</span></div>
+              <div class="card-body">
+                <div class="hbars" id="compare"></div>
+                <div class="legend" id="compareLegend"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="grid-eq">
+          <section class="card" aria-labelledby="usageTitle">
+            <div class="card-head"><h2 id="usageTitle">Tỷ lệ sử dụng phòng theo tuần</h2><span class="hint">Tuần bắt đầu từ</span></div>
+            <div class="card-body" id="usageChart" role="img" aria-label="Biểu đồ cột tỷ lệ sử dụng phòng 5 tuần gần nhất"></div>
+          </section>
+          <section class="card" aria-labelledby="loanTitle">
+            <div class="card-head"><h2 id="loanTitle">Phiếu mượn thiết bị theo ngày</h2><span class="hint">7 ngày gần nhất</span></div>
+            <div class="card-body" id="loanChart" role="img" aria-label="Biểu đồ cột số phiếu mượn thiết bị 7 ngày gần nhất"></div>
+          </section>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-dashboard.js"></script>
+</body>
+</html>

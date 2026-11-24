@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Phòng đang sử dụng & biên bản trả phòng | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-rooms">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Phòng đang sử dụng &amp; biên bản trả phòng</h1>
+            <p class="sub">Theo dõi phòng đang dùng, sắp hết giờ, quá giờ và nhận biên bản trả phòng do Bảo vệ lập.</p>
+          </div>
+        </div>
+
+        <div class="campus-bar"><span class="mono-note">Cơ sở</span><div id="campusHost"></div></div>
+
+        <div class="tabs-line" id="tabs">
+          <button type="button" data-tab="use" class="active" aria-selected="true">Phòng đang sử dụng<span class="n" id="nUse"></span></button>
+          <button type="button" data-tab="reports" aria-selected="false">Biên bản trả phòng<span class="n" id="nRep"></span></button>
+        </div>
+
+        <section class="card">
+          <div class="toolbar toolbar-card" id="toolbar"></div>
+          <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+          <div id="emptyHost"></div>
+          <div class="table-foot"><span id="countText" aria-live="polite"></span><span class="mono-note" id="noteText"></span></div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-rooms.js"></script>
+</body>
+</html>

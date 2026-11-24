@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lịch sử người mượn | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-borrowers">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Lịch sử người mượn</h1>
+            <p class="sub">Thống kê và lịch sử từng người để đối chiếu khi có bất trắc. Có thể xuất hồ sơ đưa cho người mượn xem.</p>
+          </div>
+        </div>
+
+        <div class="who-layout">
+          <section class="card" aria-label="Danh sách người mượn">
+            <div class="toolbar toolbar-card" style="flex-direction:column;align-items:stretch">
+              <div class="search" style="width:100%"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input class="input" id="q" type="search" placeholder="Họ tên, MSSV hoặc mã GV" aria-label="Tìm người mượn" style="width:100%"></div>
+              <div class="chips" id="roleChips" role="group" aria-label="Đối tượng"><button type="button" class="chip active" data-v="" aria-pressed="true">Tất cả</button><button type="button" class="chip" data-v="SV" aria-pressed="false">Sinh viên</button><button type="button" class="chip" data-v="GV" aria-pressed="false">Giảng viên</button></div>
+            </div>
+            <div class="who-list" id="whoList" role="listbox" aria-label="Người mượn"></div>
+            <div class="table-foot"><span id="whoCount" aria-live="polite"></span></div>
+          </section>
+          <section class="card" id="profile" aria-live="polite"></section>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-borrowers.js"></script>
+</body>
+</html>
