@@ -1,0 +1,167 @@
+.page { padding-top: 32px; }
+
+.page-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 24px;
+}
+.page-head h1 { font-size: 30px; font-weight: 700; line-height: 1.2; }
+.sub { color: var(--muted); margin-top: 6px; }
+
+.date-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 10px;
+  font-size: 13px; font-weight: 500; color: var(--text);
+  white-space: nowrap;
+}
+.date-chip .icon { color: var(--primary); }
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  gap: 24px; align-items: start; width: 100%;
+}
+.layout > .card { min-width: 0; width: 100%; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 24px;
+}
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.card-head h2 { font-size: 20px; font-weight: 700; }
+.hint-ok {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--primary);
+}
+.count { font-size: 12px; color: var(--muted); }
+
+/* ===== Bộ lọc phiếu sự cố (BR1) ===== */
+.filter {
+  background: var(--bg);
+  border-radius: 14px; padding: 16px;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px 16px; align-items: end;
+}
+.field label {
+  display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px;
+}
+.field.wide { grid-column: span 2; }
+.field input, .field select {
+  width: 100%; height: 44px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: #fff; font: inherit; font-size: 14px; color: var(--text);
+}
+.field input:focus, .field select:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); outline: none;
+}
+.filter .btn { height: 44px; }
+
+.result-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 18px 0 14px; font-size: 13px;
+}
+.result-bar strong { font-weight: 600; }
+.result-bar span { color: var(--muted); font-size: 12px; }
+
+/* ===== Danh sách phiếu báo sự cố (Cột trái) ===== */
+.ticket-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+}
+.ticket-card {
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px;
+  display: flex; flex-direction: column; min-width: 0;
+}
+.ticket-card.urgent {
+  border-color: #f3b8be; background: #fffafa;
+}
+.ticket-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.ticket-code { font-size: 11px; font-weight: 600; color: var(--muted); }
+.sla-badge {
+  font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+  background: var(--primary-soft); color: var(--primary);
+}
+.ticket-title {
+  font-size: 17px; font-weight: 700; margin-top: 10px; overflow-wrap: anywhere;
+}
+.ticket-meta {
+  font-size: 12px; color: var(--muted); margin-top: 4px;
+}
+.ticket-desc {
+  font-size: 12px; color: var(--text); margin: 8px 0 14px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ticket-card .btn { margin-top: auto; width: 100%; }
+
+.empty {
+  grid-column: 1 / -1; text-align: center; padding: 32px 0; color: var(--muted);
+}
+.note {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--muted); margin-top: 16px;
+}
+
+/* ===== Phiếu tôi phụ trách (Cột phải - F76, F77, F78) ===== */
+.tabs {
+  display: flex; background: var(--bg);
+  border-radius: 10px; padding: 4px; margin-bottom: 16px;
+}
+.tab {
+  flex: 1; border: none; background: none;
+  padding: 7px 4px; font-size: 11px; font-weight: 500;
+  color: var(--muted); border-radius: 8px; white-space: nowrap; cursor: pointer;
+}
+.tab.active {
+  background: #fff; color: var(--primary); font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.order-list { display: flex; flex-direction: column; gap: 12px; }
+.order {
+  border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+}
+.order.locked { background: #fdeaea; border-color: #f5c2c7; } /* BR3: Khóa bảo trì */
+
+.order-top { display: flex; align-items: center; justify-content: space-between; }
+.order-code { font-size: 11px; color: var(--muted); }
+.order-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin: 6px 0;
+}
+.order-row h3 { min-width: 0; font-size: 16px; font-weight: 700; overflow-wrap: anywhere; }
+.detail-link {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: var(--primary); font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.order-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--muted);
+}
+.order-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: 10px;
+}
+.order-foot .warn-text { font-size: 12px; font-weight: 600; color: var(--primary); }
+
+.key-note { margin-top: 18px; color: var(--primary); }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 620px) {
+  .page-head { flex-direction: column; }
+  .filter { grid-template-columns: 1fr; }
+  .field.wide { grid-column: auto; }
+  .ticket-grid { grid-template-columns: 1fr; }
+  .card { padding: 16px; border-radius: 16px; }
+  .tabs { overflow-x: auto; scrollbar-width: thin; }
+  .tab { min-height: 44px; flex: 0 0 auto; padding-inline: 12px; }
+  .detail-link { min-height: 44px; }
+}
