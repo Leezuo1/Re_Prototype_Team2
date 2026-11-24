@@ -1,9 +1,9 @@
-Rồi tiếp theo làm ua3 trên html đi nha (Ví dụ: "<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Báo cáo sự cố | Văn Lang</title>
+  <title>Bảo trì định kỳ phòng học | Văn Lang</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
@@ -12,7 +12,7 @@ Rồi tiếp theo làm ua3 trên html đi nha (Ví dụ: "<!DOCTYPE html>
   <link rel="stylesheet" href="../css/ua1-modal.css">
   <link rel="stylesheet" href="../css/ua3.css">
 </head>
-<body data-page="ua3">
+<body data-page="ua3" data-role="dnkt">
 
   <!-- Header: nạp từ components/header.html -->
   <div id="app-header"></div>
@@ -25,8 +25,8 @@ Rồi tiếp theo làm ua3 trên html đi nha (Ví dụ: "<!DOCTYPE html>
       <main class="page">
         <div class="page-head">
           <div>
-            <h1>Báo cáo sự cố</h1>
-            <p class="sub">Gửi báo cáo về phòng học, thiết bị và theo dõi tiến độ xử lý.</p>
+            <h1>Bảo trì định kỳ phòng học &amp; hạ tầng</h1>
+            <p class="sub">Lập kế hoạch tránh trùng lịch học, khóa tạm thời phòng bảo trì, kiểm tra Checklist và đề xuất vật tư.</p>
           </div>
           <div class="date-chip" id="dateChip"></div>
         </div>
@@ -35,25 +35,26 @@ Rồi tiếp theo làm ua3 trên html đi nha (Ví dụ: "<!DOCTYPE html>
         <div id="pageNotice"></div>
 
         <div class="layout eq">
-          <!-- Cột trái: biểu mẫu (JS tự vẽ) -->
-          <section class="card" id="formCard"></section>
+          <!-- Cột trái: Lập lịch bảo trì & Checklist kiểm tra kỹ thuật (F84, F86 - JS tự vẽ) -->
+          <section class="card" id="checklistCard"></section>
 
-          <!-- Cột phải: sự cố của tôi -->
+          <!-- Cột phải: Kế hoạch bảo trì & Trạng thái khóa phòng (F85, F87, BR1-BR3) -->
           <aside class="card">
             <div class="card-head">
-              <h2>Sự cố của tôi</h2>
-              <span class="count" id="incCount"></span>
+              <h2>Kế hoạch bảo trì định kỳ</h2>
+              <span class="count" id="maintCount"></span>
             </div>
 
-            <div class="tabs" id="incTabs">
+            <div class="tabs" id="maintTabs">
               <button class="tab active" data-filter="all">Tất cả</button>
-              <button class="tab" data-filter="doing">Đang xử lý</button>
-              <button class="tab" data-filter="done">Đã xử lý</button>
+              <button class="tab" data-filter="scheduled">Sắp tới</button>
+              <button class="tab" data-filter="locked">Đang bảo trì (BR2)</button>
+              <button class="tab" data-filter="done">Đã hoàn thành</button>
             </div>
 
-            <div class="inc-list" id="incList"></div>
+            <div class="inc-list" id="maintList"></div>
 
-            <p class="note" id="noteInc"></p>
+            <p class="note" id="noteMaint"></p>
           </aside>
         </div>
       </main>
@@ -62,9 +63,9 @@ Rồi tiếp theo làm ua3 trên html đi nha (Ví dụ: "<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- Ngăn chi tiết trượt từ phải + hộp giả lập -->
+  <!-- Ngăn chi tiết Checklist / Đề xuất vật tư trượt từ phải + khung modal -->
   <div id="drawerRoot"></div>
-  <div id="simRoot"></div>
+  <div id="modalRoot"></div>
 
   <script src="../js/main.js"></script>
   <script src="../js/ua3.js"></script>
