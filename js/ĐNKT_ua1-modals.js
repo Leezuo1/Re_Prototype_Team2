@@ -1,122 +1,304 @@
 /* Đội ngũ kỹ thuật · Quản lý Modal chi tiết, cập nhật xử lý & nghiệm thu sự cố */
 
-const UA1Modals = (() => {
-  const modalRoot = document.getElementById('ua1-modal-root') || document.body;
+function setModal(html, variant = '') {
+  const root = document.getElementById('modalRoot');
+  root.innerHTML = `<div class="overlay ${variant}"><div class="modal ${variant}" role="dialog" aria-modal="true" aria-labelledby="modalTitle">${html}</div></div>`;
+  document.body.classList.add('no-scroll');
+  root.querySelector('.overlay').addEventListener('mousedown', e => {
+    if (e.target.classList.contains('overlay')) closeModal();
+  });
+  root.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeModal));
+  const dialog = root.querySelector('.modal');
+  if (typeof trapDialog === 'function') trapDialog(dialog, closeModal);
+  return dialog;
+}
 
-  function closeModal() {
-    const existing = document.getElementById('vlu-ua1-modal');
-    if (existing) existing.remove();
-  }
+function closeModal() {
+  if (typeof dialogCleanup === 'function') dialogCleanup();
+  document.getElementById('modalRoot').innerHTML = '';
+  document.body.classList.remove('no-scroll');
+}
 
-  function renderShell(title, bodyHtml, footerHtml) {
-    closeModal();
-    const wrapper = document.createElement('div');
-    wrapper.id = 'vlu-ua1-modal';
-    wrapper.className = 'vlu-modal-backdrop';
-    wrapper.innerHTML = `
-      <div class="vlu-modal-box">
-        <div class="vlu-modal-head">
-          <h3>${title}</h3>
-          <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
-        </div>
-        <div class="vlu-modal-body">${bodyHtml}</div>
-        <div class="vlu-modal-foot">${footerHtml}</div>
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+const mHead = (title, sub) => `
+  <div class="m-head">
+    <div><h2 id="modalTitle">${title}</h2>${sub ? `<p>${sub}</p>` : ''}</div>
+    <button type="button" class="m-x" data-close aria-label="Đóng">${icon('x')}</button>
+  </div>`;
+const mFoot = (html, cls = '') => `<div class="m-foot ${cls}">${html}</div>`;
+const getTicket = code => TICKETS.find(t => t.code === code);
+
+function sumBox(t) {
+  return `
+    <div class="sum">
+      <h3>${esc(t.title)}</h3>
+      <div class="kv">
+        <p>Phòng: <b>${esc(t.room)} (${esc(t.campus)})</b></p>
+        <p>Mã thiết bị: <b>${esc(t.assetId)}</b></p>
+        <p>Người báo: <b>${esc(t.reporter)}</b></p>
+        <p>Thời điểm: <b>${esc(t.createdAt)}</b></p>
       </div>
-    `;
-    wrapper.addEventListener('click', (e) => {
-      if (e.target === wrapper || e.target.closest('.btn-close-modal')) closeModal();
+    </div>`;
+}
+
+/* =====================================================
+1. TIẾP NHẬN & PHÂN LOẠI MỨC ĐỘ ƯU TIÊN (Bước 1-2 | F75, BR2)
+   ===================================================== */
+const PRIORITIES = [
+  { id: 'urgent', label: 'Khẩn cấp (SLA ≤ 15p)' },
+  { id: 'medium', label: 'Trung bình' },
+  { id: 'low', label: 'Thấp' }
+];
+
+function openInspect(code) {
+  const t = getTicket(code);
+  renderInspect(t, { priority: t.priority || 'urgent', note: '' });
+}
+
+function renderInspect(t, st) {
+  const histRows = (t.history || []).map(h =>
+    `<tr><td>${esc(h.date)}</td><td>${esc(h.type)}</td><td>${esc(h.content)}</td></tr>`
+  ).join('') || '<tr><td colspan="3">Chưa có lịch sử bảo trì trước đó.</td></tr>';
+
+  const m = setModal(`
+    ${mHead(`Tiếp nhận sự cố #${t.code}`, `${t.room} · ${t.assetName}`)}
+    <div class="m-body">
+      ${st.priority === 'urgent'
+        ? alertBox('err', 'Cảnh báo SLA Khẩn cấp (BR2)', 'Ca học đang diễn ra, bắt buộc phản hồi và tiếp nhận trong vòng 15 phút.')
+        : ''}
+      ${sumBox(t)}
+
+      <div class="f-group">
+        <label>Mô tả lỗi &amp; hình ảnh hiện trường</label>
+        <p class="muted">${esc(t.desc)}</p>
+        ${t.photo ? `<div class="img-preview"><img src="${esc(t.photo)}" alt="Ảnh lỗi thiết bị"></div>` : ''}
+      </div>
+
+      <div class="f-group">
+        <label>Lịch sử bảo trì thiết bị (${esc(t.assetId)})</label>
+        <table class="hist-table">
+          <thead><tr><th>Ngày</th><th>Loại</th><th>Nội dung kỹ thuật</th></tr></thead>
+          <tbody>${histRows}</tbody>
+        </table>
+      </div>
+
+      <div class="f-group">
+        <label>Phân loại mức độ ưu tiên *</label>
+        <div class="seg">
+          ${PRIORITIES.map(p => `<button type="button" class="${p.id === st.priority ? 'active' : ''}" data-prio="${p.id}">${p.label}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    ${mFoot(`
+      <button type="button" class="btn btn-outline" data-close>Đóng</button>
+      <button type="button" class="btn btn-primary" id="btnAccept">Xác nhận tiếp nhận</button>
+    `)}
+  `, 'modal-lg');
+
+  m.querySelectorAll('[data-prio]').forEach(b => b.addEventListener('click', () => {
+    st.priority = b.dataset.prio;
+    renderInspect(t, st);
+  }));
+
+  const btn = m.querySelector('#btnAccept');
+  btn.addEventListener('click', () => submitWithLoading(btn, () => {
+    t.priority = st.priority;
+    t.status = 'processing';
+    t.logs.push({ time: 'Vừa xong', text: `Đã tiếp nhận xử lý (Mức độ: ${PRIORITIES.find(p => p.id === st.priority).label})` });
+    closeModal();
+    renderTickets();
+    renderAssigned();
+    showAssignedBanner('ok', 'Đã tiếp nhận phiếu', `Phiếu #${t.code} đã chuyển sang trạng thái Đang xử lý.`);
+  }));
+}
+
+/* =====================================================
+2. CHI TIẾT & ĐIỀU PHỐI XỬ LÝ (Drawer | F76 - F78)
+   ===================================================== */
+function openTicketDetail(code) {
+  const t = getTicket(code);
+  const steps = t.logs.map(l =>
+    `<li class="done"><span class="dot">${icon('check')}</span><div><b>${esc(l.text)}</b><small>${esc(l.time)}</small></div></li>`
+  ).join('');
+
+  let foot = '<button type="button" class="btn btn-outline" data-close>Đóng</button>';
+  if (t.status === 'pending') {
+    foot = mFoot(`<button class="btn btn-outline" data-close>Đóng</button><button class="btn btn-primary" id="dInspect">Đánh giá &amp; Tiếp nhận</button>`);
+  } else if (t.status === 'processing' || t.status === 'locked') {
+    foot = mFoot(`
+      <button class="btn btn-outline" id="dSwap">Đổi máy dự phòng</button>
+      <button class="btn btn-outline" id="dProg">Cập nhật tiến độ</button>
+      <button class="btn btn-primary" id="dClose">Nghiệm thu</button>
+    `);
+  } else {
+    foot = mFoot(foot, 'full');
+  }
+
+  const m = setModal(`
+    ${mHead(`Phiếu sự cố #${t.code}`, `${t.room} · ${t.campus}`)}
+    <div class="m-body">
+      ${t.status === 'locked'
+        ? alertBox('err', 'Thiết bị đang khóa mượn (BR3)', `Mã ${t.assetId} đã chuyển sang "Đang bảo trì / Hỏng".`)
+        : ''}
+      ${sumBox(t)}
+      <p class="muted">${esc(t.desc)}</p>
+      <h4 class="sec">Nhật ký xử lý kỹ thuật</h4>
+      <ol class="tl">${steps}</ol>
+    </div>
+    ${foot}
+  `, 'drawer');
+
+  const bind = (id, fn) => { const el = m.querySelector(id); if (el) el.addEventListener('click', fn); };
+  bind('#dInspect', () => openInspect(t.code));
+  bind('#dProg', () => openProgress(t.code));
+  bind('#dSwap', () => openDeviceSwap(t.code));
+  bind('#dClose', () => openAcceptance(t.code));
+}
+
+/* =====================================================
+3. CẬP NHẬT TIẾN ĐỘ & ĐỔI THIẾT BỊ DỰ PHÒNG (Bước 3 | F76, F77, BR3)
+   ===================================================== */
+function openProgress(code) {
+  const t = getTicket(code);
+  const m = setModal(`
+    ${mHead(`Cập nhật tiến độ #${t.code}`, `${t.room} · ${t.assetId}`)}
+    <div class="m-body">
+      <div class="f-group">
+        <label for="pMethod">Phương án xử lý *</label>
+        <select id="pMethod">
+          <option value="Sửa chữa tại chỗ">Sửa chữa / hiệu chỉnh tại chỗ</option>
+          <option value="Thay linh kiện tiêu hao">Thay thế linh kiện tiêu hao (bóng đèn, pin, dây cáp)</option>
+          <option value="Chờ linh kiện từ kho">Chờ cấp phát linh kiện thay thế</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <label for="pNote">Ghi chú kỹ thuật *</label>
+        <textarea id="pNote" placeholder="Mô tả thao tác đã thực hiện hoặc vật tư đã thay..."></textarea>
+        <p class="err" id="pErr" hidden>Vui lòng nhập ghi chú phương án xử lý.</p>
+      </div>
+    </div>
+    ${mFoot(`<button class="btn btn-outline" data-close>Hủy</button><button class="btn btn-primary" id="pSave">Lưu tiến độ</button>`)}
+  `);
+
+  const saveBtn = m.querySelector('#pSave');
+  saveBtn.addEventListener('click', () => {
+    const method = m.querySelector('#pMethod').value;
+    const note = m.querySelector('#pNote').value.trim();
+    if (!note) { m.querySelector('#pErr').hidden = false; return; }
+
+    submitWithLoading(saveBtn, () => {
+      t.logs.push({ time: 'Vừa xong', text: `${method}: ${note}` });
+      closeModal();
+      renderAssigned();
+      showAssignedBanner('ok', 'Đã cập nhật tiến độ', `Lưu lịch sử xử lý cho phiếu #${t.code}.`);
     });
-    modalRoot.appendChild(wrapper);
-    return wrapper;
-  }
+  });
+}
 
-  // Modal 1: Xem chi tiết & phân loại mức độ ưu tiên (BR1, BR2)
-  function openDetailModal(ticket, onSavePriority) {
-    const body = `
-      <p><strong>Mã phiếu:</strong> ${ticket.id} | <strong>Cơ sở:</strong> ${ticket.campus}</p>
-      <p><strong>Phòng / Thiết bị:</strong> ${ticket.room} - ${ticket.deviceName} (${ticket.deviceCode})</p>
-      <p><strong>Người báo cáo:</strong> ${ticket.reporter} (${ticket.reportedAt})</p>
-      <p><strong>Mô tả lỗi:</strong> ${ticket.description}</p>
-      <p><strong>Lịch sử bảo trì gần nhất:</strong> ${ticket.lastMaintenance || 'Chưa có ghi nhận'}</p>
-      <label class="vlu-label">Phân loại mức độ ưu tiên (SLA 15p cho Khẩn cấp):</label>
-      <select id="modal-priority-select" class="vlu-input">
-        <option value="Khẩn cấp" ${ticket.priority === 'Khẩn cấp' ? 'selected' : ''}>Khẩn cấp (Ảnh hưởng ca học)</option>
-        <option value="Trung bình" ${ticket.priority === 'Trung bình' ? 'selected' : ''}>Trung bình</option>
-        <option value="Thấp" ${ticket.priority === 'Thấp' ? 'selected' : ''}>Thấp</option>
-      </select>
-    `;
-    const foot = `
-      <button type="button" class="btn-secondary btn-close-modal">Đóng</button>
-      <button type="button" class="btn-vlu" id="btn-save-priority">Lưu phân loại</button>
-    `;
-    const modal = renderShell(`Chi tiết sự cố ${ticket.id}`, body, foot);
-    modal.querySelector('#btn-save-priority').onclick = () => {
-      const priority = modal.querySelector('#modal-priority-select').value;
-      onSavePriority(ticket.id, priority);
+function openDeviceSwap(code) {
+  const t = getTicket(code);
+  const m = setModal(`
+    ${mHead(`Khóa thiết bị & Đổi máy dự phòng`, `Phiếu #${t.code} · ${t.assetId}`)}
+    <div class="m-body">
+      <div class="lock-box">
+        <b>Quy tắc nghiệp vụ BR3:</b> Thiết bị <b>${esc(t.assetId)}</b> sẽ tự động khóa sang trạng thái <b>"Đang bảo trì / Hỏng"</b> để ngăn đăng ký mượn mới.
+      </div>
+      <div class="f-group">
+        <label for="sBackup">Thiết bị dự phòng cấp bù / Đề xuất bảo hành *</label>
+        <select id="sBackup">
+          <option value="Cấp bù TB-DỰ-PHÒNG-01 từ Kho CS3">Cấp bù TB-DỰ-PHÒNG-01 từ Kho CS3</option>
+          <option value="Cấp bù TB-DỰ-PHÒNG-02 từ Kho CS3">Cấp bù TB-DỰ-PHÒNG-02 từ Kho CS3</option>
+          <option value="Lập phiếu gửi bảo hành đơn vị ngoài">Không đổi máy – Lập phiếu bảo hành ngoài</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <label for="sReason">Tình trạng hư hỏng thiết bị gốc *</label>
+        <textarea id="sReason" placeholder="Ghi rõ lỗi phần cứng không thể khắc phục tại chỗ..."></textarea>
+        <p class="err" id="sErr" hidden>Vui lòng nhập tình trạng hư hỏng.</p>
+      </div>
+    </div>
+    ${mFoot(`<button class="btn btn-outline" data-close>Hủy</button><button class="btn btn-danger" id="sConfirm">Khóa máy &amp; Xác nhận</button>`)}
+  `);
+
+  const btn = m.querySelector('#sConfirm');
+  btn.addEventListener('click', () => {
+    const reason = m.querySelector('#sReason').value.trim();
+    const action = m.querySelector('#sBackup').value;
+    if (!reason) { m.querySelector('#sErr').hidden = false; return; }
+
+    submitWithLoading(btn, () => {
+      t.status = 'locked';
+      t.deviceLocked = true;
+      t.logs.push({ time: 'Vừa xong', text: `Khóa ${t.assetId} (${reason}) · ${action}` });
       closeModal();
-    };
-  }
+      renderTickets();
+      renderAssigned();
+      showAssignedBanner('warn', 'Đã khóa thiết bị hỏng (BR3)', `${t.assetId} đã ngừng cho mượn và ghi nhận đề xuất đổi máy.`);
+    });
+  });
+}
 
-  // Modal 2: Cập nhật tiến trình & phương án khắc phục (BR3: Khóa thiết bị nếu hỏng nặng)
-  function openProcessModal(ticket, onUpdateProcess) {
-    const body = `
-      <p><strong>Đối tượng:</strong> ${ticket.deviceName} (${ticket.room})</p>
-      <label class="vlu-label">Trạng thái xử lý:</label>
-      <select id="modal-status-select" class="vlu-input">
-        <option value="Đang xử lý" ${ticket.status === 'Đang xử lý' ? 'selected' : ''}>Đang xử lý</option>
-        <option value="Chờ linh kiện" ${ticket.status === 'Chờ linh kiện' ? 'selected' : ''}>Chờ linh kiện / Đổi thiết bị dự phòng</option>
-      </select>
-      <label class="vlu-label">Phương án kỹ thuật:</label>
-      <select id="modal-method-select" class="vlu-input">
-        <option value="Sửa tại chỗ">Sửa tại chỗ</option>
-        <option value="Thay linh kiện">Thay linh kiện</option>
-        <option value="Đề xuất đổi thiết bị dự phòng">Lỗi nặng - Khóa mượn & Đề xuất đổi thiết bị dự phòng</option>
-      </select>
-      <label class="vlu-label">Ghi chú kỹ thuật:</label>
-      <textarea id="modal-tech-note" class="vlu-input" rows="3" placeholder="Nhập chi tiết tình trạng và hướng xử lý...">${ticket.techNote || ''}</textarea>
-    `;
-    const foot = `
-      <button type="button" class="btn-secondary btn-close-modal">Hủy</button>
-      <button type="button" class="btn-vlu" id="btn-confirm-process">Cập nhật tiến độ</button>
-    `;
-    const modal = renderShell(`Cập nhật xử lý - ${ticket.id}`, body, foot);
-    modal.querySelector('#btn-confirm-process').onclick = () => {
-      const status = modal.querySelector('#modal-status-select').value;
-      const method = modal.querySelector('#modal-method-select').value;
-      const techNote = modal.querySelector('#modal-tech-note').value.trim();
-      const lockBorrowing = method === 'Đề xuất đổi thiết bị dự phòng' || status === 'Chờ linh kiện';
-      onUpdateProcess(ticket.id, { status, method, techNote, lockBorrowing });
+/* =====================================================
+4. NGHIỆM THU & ĐÓNG PHIẾU SỰ CỐ (Bước 4-5 | F78, PB-78, BR4)
+   ===================================================== */
+function openAcceptance(code) {
+  const t = getTicket(code);
+  let proofFile = null;
+
+  const m = setModal(`
+    ${mHead(`Nghiệm thu & Đóng phiếu #${t.code}`, `${t.room} · ${t.assetId}`)}
+    <div class="m-body">
+      ${alertBox('brand', 'Quy định nghiệm thu (BR4)', 'Bắt buộc đính kèm ảnh chụp thiết bị hoạt động bình thường hoặc biên bản xác nhận trước khi đóng phiếu.')}
+      <div class="f-group">
+        <label>Ảnh / Biên bản nghiệm thu *</label>
+        <button type="button" class="drop" id="aDrop">
+          <span id="aDropText">Nhấn để tải lên ảnh nghiệm thu hoặc biên bản</span>
+          <small>JPG, PNG, PDF · Tối đa 10 MB</small>
+        </button>
+        <input type="file" id="aFile" accept="image/*,.pdf" hidden>
+        <p class="err" id="aFileErr" hidden>Vui lòng đính kèm ảnh hoặc biên bản nghiệm thu (BR4).</p>
+      </div>
+      <div class="f-group">
+        <label for="aNote">Kết quả kiểm tra sau sửa chữa *</label>
+        <textarea id="aNote" placeholder="VD: Đã thay cáp và kiểm tra tín hiệu ổn định..."></textarea>
+        <p class="err" id="aNoteErr" hidden>Vui lòng nhập kết quả nghiệm thu.</p>
+      </div>
+      <label style="display:flex;gap:8px;font-size:12px;">
+        <input type="checkbox" id="aReady" checked>
+        Khôi phục trạng thái <b>"Sẵn sàng sử dụng"</b> &amp; gửi thông báo cho người báo lỗi.
+      </label>
+    </div>
+    ${mFoot(`<button class="btn btn-outline" data-close>Quay lại</button><button class="btn btn-primary" id="aSubmit">Hoàn tất &amp; Đóng phiếu</button>`)}
+  `);
+
+  const fileInput = m.querySelector('#aFile');
+  const dropBtn = m.querySelector('#aDrop');
+  dropBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files[0];
+    if (!f || f.size > 10 * 1024 * 1024) return;
+    proofFile = f.name;
+    dropBtn.classList.add('has');
+    m.querySelector('#aDropText').textContent = `Đã chọn: ${f.name}`;
+    m.querySelector('#aFileErr').hidden = true;
+  });
+
+  const submitBtn = m.querySelector('#aSubmit');
+  submitBtn.addEventListener('click', () => {
+    const note = m.querySelector('#aNote').value.trim();
+    m.querySelector('#aFileErr').hidden = !!proofFile;
+    m.querySelector('#aNoteErr').hidden = !!note;
+    if (!proofFile || !note) return;
+
+    submitWithLoading(submitBtn, () => {
+      t.status = 'closed';
+      t.deviceLocked = false;
+      t.logs.push({ time: 'Vừa xong', text: `Nghiệm thu hoàn tất (${proofFile}): ${note} → Trạng thái: Sẵn sàng sử dụng` });
       closeModal();
-    };
-  }
-
-  // Modal 3: Nghiệm thu & đóng phiếu (BR4: Bắt buộc có ảnh/biên bản nghiệm thu)
-  function openCloseModal(ticket, onConfirmClose) {
-    const body = `
-      <p>Xác nhận hoàn tất khắc phục sự cố cho <strong>${ticket.deviceName}</strong> tại phòng <strong>${ticket.room}</strong>.</p>
-      <label class="vlu-label">Ảnh / Biên bản nghiệm thu sau sửa chữa (*):</label>
-      <input type="file" id="modal-proof-file" class="vlu-input" accept="image/*,.pdf">
-      <label class="vlu-label">Kết quả nghiệm thu:</label>
-      <input type="text" id="modal-close-note" class="vlu-input" value="Thiết bị đã hoạt động bình thường, mở lại trạng thái Sẵn sàng sử dụng.">
-      <p id="modal-close-error" style="color:#c8102e;font-size:12px;margin-top:6px;"></p>
-    `;
-    const foot = `
-      <button type="button" class="btn-secondary btn-close-modal">Quay lại</button>
-      <button type="button" class="btn-vlu" id="btn-finish-ticket">Hoàn tất & Đóng phiếu</button>
-    `;
-    const modal = renderShell(`Nghiệm thu đóng phiếu ${ticket.id}`, body, foot);
-    modal.querySelector('#btn-finish-ticket').onclick = () => {
-      const fileInput = modal.querySelector('#modal-proof-file');
-      const errEl = modal.querySelector('#modal-close-error');
-      if (!fileInput.files || fileInput.files.length === 0) {
-        errEl.textContent = 'Vui lòng đính kèm hình ảnh hoặc biên bản nghiệm thu trước khi đóng phiếu (BR4).';
-        return;
-      }
-      const closeNote = modal.querySelector('#modal-close-note').value.trim();
-      onConfirmClose(ticket.id, { proofFileName: fileInput.files[0].name, closeNote });
-      closeModal();
-    };
-  }
-
-  return { openDetailModal, openProcessModal, openCloseModal, closeModal };
-})();
+      renderTickets();
+      renderAssigned();
+      showAssignedBanner('ok', 'Đã đóng phiếu sự cố', `Thiết bị ${t.assetId} đã khôi phục "Sẵn sàng sử dụng" và gửi thông báo tới ${t.reporter}.`);
+    });
+  });
+}
