@@ -1,0 +1,106 @@
+/* UA2 (Đội Ngũ Kỹ Thuật) dùng chung style.css + ua1.css + ua1-modal.css */
+
+#pageAlert, #pageNotice { margin-bottom: 18px; }
+#pageAlert .alert, #pageNotice .alert { margin-bottom: 0; }
+#pageNotice:empty { display: none; }
+
+.btn-block { width: 100%; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.badge.blue { background: var(--info-bg); color: var(--info-text); }
+
+/* ===== Tabs chuyển luồng Xuất kho / Thu hồi (F79, F82) ===== */
+.seg-tabs {
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--bg); border-radius: 12px; padding: 4px; margin-bottom: 16px;
+}
+.seg-tabs button {
+  border: none; background: none; padding: 10px 8px; border-radius: 9px;
+  font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer;
+}
+.seg-tabs button.active {
+  background: #fff; color: var(--primary); font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+}
+
+/* ===== Thanh lọc cơ sở & Quét mã QR/Barcode (F80, F82, BR3) ===== */
+.scan-bar {
+  display: grid; grid-template-columns: 160px 1fr auto; gap: 10px;
+  background: var(--bg); padding: 12px; border-radius: 12px; margin-bottom: 16px;
+}
+.scan-bar select, .scan-bar input {
+  height: 42px; padding: 0 12px; border: 1px solid var(--border);
+  border-radius: 10px; background: #fff; font: inherit; font-size: 13px;
+}
+.scan-bar input:focus, .scan-bar select:focus {
+  border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); outline: none;
+}
+
+/* ===== Danh sách đơn mượn đã duyệt (Cột trái - F79) ===== */
+.req-list { display: flex; flex-direction: column; gap: 12px; }
+.req-card {
+  border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+  transition: border-color .15s;
+}
+.req-card.selected { border-color: var(--primary); background: #fffafa; }
+.req-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+.req-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.req-meta { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.req-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.eq-tag {
+  font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 8px;
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+}
+
+/* ===== Cột phải: Checklist ngoại quan & Kiểm đếm phụ kiện (F80 - F83) ===== */
+.qr-status {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; font-size: 12px; font-weight: 600;
+  margin-bottom: 14px;
+}
+.qr-status.ok { background: var(--ok-bg); color: var(--ok-text); }
+.qr-status.wait { background: #fff1e2; color: var(--soon-text); }
+
+.chk-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 14px; }
+.chk-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+  font-size: 13px;
+}
+.chk-item input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--primary); }
+
+.acc-box {
+  background: var(--bg); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+}
+.acc-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.acc-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; padding: 4px 0; border-bottom: 1px dashed var(--border);
+}
+.acc-row:last-child { border-bottom: none; }
+
+/* Hộp lập biên bản hư hỏng / thiếu phụ kiện khi trả (F83, BR2) */
+.damage-box {
+  background: var(--bad-bg); border: 1px solid #f5c2c7;
+  border-radius: 12px; padding: 12px; margin-bottom: 14px;
+}
+.damage-box label { display: block; font-size: 12px; font-weight: 600; color: var(--bad-text); margin-bottom: 6px; }
+.damage-box textarea {
+  width: 100%; height: 68px; padding: 8px 10px; border-radius: 8px;
+  border: 1px solid #e5a9b0; font: inherit; font-size: 12px; resize: vertical;
+}
+
+.panel-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+
+/* ===== Modal đối chiếu QR & Lịch sử giao nhận ===== */
+.qr-verify { text-align: center; padding: 12px; background: var(--bg); border-radius: 12px; margin-bottom: 14px; }
+.qr-verify code { display: inline-block; font-size: 18px; font-weight: 700; color: var(--primary); margin-top: 4px; }
+
+.tbl-wrap { border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; margin-top: 10px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 520px; }
+.tbl th { text-align: left; background: var(--bg); color: var(--muted); padding: 10px 12px; }
+.tbl td { padding: 10px 12px; border-top: 1px solid var(--border); }
+
+@media (max-width: 620px) {
+  .scan-bar { grid-template-columns: 1fr; }
+  .seg-tabs button { min-height: 44px; }
+}
