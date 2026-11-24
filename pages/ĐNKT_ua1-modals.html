@@ -1,80 +1,503 @@
-<!-- ua1-modals.html - Vùng mount và cấu trúc các modal của UA1 -->
-<div id="ua1-modal-root"></div> 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tiếp nhận &amp; Xử lý sự cố kỹ thuật | Đại học Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+</head>
+<body data-page="ua1" data-role="technical-staff">
 
-<!-- Modal 1: Chi tiết & phân loại mức độ ưu tiên (BR1, BR2) -->
-<template id="tpl-ua1-detail-modal">
-  <div class="vlu-modal-backdrop">
-    <div class="vlu-modal-box">
-      <div class="vlu-modal-head">
-        <h3>Chi tiết sự cố</h3>
-        <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
-      </div>
-      <div class="vlu-modal-body">
-        <label class="vlu-label" for="modal-priority-select">Phân loại mức độ ưu tiên (SLA 15p cho Khẩn cấp):</label>
-        <select id="modal-priority-select" class="vlu-input">
-          <option value="Khẩn cấp">Khẩn cấp (Ảnh hưởng ca học)</option>
-          <option value="Trung bình">Trung bình</option>
-          <option value="Thấp">Thấp</option>
-        </select>
-      </div>
-      <div class="vlu-modal-foot">
-        <button type="button" class="btn-secondary btn-close-modal">Đóng</button>
-        <button type="button" class="btn-vlu" id="btn-save-priority">Lưu phân loại</button>
-      </div>
+  <!-- Header dùng chung (nạp từ components/header.html) -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái dùng chung (nạp từ components/sidebar.html) -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <!-- Tiêu đề phân hệ UA1 -->
+        <div class="page-head">
+          <div>
+            <h1>Tiếp nhận &amp; Xử lý sự cố phòng học / thiết bị</h1>
+            <p class="sub">Theo dõi phiếu báo hỏng theo cơ sở phụ trách, phân loại ưu tiên SLA 15 phút và nghiệm thu sau sửa chữa.</p>
+          </div>
+          <div class="date-chip" id="dateChip"></div>
+        </div>
+
+        <div class="layout">
+          <!-- Cột trái: Bộ lọc & Danh sách phiếu sự cố (BR1, BR2) -->
+          <section class="card" id="ticketListCard">
+            <div class="card-head">
+              <h2>Danh sách phiếu báo sự cố</h2>
+              <span class="hint-ok" id="slaAlertHint">SLA Khẩn cấp: Phản hồi &le; 15 phút</span>
+            </div>
+
+            <!-- Bộ lọc theo cơ sở phụ trách (BR1), tòa nhà và mức độ ưu tiên -->
+            <form class="filter" id="ticketFilterForm">
+              <div class="field">
+                <label for="fCampus">Cơ sở VLU (BR1)</label>
+                <select id="fCampus">
+                  <option value="CS3" selected>Cơ sở 3 (Dương Quảng Hàm)</option>
+                  <option value="CS1">Cơ sở 1 (Nguyễn Khắc Nhu)</option>
+                  <option value="CS2">Cơ sở 2 (Phan Văn Trị)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="fBuilding">Tòa nhà</label>
+                <select id="fBuilding">
+                  <option value="all">Tất cả tòa nhà được phân công</option>
+                  <option value="A">Tòa A</option>
+                  <option value="G">Tòa G</option>
+                  <option value="H">Tòa H</option>
+                  <option value="LV">Tòa LV (Lab)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="fPriority">Mức độ ưu tiên</label>
+                <select id="fPriority">
+                  <option value="all">Tất cả mức độ</option>
+                  <option value="urgent">Khẩn cấp (Đang có tiết)</option>
+                  <option value="medium">Trung bình</option>
+                  <option value="low">Thấp</option>
+                </select>
+              </div>
+              <div class="field wide">
+                <label for="fKeyword">Tra cứu nhanh</label>
+                <input type="text" id="fKeyword" placeholder="Nhập mã phiếu (#SC-...), số phòng (A.0502) hoặc mã thiết bị...">
+              </div>
+              <button type="submit" class="btn btn-primary" id="btnFilterTicket">Lọc phiếu</button>
+            </form>
+
+            <!-- Tabs trạng thái xử lý -->
+            <div class="tabs" id="ticketStatusTabs">
+              <button type="button" class="tab active" data-status="all">Tất cả (6)</button>
+              <button type="button" class="tab" data-status="pending">Chờ tiếp nhận (2)</button>
+              <button type="button" class="tab" data-status="processing">Đang xử lý (2)</button>
+              <button type="button" class="tab" data-status="waiting_part">Chờ linh kiện / Đổi máy (1)</button>
+              <button type="button" class="tab" data-status="closed">Đã nghiệm thu (1)</button>
+            </div>
+
+            <div class="result-bar">
+              <strong id="ticketCount">Hiển thị 6 phiếu sự cố thuộc khu vực phụ trách</strong>
+              <span id="lastSyncTime">Cập nhật tự động qua tài khoản @vlu.edu.vn</span>
+            </div>
+
+            <!-- Danh sách thẻ phiếu sự cố (render bởi ua1.js hoặc hiển thị mẫu) -->
+            <div class="ticket-grid" id="ticketGrid">
+              <!-- Phiếu mẫu 1: Khẩn cấp - Chờ tiếp nhận -->
+              <article class="ticket-item urgent" data-ticket-id="SC-2026-104">
+                <div class="ticket-top">
+                  <span class="badge badge-urgent">KHẨN CẤP &bull; Còn 09:42 SLA</span>
+                  <span class="ticket-code">#SC-2026-104</span>
+                </div>
+                <h3>Máy chiếu không lên tín hiệu HDMI – Phòng A.0502</h3>
+                <p class="ticket-meta">
+                  <strong>Thiết bị:</strong> <code>TB-MC-A0502</code> (Epson EB-X51) &bull;
+                  <strong>Người báo:</strong> ThS. Lê Gia Hiếu (GV Khoa CNTT)
+                </p>
+                <p class="ticket-desc">Lớp đang diễn ra tiết 2-3 (90 SV), máy chiếu báo đèn đỏ Temp và mất tín hiệu kết nối.</p>
+                <div class="ticket-actions">
+                  <button type="button" class="btn btn-primary" data-open-modal="modalTicketDetail" data-id="SC-2026-104">
+                    Xem chi tiết &amp; Tiếp nhận
+                  </button>
+                </div>
+              </article>
+
+              <!-- Phiếu mẫu 2: Trung bình - Đang xử lý -->
+              <article class="ticket-item processing" data-ticket-id="SC-2026-101">
+                <div class="ticket-top">
+                  <span class="badge badge-processing">ĐANG XỬ LÝ &bull; Trung bình</span>
+                  <span class="ticket-code">#SC-2026-101</span>
+                </div>
+                <h3>Micro không dây bị rè và mất tiếng – Hội trường G.0201</h3>
+                <p class="ticket-meta">
+                  <strong>Thiết bị:</strong> <code>TB-AT-G0201</code> (Bộ thu phát Shure) &bull;
+                  <strong>Người báo:</strong> Nguyễn Đình Thuần (SV CLB Cờ vua)
+                </p>
+                <p class="ticket-desc">Micro cầm tay số 2 chập chờn âm thanh khi di chuyển xa bục phát biểu.</p>
+                <div class="ticket-actions">
+                  <button type="button" class="btn btn-outline" data-open-modal="modalTicketProgress" data-id="SC-2026-101">
+                    Cập nhật tiến độ
+                  </button>
+                  <button type="button" class="btn btn-secondary" data-open-modal="modalDeviceSwap" data-id="SC-2026-101">
+                    Đổi thiết bị dự phòng
+                  </button>
+                  <button type="button" class="btn btn-primary" data-open-modal="modalTicketClose" data-id="SC-2026-101">
+                    Nghiệm thu &amp; Đóng
+                  </button>
+                </div>
+              </article>
+            </div>
+
+            <p class="note" id="noteBusinessRule">
+              Lưu ý nghiệp vụ: Chỉ tiếp nhận phiếu thuộc cơ sở/tòa nhà được phân công (BR1). Thiết bị hỏng nặng bắt buộc khóa mượn trước khi đề xuất đổi máy (BR3).
+            </p>
+          </section>
+
+          <!-- Cột phải: Theo dõi SLA & Lịch sử thao tác trong ca trực -->
+          <aside class="card">
+            <div class="card-head">
+              <h2>Giám sát SLA &amp; Tiến độ ca trực</h2>
+              <span class="count" id="activeSlaCount">2 đang mở</span>
+            </div>
+
+            <div class="sla-summary" id="slaSummaryBox">
+              <div class="sla-metric alert">
+                <span class="label">Phiếu khẩn cấp chờ phản hồi (&le;15p)</span>
+                <strong class="value">01 phiếu</strong>
+              </div>
+              <div class="sla-metric">
+                <span class="label">Thiết bị đang khóa bảo trì (BR3)</span>
+                <strong class="value">02 thiết bị</strong>
+              </div>
+              <div class="sla-metric success">
+                <span class="label">Đã nghiệm thu hôm nay (BR4)</span>
+                <strong class="value">04 phiếu</strong>
+              </div>
+            </div>
+
+            <div class="timeline-box">
+              <h3>Nhật ký xử lý gần nhất</h3>
+              <ul class="activity-feed" id="techActivityFeed">
+                <li>
+                  <span class="time">08:45</span>
+                  <p><strong>#SC-2026-099 (Phòng H.0304):</strong> Đã tải ảnh nghiệm thu và khôi phục trạng thái <em>Sẵn sàng sử dụng</em>.</p>
+                </li>
+                <li>
+                  <span class="time">08:10</span>
+                  <p><strong>#SC-2026-101 (Hội trường G.0201):</strong> Chuyển sang <em>Đang xử lý</em> – kiểm tra tần số bộ thu âm thanh.</p>
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
     </div>
   </div>
-</template>
 
-<!-- Modal 2: Cập nhật tiến trình & phương án khắc phục (BR3) -->
-<template id="tpl-ua1-process-modal">
-  <div class="vlu-modal-backdrop">
-    <div class="vlu-modal-box">
-      <div class="vlu-modal-head">
-        <h3>Cập nhật tiến trình xử lý</h3>
-        <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
-      </div>
-      <div class="vlu-modal-body">
-        <label class="vlu-label" for="modal-status-select">Trạng thái xử lý:</label>
-        <select id="modal-status-select" class="vlu-input">
-          <option value="Đang xử lý">Đang xử lý</option>
-          <option value="Chờ linh kiện">Chờ linh kiện / Đổi thiết bị dự phòng</option>
-        </select>
-        <label class="vlu-label" for="modal-method-select">Phương án kỹ thuật:</label>
-        <select id="modal-method-select" class="vlu-input">
-          <option value="Sửa tại chỗ">Sửa tại chỗ</option>
-          <option value="Thay linh kiện">Thay linh kiện</option>
-          <option value="Đề xuất đổi thiết bị dự phòng">Lỗi nặng - Khóa mượn &amp; Đề xuất đổi thiết bị dự phòng</option>
-        </select>
-        <label class="vlu-label" for="modal-tech-note">Ghi chú kỹ thuật:</label>
-        <textarea id="modal-tech-note" class="vlu-input" rows="3" placeholder="Nhập chi tiết tình trạng và hướng xử lý..."></textarea>
-      </div>
-      <div class="vlu-modal-foot">
-        <button type="button" class="btn-secondary btn-close-modal">Hủy</button>
-        <button type="button" class="btn-vlu" id="btn-confirm-process">Cập nhật tiến độ</button>
+  <!-- Nhắc nhở nổi SLA 15 phút (BR2) -->
+  <div id="reminder" class="sla-toast" role="alert" aria-live="polite">
+    <strong>Cảnh báo SLA (BR2):</strong> Phiếu khẩn cấp <code>#SC-2026-104</code> tại Phòng <strong>A.0502</strong> còn 09 phút 42 giây để xác nhận tiếp nhận!
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- KHUNG CHỨA TOÀN BỘ MODALS CỦA UA1 (ĐỘI NGŨ KỸ THUẬT)                  -->
+  <!-- ===================================================================== -->
+  <div id="modalRoot">
+
+    <!-- MODAL 1: CHI TIẾT PHIẾU SỰ CỐ, LỊCH SỬ BẢO TRÌ & PHÂN LOẠI ƯU TIÊN (Bước 1 & 2 - F75, PB-76) -->
+    <div class="modal-backdrop" id="modalTicketDetail" role="dialog" aria-modal="true" aria-labelledby="titleTicketDetail" hidden>
+      <div class="modal-dialog modal-lg">
+        <header class="modal-header">
+          <div>
+            <span class="modal-kicker">BƯỚC 1 &amp; 2 &bull; TIẾP NHẬN &amp; ĐÁNH GIÁ SỰ CỐ (F75)</span>
+            <h2 id="titleTicketDetail">Chi tiết phiếu sự cố <span id="detailTicketCode">#SC-2026-104</span></h2>
+          </div>
+          <button type="button" class="modal-close" data-close-modal aria-label="Đóng hộp thoại">&times;</button>
+        </header>
+
+        <form id="formAcceptTicket" class="modal-body">
+          <!-- Thanh cảnh báo SLA BR2 -->
+          <div class="alert-box alert-danger" id="detailSlaBanner">
+            <strong>Yêu cầu phản hồi khẩn cấp (BR2):</strong> Lớp học đang diễn ra. Vui lòng phân loại và xác nhận tiếp nhận trong vòng 15 phút kể từ lúc báo cáo (09:05).
+          </div>
+
+          <!-- Thông tin chung & vị trí -->
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Cơ sở / Phòng học</span>
+              <strong id="detailLocation">Cơ sở 3 &ndash; Tòa A &ndash; Phòng A.0502</strong>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Mã tài sản &amp; Thiết bị</span>
+              <strong id="detailAsset"><code>TB-MC-A0502</code> &ndash; Máy chiếu Epson EB-X51</strong>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Người báo cáo</span>
+              <strong id="detailReporter">ThS. Lê Gia Hiếu (hieu.lg@vlu.edu.vn)</strong>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Thời điểm báo hỏng</span>
+              <strong id="detailCreatedAt">24/11/2026 &ndash; 09:05</strong>
+            </div>
+          </div>
+
+          <!-- Mô tả lỗi & Hình ảnh hiện trường -->
+          <div class="form-section">
+            <label class="section-label">Mô tả sự cố từ người dùng</label>
+            <div class="readonly-box" id="detailDescription">
+              Máy chiếu khởi động khoảng 2 phút thì tự tắt, đèn báo Temp nhấp nháy đỏ và không nhận tín hiệu HDMI từ laptop giảng viên. Lớp học bù có 90 sinh viên đang chờ.
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="section-label">Hình ảnh đính kèm lúc báo lỗi</label>
+            <div class="attachment-preview" id="detailAttachments">
+              <figure class="thumb-card">
+                <img src="../assets/sample-projector-error.jpg" alt="Ảnh đèn báo lỗi máy chiếu phòng A.0502">
+                <figcaption>anh_loi_may_chieu_A0502.jpg</figcaption>
+              </figure>
+            </div>
+          </div>
+
+          <!-- Lịch sử bảo trì / sửa chữa trước đó (Step 2.3) -->
+          <div class="form-section">
+            <label class="section-label">Lịch sử bảo trì gần nhất của thiết bị <code>TB-MC-A0502</code></label>
+            <table class="mini-table">
+              <thead>
+                <tr>
+                  <th>Ngày</th>
+                  <th>Loại xử lý</th>
+                  <th>Nội dung kỹ thuật</th>
+                  <th>KTV phụ trách</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>12/09/2026</td>
+                  <td>Bảo trì định kỳ</td>
+                  <td>Vệ sinh lưới lọc bụi, kiểm tra độ sáng bóng đèn (1.850 giờ)</td>
+                  <td>Nguyễn Dương Quốc Bảo</td>
+                </tr>
+                <tr>
+                  <td>18/05/2026</td>
+                  <td>Xử lý sự cố</td>
+                  <td>Thay cáp HDMI âm tường dài 10m</td>
+                  <td>Nguyễn Dương Quốc Bảo</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Phân loại mức độ ưu tiên (Step 2.2) -->
+          <div class="form-row">
+            <div class="field">
+              <label for="selectPriorityLevel">Phân loại mức độ ưu tiên <span class="req">*</span></label>
+              <select id="selectPriorityLevel" name="priority" required>
+                <option value="urgent" selected>Khẩn cấp (Ảnh hưởng trực tiếp ca học đang diễn ra)</option>
+                <option value="medium">Trung bình (Cần xử lý trong ngày)</option>
+                <option value="low">Thấp (Có thể xử lý cuối buổi / bảo trì)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="assignedTechName">Kỹ thuật viên tiếp nhận</label>
+              <input type="text" id="assignedTechName" value="Nguyễn Dương Quốc Bảo (bao.ndq@vlu.edu.vn)" readonly>
+            </div>
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close-modal>Đóng</button>
+            <button type="submit" class="btn btn-primary">Xác nhận tiếp nhận &amp; Chuyển sang Đang xử lý</button>
+          </footer>
+        </form>
       </div>
     </div>
-  </div>
-</template>
 
-<!-- Modal 3: Nghiệm thu & đóng phiếu sự cố (BR4) -->
-<template id="tpl-ua1-close-modal">
-  <div class="vlu-modal-backdrop">
-    <div class="vlu-modal-box">
-      <div class="vlu-modal-head">
-        <h3>Nghiệm thu đóng phiếu sự cố</h3>
-        <button type="button" class="btn-close-modal" aria-label="Đóng">&times;</button>
-      </div>
-      <div class="vlu-modal-body">
-        <label class="vlu-label" for="modal-proof-file">Ảnh / Biên bản nghiệm thu sau sửa chữa (*):</label>
-        <input type="file" id="modal-proof-file" class="vlu-input" accept="image/*,.pdf">
-        <label class="vlu-label" for="modal-close-note">Kết quả nghiệm thu:</label>
-        <input type="text" id="modal-close-note" class="vlu-input" value="Thiết bị đã hoạt động bình thường, mở lại trạng thái Sẵn sàng sử dụng.">
-        <p id="modal-close-error" style="color:#c8102e;font-size:12px;margin-top:6px;"></p>
-      </div>
-      <div class="vlu-modal-foot">
-        <button type="button" class="btn-secondary btn-close-modal">Quay lại</button>
-        <button type="button" class="btn-vlu" id="btn-finish-ticket">Hoàn tất &amp; Đóng phiếu</button>
+    <!-- MODAL 2: CẬP NHẬT TIẾN TRÌNH & PHƯƠNG ÁN XỬ LÝ (Bước 3 - F76, PB-77) -->
+    <div class="modal-backdrop" id="modalTicketProgress" role="dialog" aria-modal="true" aria-labelledby="titleTicketProgress" hidden>
+      <div class="modal-dialog">
+        <header class="modal-header">
+          <div>
+            <span class="modal-kicker">BƯỚC 3 &bull; KHẮC PHỤC &amp; CẬP NHẬT TIẾN ĐỘ (F76)</span>
+            <h2 id="titleTicketProgress">Cập nhật xử lý phiếu <span id="progressTicketCode">#SC-2026-101</span></h2>
+          </div>
+          <button type="button" class="modal-close" data-close-modal aria-label="Đóng hộp thoại">&times;</button>
+        </header>
+
+        <form id="formUpdateProgress" class="modal-body">
+          <div class="field">
+            <label for="progressStatus">Trạng thái xử lý phiếu <span class="req">*</span></label>
+            <select id="progressStatus" name="status" required>
+              <option value="processing" selected>Đang xử lý tại hiện trường</option>
+              <option value="waiting_part">Chờ linh kiện thay thế</option>
+              <option value="severe_broken">Hỏng nặng &ndash; Không thể khắc phục tại chỗ (Kích hoạt BR3)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="repairMethod">Phương án xử lý kỹ thuật <span class="req">*</span></label>
+            <select id="repairMethod" name="method" required>
+              <option value="onsite_fix">Sửa chữa / hiệu chỉnh trực tiếp tại chỗ</option>
+              <option value="replace_consumable">Thay thế linh kiện tiêu hao (bóng đèn, pin, dây cáp...)</option>
+              <option value="swap_backup">Đề xuất đổi thiết bị dự phòng từ kho (F77)</option>
+              <option value="external_warranty">Lập phiếu gửi bảo hành / sửa chữa đơn vị ngoài</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="consumableUsed">Linh kiện / Vật tư sử dụng (nếu có)</label>
+            <input type="text" id="consumableUsed" name="consumable" placeholder="VD: 02 pin sạc AA, 01 cáp HDMI 2.0 dài 3m...">
+          </div>
+
+          <div class="field">
+            <label for="progressNote">Ghi chú phương án khắc phục &amp; hiện trạng <span class="req">*</span></label>
+            <textarea id="progressNote" name="note" rows="4" required placeholder="Mô tả chi tiết nguyên nhân kỹ thuật, thao tác đã thực hiện hoặc lý do chờ linh kiện..."></textarea>
+          </div>
+
+          <!-- Cảnh báo tự động hiện khi chọn "Hỏng nặng" (BR3) -->
+          <div class="alert-box alert-warning" id="br3LockNotice" hidden>
+            <strong>Quy tắc nghiệp vụ BR3:</strong> Khi xác nhận thiết bị không thể khắc phục tại chỗ, hệ thống sẽ tự động chuyển trạng thái thiết bị sang <strong>"Đang bảo trì / Hỏng"</strong> và khóa tính năng cho mượn thiết bị này.
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close-modal>Hủy</button>
+            <button type="button" class="btn btn-secondary" data-open-modal="modalDeviceSwap">Mở phiếu đổi thiết bị dự phòng</button>
+            <button type="submit" class="btn btn-primary">Lưu tiến độ xử lý</button>
+          </footer>
+        </form>
       </div>
     </div>
+
+    <!-- MODAL 3: KHÓA THIẾT BỊ LỖI & ĐỀ XUẤT ĐỔI THIẾT BỊ DỰ PHÒNG (Bước 3.3 - F77, BR3) -->
+    <div class="modal-backdrop" id="modalDeviceSwap" role="dialog" aria-modal="true" aria-labelledby="titleDeviceSwap" hidden>
+      <div class="modal-dialog">
+        <header class="modal-header">
+          <div>
+            <span class="modal-kicker">BƯỚC 3.3 &bull; XỬ LÝ LỖI NẶNG &amp; CẤP BÙ THIẾT BỊ (F77 &ndash; BR3)</span>
+            <h2 id="titleDeviceSwap">Khóa thiết bị hỏng &amp; Đề xuất đổi thiết bị dự phòng</h2>
+          </div>
+          <button type="button" class="modal-close" data-close-modal aria-label="Đóng hộp thoại">&times;</button>
+        </header>
+
+        <form id="formDeviceSwap" class="modal-body">
+          <div class="alert-box alert-danger">
+            Thiết bị gốc <code>TB-AT-G0201</code> sẽ bị khóa khỏi danh mục cho mượn (trạng thái: <strong>Đang bảo trì / Hỏng</strong>) cho đến khi hoàn tất sửa chữa hoặc bảo hành ngoài.
+          </div>
+
+          <div class="field">
+            <label for="brokenReason">Kết luận tình trạng hư hỏng thiết bị gốc <span class="req">*</span></label>
+            <textarea id="brokenReason" rows="3" required placeholder="Ghi rõ lỗi phần cứng không thể sửa ngay (VD: Cháy bo nguồn, hỏng mạch thu sóng)..."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="swapActionType">Hình thức xử lý tiếp theo <span class="req">*</span></label>
+            <select id="swapActionType" required>
+              <option value="warehouse_swap">Cấp đổi thiết bị dự phòng từ Kho thiết bị Cơ sở 3</option>
+              <option value="external_warranty">Chỉ khóa thiết bị &amp; Lập phiếu đề xuất bảo hành ngoài</option>
+            </select>
+          </div>
+
+          <div class="field" id="backupDeviceSelectGroup">
+            <label for="backupDeviceId">Chọn thiết bị dự phòng sẵn sàng trong kho <span class="req">*</span></label>
+            <select id="backupDeviceId">
+              <option value="TB-AT-KHO04">TB-AT-KHO04 &ndash; Bộ micro không dây Shure BLX288 (Sẵn sàng &bull; Kho CS3)</option>
+              <option value="TB-AT-KHO09">TB-AT-KHO09 &ndash; Bộ micro cầm tay Sennheiser XSW1 (Sẵn sàng &bull; Kho CS3)</option>
+            </select>
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close-modal>Hủy</button>
+            <button type="submit" class="btn btn-primary">Xác nhận khóa máy &amp; Lập phiếu đề xuất</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL 4: NGHIỆM THU & ĐÓNG PHIẾU SỰ CỐ (Bước 4 & 5 - F78, PB-78, BR4) -->
+    <div class="modal-backdrop" id="modalTicketClose" role="dialog" aria-modal="true" aria-labelledby="titleTicketClose" hidden>
+      <div class="modal-dialog">
+        <header class="modal-header">
+          <div>
+            <span class="modal-kicker">BƯỚC 4 &amp; 5 &bull; NGHIỆM THU &amp; ĐÓNG PHIẾU (F78 &ndash; BR4)</span>
+            <h2 id="titleTicketClose">Nghiệm thu hoàn tất phiếu <span id="closeTicketCode">#SC-2026-101</span></h2>
+          </div>
+          <button type="button" class="modal-close" data-close-modal aria-label="Đóng hộp thoại">&times;</button>
+        </header>
+
+        <form id="formCloseTicket" class="modal-body">
+          <div class="alert-box alert-info">
+            <strong>Quy định nghiệm thu (BR4):</strong> Bắt buộc đính kèm hình ảnh thiết bị hoạt động bình thường sau sửa chữa hoặc biên bản xác nhận của người báo cáo/quản lý phòng trước khi đóng phiếu.
+          </div>
+
+          <div class="field">
+            <label for="acceptanceProofFile">Tải lên ảnh nghiệm thu / Biên bản xác nhận <span class="req">*</span></label>
+            <input type="file" id="acceptanceProofFile" name="proofFile" accept="image/*,.pdf" required>
+            <small class="field-hint">Hỗ trợ định dạng JPG, PNG hoặc PDF (tối đa 10MB). Bắt buộc để mở nút Đóng phiếu.</small>
+          </div>
+
+          <div class="field">
+            <label for="acceptanceResult">Kết quả kiểm tra vận hành sau sửa chữa <span class="req">*</span></label>
+            <textarea id="acceptanceResult" name="result" rows="3" required placeholder="VD: Đã thay dây kết nối và hiệu chỉnh tần số, kiểm tra âm thanh rõ, không nhiễu, thiết bị hoạt động ổn định."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="confirmerName">Người xác nhận nghiệm thu (GV / SV / Quản lý phòng)</label>
+            <input type="text" id="confirmerName" name="confirmer" placeholder="VD: Nguyễn Đình Thuần - Ban chủ nhiệm CLB Cờ vua">
+          </div>
+
+          <div class="checkbox-field">
+            <input type="checkbox" id="restoreReadyStatus" checked>
+            <label for="restoreReadyStatus">
+              Khôi phục trạng thái phòng học / thiết bị về <strong>"Sẵn sàng sử dụng"</strong> và lưu vào hồ sơ lý lịch thiết bị (PB-78 AC2).
+            </label>
+          </div>
+
+          <div class="checkbox-field">
+            <input type="checkbox" id="notifyReporterCheck" checked disabled>
+            <label for="notifyReporterCheck">
+              Tự động gửi thông báo hoàn tất xử lý đến người báo lỗi qua hệ thống &amp; email <code>@vlu.edu.vn</code> (PB-78 AC3).
+            </label>
+          </div>
+
+          <footer class="modal-footer">
+            <button type="button" class="btn btn-ghost" data-close-modal>Quay lại</button>
+            <button type="submit" class="btn btn-primary" id="btnConfirmCloseTicket">Hoàn tất xử lý &amp; Đóng phiếu</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
   </div>
-</template>
+
+  <!-- Script điều khiển mẫu giúp mở/đóng modal ngay trên HTML (có thể chuyển vào js/ua1-modals.js) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const openButtons = document.querySelectorAll('[data-open-modal]');
+      const closeButtons = document.querySelectorAll('[data-close-modal]');
+      const progressSelect = document.getElementById('progressStatus');
+      const br3Notice = document.getElementById('br3LockNotice');
+
+      openButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-open-modal');
+          const modal = document.getElementById(targetId);
+          document.querySelectorAll('.modal-backdrop').forEach(m => m.hidden = true);
+          if (modal) modal.hidden = false;
+        });
+      });
+
+      closeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const backdrop = btn.closest('.modal-backdrop');
+          if (backdrop) backdrop.hidden = true;
+        });
+      });
+
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.addEventListener('click', (e) => {
+          if (e.target === backdrop) backdrop.hidden = true;
+        });
+      });
+
+      if (progressSelect && br3Notice) {
+        progressSelect.addEventListener('change', () => {
+          br3Notice.hidden = progressSelect.value !== 'severe_broken';
+        });
+      }
+    });
+  </script>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua1.js"></script>
+  <script src="../js/ua1-modals.js"></script>
+</body>
+</html>
