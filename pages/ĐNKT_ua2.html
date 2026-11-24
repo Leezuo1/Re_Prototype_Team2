@@ -2,52 +2,54 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>UA2 - Kiểm tra &amp; bàn giao thiết bị mượn/trả | VLU Kỹ thuật</title>
-  <link rel="stylesheet" href="header.css">
-  <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="ua4.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kiểm tra &amp; Bàn giao thiết bị | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/ua2.css">
 </head>
-<body>
-  <div id="header-container"></div>
+<body data-page="ua2" data-role="dnkt">
 
-  <div class="app-layout">
-    <div id="sidebar-container"></div>
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
 
-    <main class="ua4-main">
-      <div class="ua4-topbar">
-        <h2>UA2 - Kiểm tra kỹ thuật và bàn giao thiết bị mượn / trả</h2>
-        <div class="ua4-filter">
-          <input type="text" id="ua2-qr-input" placeholder="Quét hoặc nhập mã QR thiết bị (VD: QR-TB-009)...">
-          <button type="button" id="ua2-btn-scan-qr" class="btn-vlu">Đối chiếu mã QR</button>
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Kiểm tra kỹ thuật &amp; Bàn giao thiết bị</h1>
+            <p class="sub">Lọc đơn mượn đã duyệt theo cơ sở, quét mã QR xuất kho và kiểm tra ngoại quan khi thu hồi.</p>
+          </div>
+          <div class="date-chip" id="dateChip"></div>
         </div>
-      </div>
 
-      <p id="ua2-qr-feedback" style="margin-bottom:14px;font-size:13.5px;color:#c8102e;font-weight:600;"></p>
+        <div id="pageAlert"></div>
+        <div id="pageNotice"></div>
 
-      <div class="ua4-stats">
-        <div class="stat-card"><span>Đơn chờ kiểm tra xuất kho</span><strong>4</strong></div>
-        <div class="stat-card"><span>Thiết bị đang được mượn</span><strong>9</strong></div>
-        <div class="stat-card"><span>Thu hồi đạt chuẩn hôm nay</span><strong>12</strong></div>
-      </div>
+        <div class="layout" id="layout">
+          <!-- Cột trái: Danh sách đơn mượn đã duyệt & Quét QR xuất/nhập kho (F79, F80, F82) -->
+          <section class="card" id="handoverQueue"></section>
 
-      <div class="ua4-card">
-        <table class="ua4-table">
-          <thead>
-            <tr>
-              <th>Mã phiếu</th>
-              <th>Người mượn (MSSV / Mã GV)</th>
-              <th>Thiết bị &amp; Mã QR</th>
-              <th>Cơ sở / Phòng</th>
-              <th>Trạng thái</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody id="ua2-orders-tbody"></tbody>
-        </table>
-      </div>
-    </main>
+          <!-- Cột phải: Checklist ngoại quan bàn giao & Biên bản thu hồi/hư hỏng (F81, F83, BR1-BR3) -->
+          <aside class="card" id="inspectionPanel"></aside>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
   </div>
 
-  <script src="ua2.js"></script>
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua2.js"></script>
 </body>
 </html>
