@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sự cố | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-incidents">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Sự cố</h1>
+            <p class="sub">Duyệt, xếp mức ưu tiên, phân công kỹ thuật viên và theo dõi tiến độ xử lý.</p>
+          </div>
+        </div>
+
+        <div class="campus-bar">
+          <span class="mono-note">Cơ sở</span><div id="campusHost"></div>
+          <button type="button" class="chip" id="overBtn" aria-pressed="false">Quá hạn<span class="n" id="overN">0</span></button>
+        </div>
+
+        <section class="card">
+          <div class="toolbar toolbar-card">
+            <div class="chips" id="tabChips" role="group" aria-label="Trạng thái sự cố"></div>
+          </div>
+          <div class="toolbar toolbar-card" style="border-top:1px solid var(--border)">
+            <div class="search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input class="input" id="q" type="search" placeholder="Mã phiếu, thiết bị, phòng" aria-label="Tìm sự cố"></div>
+            <select class="select" id="fPrio" aria-label="Mức ưu tiên"><option value="">Mọi mức ưu tiên</option><option value="urgent">Khẩn cấp</option><option value="normal">Thông thường</option><option value="none">Chưa xếp mức</option></select>
+            <select class="select" id="fSource" aria-label="Nguồn báo"></select>
+          </div>
+          <ul class="inc-list" id="incList"></ul>
+          <div id="emptyHost"></div>
+          <div class="table-foot"><span id="countText" aria-live="polite"></span><span class="mono-note">Sắp xếp: phiếu đang mở trước, Khẩn cấp rồi phiếu chờ duyệt, gửi sớm nhất trước.</span></div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-incidents.js"></script>
+</body>
+</html>

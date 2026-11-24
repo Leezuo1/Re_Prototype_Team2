@@ -1,0 +1,49 @@
+/* Trang chủ: liên kết tới mọi màn hình theo vai trò */
+
+.hub { padding-top: 40px; padding-bottom: 8px; }
+.hub-head { margin-bottom: 32px; }
+.hub-head h1 { font-size: 32px; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; text-wrap: balance; }
+.hub-head .sub { color: var(--muted); margin-top: 8px; max-width: 64ch; }
+
+.hub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+
+.role {
+  background: var(--card); border: 1px solid #e3e5ec; border-radius: 16px;
+  padding: 24px 0 8px;
+  box-shadow: 0 1px 2px rgba(31, 36, 48, .04), 0 10px 28px -18px rgba(31, 36, 48, .12);
+}
+.role-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 24px; }
+.role-head h2 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.count {
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  background: var(--primary-soft); padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+}
+.role-desc { padding: 6px 24px 16px; color: var(--muted); font-size: 13px; }
+
+.links { list-style: none; border-top: 1px solid var(--border); }
+.links li + li { border-top: 1px solid var(--border); }
+.links a {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px 24px; transition: background-color .15s cubic-bezier(.2, .8, .2, 1);
+}
+.links a span { min-width: 0; }
+.links b { display: block; font-size: 15px; font-weight: 600; }
+.links small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+.links .icon { color: #a6acb8; transition: color .15s, transform .15s cubic-bezier(.2, .8, .2, 1); }
+.links a:hover { background: var(--bg); }
+.links a:hover b { color: var(--primary); }
+.links a:hover .icon { color: var(--primary); transform: translateX(3px); }
+.links li:last-child a { border-radius: 0 0 16px 16px; }
+
+@media (max-width: 900px) {
+  .hub-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .hub { padding-top: 24px; }
+  .hub-head h1 { font-size: 26px; }
+  .role-head, .role-desc, .links a { padding-left: 16px; padding-right: 16px; }
+  .links a { min-height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .links a:hover .icon { transform: none; }
+}

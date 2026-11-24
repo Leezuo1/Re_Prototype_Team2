@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Báo cáo | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-reports">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Báo cáo</h1>
+            <p class="sub">Chọn loại báo cáo, cơ sở và khoảng thời gian, xem trước rồi xuất Excel hoặc PDF.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-primary" id="btnExport"><svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Xuất báo cáo</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <section class="card" aria-labelledby="typesTitle">
+            <div class="card-head"><h2 id="typesTitle">Loại báo cáo</h2><span class="hint">Bấm một loại để xuất nhanh</span></div>
+            <div class="type-list" id="types"></div>
+          </section>
+          <section class="card" aria-labelledby="recentTitle">
+            <div class="card-head"><h2 id="recentTitle">Báo cáo đã xuất gần đây</h2></div>
+            <ul class="attn" id="recent"></ul>
+          </section>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-reports.js"></script>
+</body>
+</html>

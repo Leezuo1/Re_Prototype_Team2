@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lịch phòng | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+</head>
+<body data-page="manager-calendar">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Lịch phòng</h1>
+            <p class="sub">Xem phòng nào đang có lớp, đã được mượn hoặc còn trống theo từng ngày. Sự kiện của trường được giữ chỗ trước.</p>
+          </div>
+          <div class="page-actions"><button type="button" class="btn btn-primary" id="btnHold"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg> Giữ chỗ phòng</button></div>
+        </div>
+
+        <section class="card">
+          <div class="cal-bar">
+            <div class="date-nav">
+              <button type="button" id="prevDay" aria-label="Ngày trước"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+              <strong id="dayLabel" aria-live="polite"></strong>
+              <button type="button" id="nextDay" aria-label="Ngày sau"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="btnToday">Hôm nay</button>
+            <span class="spacer" style="flex:1"></span>
+            <select class="select" id="fBuilding" aria-label="Tòa nhà"><option value="">Tất cả tòa</option></select>
+            <label class="mono-note" style="gap:8px;color:var(--text);font-size:13px"><input type="checkbox" id="onlyFree"> Chỉ hiện phòng trống</label>
+          </div>
+          <div class="day-tabs" id="dayTabs" role="tablist" aria-label="Các ngày trong tuần"></div>
+          <div class="toolbar toolbar-card" id="freeBar" hidden>
+            <span class="mono-note" style="color:var(--text);font-size:13px">Phòng trống trong khung giờ</span>
+            <input class="input" type="time" id="freeFrom" value="09:00" aria-label="Từ giờ"> <span class="mono-note">đến</span>
+            <input class="input" type="time" id="freeTo" value="11:00" aria-label="Đến giờ">
+          </div>
+          <div class="toolbar toolbar-card"><div class="chips" id="typeChips" role="group" aria-label="Loại phòng"></div></div>
+          <div class="gantt" id="gantt"></div>
+          <div class="legend-bar">
+            <span><i class="class"></i>Lịch học</span><span><i class="loan"></i>Lịch mượn</span><span><i class="event"></i>Sự kiện / họp định kỳ của trường</span>
+            <span><i class="makeup"></i>Dạy bù</span><span><i class="pending"></i>Chờ duyệt</span>
+          </div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/manager-calendar.js"></script>
+</body>
+</html>

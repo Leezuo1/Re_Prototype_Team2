@@ -1,0 +1,65 @@
+/* Shared presentation of the two lecturer service pages. */
+.page-head {
+  align-items: center;
+}
+.layout > .card { min-width: 0; border-radius: 12px; }
+.seg-tabs { background: white; padding: 0; border-bottom: 1px solid var(--border); }
+.seg-tabs button, .seg-tabs button.active { border-radius: 0; box-shadow: none; }
+.seg-tabs button.active { border-bottom: 2px solid var(--primary); }
+
+#catalog { container-type: inline-size; }
+.eq-grid { grid-template-columns: 1fr; gap: 0; }
+.eq-card {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 6px 18px;
+  align-items: center;
+  padding: 18px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+.eq-top { grid-column: 2; grid-row: 1; margin: 0; justify-self: end; }
+.eq-top .room-icon { display: none; }
+.eq-card h3 { grid-column: 1; grid-row: 1; font-size: 16px; }
+.eq-desc { grid-column: 1 / -1; margin: 0 0 6px; font-size: 12px; }
+.eq-mid { align-items: center; gap: 12px; margin: 0; }
+.eq-mid strong { font-size: 15px; }
+.eq-card > .btn { width: auto; justify-self: end; }
+.cart { background: #faf5f6; }
+@container (max-width: 400px) {
+  .eq-mid, .eq-card > .btn { grid-column: 1 / -1; }
+  .eq-card > .btn { width: 100%; margin-top: 4px; }
+}
+
+.layout.eq { grid-template-columns: minmax(0,1fr); }
+#formCard { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 24px; }
+#formCard > :not(.fl) { grid-column: 1 / -1; }
+#formCard .kind { justify-content: center; padding: 10px; }
+#formCard .drop { padding: 15px 12px; }
+#formCard #fBtn { width: auto; justify-self: start; padding-inline: 24px; }
+#incList { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,320px),1fr)); }
+#incList .inc { border-radius: 8px; border-left: 3px solid #bfa7ae; }
+#incList .inc.new { border-left-color: var(--primary); }
+@media (max-width: 760px) {
+  #formCard { grid-template-columns: 1fr; }
+  .page-head { align-items: flex-start; }
+}
+
+#otherDeviceField { margin-top: 12px; }
+#otherDeviceField label { display: block; margin-bottom: 6px; font-weight: 600; }
+#otherDeviceName { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
+#otherDeviceName[aria-invalid="true"] { border-color: var(--bad-text); }
+
+/* Keep the quantity and the report actions readable on touch screens. */
+.stepper span, .eq-mid strong, .inc-time { font-variant-numeric: tabular-nums; }
+.page :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+#otherDeviceName[aria-invalid="true"] { border-width: 2px; }
+@media (max-width: 760px) {
+  .stepper { height: 44px; }
+  .stepper button { width: 44px; }
+  #formCard #fBtn { width: 100%; min-height: 44px; }
+  #incTabs { flex-wrap: wrap; }
+  #incList .inc-title { flex-wrap: wrap; }
+  #incList .inc-title h3 { min-width: 0; overflow-wrap: anywhere; }
+}

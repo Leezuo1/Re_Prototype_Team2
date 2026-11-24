@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mượn – trả thiết bị | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/mgmt.css">
+  <link rel="stylesheet" href="../css/csvc.css">
+</head>
+<body data-page="csvc-equipment">
+
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
+
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Mượn – trả thiết bị</h1>
+            <p class="sub">Chuẩn bị thiết bị theo phiếu, bàn giao và nhận trả bằng mã QR. Không cọc thẻ sinh viên, không ghi sổ tay.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn btn-outline" id="btnBack"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/></svg> Quét QR nhận trả</button>
+            <button type="button" class="btn btn-primary" id="btnGive"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/></svg> Quét QR bàn giao</button>
+          </div>
+        </div>
+
+        <div class="campus-bar"><span class="mono-note">Cơ sở</span><div id="campusHost"></div></div>
+
+        <section class="card">
+          <div class="toolbar toolbar-card">
+            <div class="chips" id="statusChips" role="group" aria-label="Trạng thái phiếu"></div>
+          </div>
+          <div class="toolbar toolbar-card" style="border-top:1px solid var(--border)">
+            <div class="search"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input class="input" id="q" type="search" placeholder="Mã phiếu, tên, MSSV / mã GV" aria-label="Tìm phiếu"></div>
+            <label class="mono-note" for="fDate">Ngày mượn</label><input class="input" type="date" id="fDate">
+          </div>
+          <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+          <div id="emptyHost"></div>
+          <div class="table-foot"><span id="countText" aria-live="polite"></span><span class="mono-note">Số lượng khả dụng được trừ khi người mượn tạo phiếu, không đổi lúc bàn giao.</span></div>
+        </section>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
+  </div>
+
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/mgmt.js"></script>
+  <script src="../js/mgmt-data.js"></script>
+  <script src="../js/csvc-data.js"></script>
+  <script src="../js/csvc-common.js"></script>
+  <script src="../js/csvc-equipment.js"></script>
+</body>
+</html>
