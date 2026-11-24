@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>UA1 - Tiếp nhận &amp; xử lý sự cố | VLU Kỹ thuật</title>
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="ua4.css">
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <div class="app-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="ua4-main">
+      <div class="ua4-topbar">
+        <h2>UA1 - Tiếp nhận và xử lý sự cố phòng học / thiết bị</h2>
+        <div class="ua4-filter">
+          <select id="ua1-filter-campus">
+            <option value="ALL">Tất cả cơ sở VLU</option>
+            <option value="Cơ sở 1">Cơ sở 1</option>
+            <option value="Cơ sở 2">Cơ sở 2</option>
+            <option value="Cơ sở 3">Cơ sở 3</option>
+          </select>
+          <select id="ua1-filter-status">
+            <option value="ALL">Tất cả trạng thái</option>
+            <option value="Chờ tiếp nhận">Chờ tiếp nhận</option>
+            <option value="Đang xử lý">Đang xử lý</option>
+            <option value="Chờ linh kiện">Chờ linh kiện</option>
+            <option value="Đã hoàn thành">Đã hoàn thành</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ua4-stats">
+        <div class="stat-card"><span>Sự cố Khẩn cấp (SLA 15p)</span><strong>1</strong></div>
+        <div class="stat-card"><span>Đang xử lý</span><strong>1</strong></div>
+        <div class="stat-card"><span>Đã nghiệm thu hoàn tất</span><strong>18</strong></div>
+      </div>
+
+      <div class="ua4-card">
+        <table class="ua4-table">
+          <thead>
+            <tr>
+              <th>Mã phiếu</th>
+              <th>Cơ sở / Phòng</th>
+              <th>Thiết bị gặp sự cố</th>
+              <th>Mức độ ưu tiên</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="ua1-ticket-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <div id="ua1-modal-root"></div>
+  <script src="ua1-modals.js"></script>
+  <script src="ua1.js"></script>
+</body>
+</html>

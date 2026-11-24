@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>UA2 - Kiểm tra &amp; bàn giao thiết bị mượn/trả | VLU Kỹ thuật</title>
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="ua4.css">
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <div class="app-layout">
+    <div id="sidebar-container"></div>
+
+    <main class="ua4-main">
+      <div class="ua4-topbar">
+        <h2>UA2 - Kiểm tra kỹ thuật và bàn giao thiết bị mượn / trả</h2>
+        <div class="ua4-filter">
+          <input type="text" id="ua2-qr-input" placeholder="Quét hoặc nhập mã QR thiết bị (VD: QR-TB-009)...">
+          <button type="button" id="ua2-btn-scan-qr" class="btn-vlu">Đối chiếu mã QR</button>
+        </div>
+      </div>
+
+      <p id="ua2-qr-feedback" style="margin-bottom:14px;font-size:13.5px;color:#c8102e;font-weight:600;"></p>
+
+      <div class="ua4-stats">
+        <div class="stat-card"><span>Đơn chờ kiểm tra xuất kho</span><strong>4</strong></div>
+        <div class="stat-card"><span>Thiết bị đang được mượn</span><strong>9</strong></div>
+        <div class="stat-card"><span>Thu hồi đạt chuẩn hôm nay</span><strong>12</strong></div>
+      </div>
+
+      <div class="ua4-card">
+        <table class="ua4-table">
+          <thead>
+            <tr>
+              <th>Mã phiếu</th>
+              <th>Người mượn (MSSV / Mã GV)</th>
+              <th>Thiết bị &amp; Mã QR</th>
+              <th>Cơ sở / Phòng</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="ua2-orders-tbody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="ua2.js"></script>
+</body>
+</html>
