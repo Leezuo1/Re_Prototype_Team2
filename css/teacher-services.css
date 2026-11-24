@@ -1,8 +1,6 @@
 /* Shared presentation of the two lecturer service pages. */
 .page-head {
   align-items: center;
-  padding-bottom: 18px;
-  border-bottom: 2px solid var(--primary);
 }
 .layout > .card { min-width: 0; border-radius: 12px; }
 .seg-tabs { background: white; padding: 0; border-bottom: 1px solid var(--border); }
@@ -52,3 +50,16 @@
 #otherDeviceField label { display: block; margin-bottom: 6px; font-weight: 600; }
 #otherDeviceName { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; }
 #otherDeviceName[aria-invalid="true"] { border-color: var(--bad-text); }
+
+/* Keep the quantity and the report actions readable on touch screens. */
+.stepper span, .eq-mid strong, .inc-time { font-variant-numeric: tabular-nums; }
+.page :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+#otherDeviceName[aria-invalid="true"] { border-width: 2px; }
+@media (max-width: 760px) {
+  .stepper { height: 44px; }
+  .stepper button { width: 44px; }
+  #formCard #fBtn { width: 100%; min-height: 44px; }
+  #incTabs { flex-wrap: wrap; }
+  #incList .inc-title { flex-wrap: wrap; }
+  #incList .inc-title h3 { min-width: 0; overflow-wrap: anywhere; }
+}

@@ -76,7 +76,6 @@ function renderForm() {
   const opts = dev ? DEVICES : ROOMS;
   $('formCard').innerHTML = `
     <h2>Báo cáo sự cố mới</h2>
-    <p class="fsub">Chọn đối tượng và mô tả vấn đề bạn gặp phải. <span class="req">*</span> là thông tin bắt buộc.</p>
 
     <div class="fl">
       <label>Đối tượng báo sự cố <span class="req">*</span></label>
@@ -112,7 +111,6 @@ function renderForm() {
       <div class="drop" id="fDrop" role="button" tabindex="0" aria-label="Chọn ảnh đính kèm">
         ${icon('imagePlus')}
         <p>Kéo thả ảnh vào đây hoặc <b>Chọn ảnh</b></p>
-        <small>Có thể gửi báo cáo mà không cần đính kèm ảnh.</small>
       </div>
       <input type="file" id="fFile" accept="image/*" hidden>
       ${f.file ? `
@@ -247,7 +245,7 @@ function noteOf(i) {
   if (i.status === 'sent') return 'Phiếu sự cố đã được tạo và chuyển đến Phòng CSVC.';
   if (i.status === 'received') return 'Phòng CSVC đã tiếp nhận và đang kiểm tra sự cố.';
   if (i.status === 'repairing') return dev ? 'Đang khắc phục sự cố của thiết bị.' : 'Đang khắc phục sự cố tại phòng.';
-  return i.result === 'replace' ? 'Đã thay thiết bị và thông báo kết quả cho sinh viên.' : 'Đã khắc phục sự cố và kiểm tra hoạt động ổn định.';
+  return i.result === 'replace' ? 'Đã thay thiết bị và thông báo kết quả cho giảng viên.' : 'Đã khắc phục sự cố và kiểm tra hoạt động ổn định.';
 }
 
 function openDetail(code) {
@@ -412,7 +410,6 @@ function initBell() {
    ===================================================== */
 function initUA3() {
   $('dateChip').innerHTML = `${icon('calendar')} Thứ Hai, 26/10/2026`;
-  $('pageAlert').innerHTML = alertBox('brand', '', 'Báo sự cố trực tiếp trên hệ thống để không bị trôi tin nhắn. Hệ thống tự chuyển đến bộ phận xử lý, bạn không cần liên hệ ai.');
   $('noteInc').innerHTML = `${icon('bell')} Bạn sẽ nhận thông báo khi sự cố được tiếp nhận, đang sửa hoặc đã xử lý.`;
 
   const fr = document.querySelector('.footer-inner span:last-child');

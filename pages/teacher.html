@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/teacher.css?v=workflow3">
+  <link rel="stylesheet" href="../css/teacher-heading.css">
 </head>
 <body data-page="teacher">
   <div id="app-header"></div>
@@ -16,14 +17,13 @@
     <aside class="sidebar" id="app-sidebar"></aside>
     <div class="app-main">
       <main class="page teacher-page">
-        <header class="teacher-page-title">
+        <header class="teacher-heading">
           <h1>Mượn – trả phòng</h1>
         </header>
 
 
         <section class="teacher-section-heading" id="teacher-booking">
-          <div><span class="teacher-section-kicker">ĐẶT PHÒNG</span><h2>Tìm phòng phù hợp</h2></div>
-          <span class="teacher-live">Lịch phòng</span>
+          <div><h2>Tìm phòng phù hợp</h2></div>
         </section>
 
         <section class="teacher-card teacher-search-card">
@@ -42,7 +42,7 @@
         <section id="teacherRoomGrid" class="teacher-room-grid" aria-live="polite"></section>
 
         <section class="teacher-requests-section" id="teacher-requests">
-          <div class="teacher-section-heading compact"><div><span class="teacher-section-kicker">THEO DÕI</span><h2>Lịch mượn</h2></div><button class="teacher-text-button" id="teacherShowAll" type="button" hidden>Xem tất cả</button></div>
+          <div class="teacher-section-heading compact"><div><h2>Lịch mượn</h2></div><button class="teacher-text-button" id="teacherShowAll" type="button" hidden>Xem tất cả</button></div>
           <div class="teacher-card teacher-requests-card">
             <div class="teacher-request-tabs" id="teacherRequestTabs"><button class="selected" data-filter="all">Tất cả <span>0</span></button><button data-filter="pending">Chờ duyệt <span>0</span></button><button data-filter="approved">Đã duyệt <span>0</span></button><button data-filter="rejected">Từ chối <span>0</span></button><button data-filter="cancelled">Đã hủy <span>0</span></button><button data-filter="returned">Đã trả <span>0</span></button></div>
             <div id="teacherRequestList"></div>
@@ -56,7 +56,7 @@
 
   <div class="teacher-modal-backdrop" id="teacherModal" hidden>
     <section class="teacher-modal" role="dialog" aria-modal="true" aria-labelledby="teacherModalTitle">
-      <div class="teacher-modal-head"><div><span class="teacher-section-kicker">TẠO YÊU CẦU</span><h2 id="teacherModalTitle">Đăng ký mượn phòng</h2><p id="teacherModalRoom"></p></div><button type="button" class="teacher-modal-close" id="teacherModalClose">Đóng</button></div>
+      <div class="teacher-modal-head"><div><h2 id="teacherModalTitle">Đăng ký mượn phòng</h2><p id="teacherModalRoom"></p></div><button type="button" class="teacher-modal-close" id="teacherModalClose">Đóng</button></div>
       <form id="teacherBookingForm" class="teacher-booking-form">
         <input type="hidden" id="teacherSelectedRoom">
         <div class="teacher-modal-fields">
@@ -86,5 +86,6 @@
   </div>
   <script src="../js/main.js"></script>
   <script src="../js/teacher.js?v=teacher-conflicts"></script>
+  <script src="../js/teacher-room-display.js"></script>
 </body>
 </html>
