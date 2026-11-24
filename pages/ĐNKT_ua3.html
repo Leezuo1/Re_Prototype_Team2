@@ -2,37 +2,72 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>UA3 - Bảo trì định kỳ phòng học &amp; hạ tầng | VLU Kỹ thuật</title>
-  <link rel="stylesheet" href="header.css">
-  <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="ua4.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bảo trì định kỳ phòng học | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
+  <link rel="stylesheet" href="../css/ua3.css">
 </head>
-<body>
-  <div id="header-container"></div>
+<body data-page="ua3" data-role="dnkt">
 
-  <div class="app-layout">
-    <div id="sidebar-container"></div>
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
 
-    <main class="ua4-main">
-      <div class="ua4-topbar">
-        <h2>UA3 - Bảo trì định kỳ phòng học và hạ tầng công nghệ</h2>
-      </div>
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
 
-      <!-- Danh sách kế hoạch bảo trì & Checklist kiểm tra theo loại phòng -->
-      <section id="ua3-plan-list"></section>
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Bảo trì định kỳ phòng học &amp; hạ tầng</h1>
+            <p class="sub">Lập kế hoạch tránh trùng lịch học, khóa tạm thời phòng bảo trì, kiểm tra Checklist và đề xuất vật tư.</p>
+          </div>
+          <div class="date-chip" id="dateChip"></div>
+        </div>
 
-      <!-- Phiếu đề xuất cấp phát vật tư tiêu hao gửi Phòng CSVC -->
-      <section class="ua4-card">
-        <h3 style="font-size:15px;color:#c8102e;margin-bottom:12px;">Đề xuất cấp phát vật tư tiêu hao sau bảo trì</h3>
-        <form id="ua3-material-form" class="ua4-filter">
-          <input type="text" id="ua3-material-name" placeholder="Tên linh kiện / vật tư (VD: Bóng đèn máy chiếu, Pin micro...)" style="flex:1;" required>
-          <input type="number" id="ua3-material-qty" placeholder="Số lượng" min="1" style="width:120px;" required>
-          <button type="submit" class="btn-vlu">Gửi đề xuất vật tư</button>
-        </form>
-      </section>
-    </main>
+        <div id="pageAlert"></div>
+        <div id="pageNotice"></div>
+
+        <div class="layout eq">
+          <!-- Cột trái: Lập lịch bảo trì & Checklist kiểm tra kỹ thuật (F84, F86 - JS tự vẽ) -->
+          <section class="card" id="checklistCard"></section>
+
+          <!-- Cột phải: Kế hoạch bảo trì & Trạng thái khóa phòng (F85, F87, BR1-BR3) -->
+          <aside class="card">
+            <div class="card-head">
+              <h2>Kế hoạch bảo trì định kỳ</h2>
+              <span class="count" id="maintCount"></span>
+            </div>
+
+            <div class="tabs" id="maintTabs">
+              <button class="tab active" data-filter="all">Tất cả</button>
+              <button class="tab" data-filter="scheduled">Sắp tới</button>
+              <button class="tab" data-filter="locked">Đang bảo trì (BR2)</button>
+              <button class="tab" data-filter="done">Đã hoàn thành</button>
+            </div>
+
+            <div class="inc-list" id="maintList"></div>
+
+            <p class="note" id="noteMaint"></p>
+          </aside>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
   </div>
 
-  <script src="ua3.js"></script>
+  <!-- Ngăn chi tiết Checklist / Đề xuất vật tư trượt từ phải + khung modal -->
+  <div id="drawerRoot"></div>
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua3.js"></script>
 </body>
 </html>
