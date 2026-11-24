@@ -2,63 +2,119 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>UA1 - Tiếp nhận &amp; xử lý sự cố | VLU Kỹ thuật</title>
-  <link rel="stylesheet" href="header.css">
-  <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="ua4.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tiếp nhận &amp; Xử lý sự cố | Văn Lang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/ua1.css">
+  <link rel="stylesheet" href="../css/ua1-modal.css">
 </head>
-<body>
-  <div id="header-container"></div>
+<body data-page="ua1" data-role="dnkt">
 
-  <div class="app-layout">
-    <div id="sidebar-container"></div>
+  <!-- Header: nạp từ components/header.html -->
+  <div id="app-header"></div>
 
-    <main class="ua4-main">
-      <div class="ua4-topbar">
-        <h2>UA1 - Tiếp nhận và xử lý sự cố phòng học / thiết bị</h2>
-        <div class="ua4-filter">
-          <select id="ua1-filter-campus">
-            <option value="ALL">Tất cả cơ sở VLU</option>
-            <option value="Cơ sở 1">Cơ sở 1</option>
-            <option value="Cơ sở 2">Cơ sở 2</option>
-            <option value="Cơ sở 3">Cơ sở 3</option>
-          </select>
-          <select id="ua1-filter-status">
-            <option value="ALL">Tất cả trạng thái</option>
-            <option value="Chờ tiếp nhận">Chờ tiếp nhận</option>
-            <option value="Đang xử lý">Đang xử lý</option>
-            <option value="Chờ linh kiện">Chờ linh kiện</option>
-            <option value="Đã hoàn thành">Đã hoàn thành</option>
-          </select>
+  <div class="app-body">
+    <!-- Sidebar trái: nạp từ components/sidebar.html -->
+    <aside class="sidebar" id="app-sidebar"></aside>
+
+    <div class="app-main">
+      <main class="page">
+        <div class="page-head">
+          <div>
+            <h1>Tiếp nhận &amp; Xử lý sự cố kỹ thuật</h1>
+            <p class="sub">Theo dõi phiếu báo hỏng phòng học, phân loại ưu tiên và cập nhật nghiệm thu thiết bị.</p>
+          </div>
+          <div class="date-chip" id="dateChip"></div>
         </div>
-      </div>
 
-      <div class="ua4-stats">
-        <div class="stat-card"><span>Sự cố Khẩn cấp (SLA 15p)</span><strong>1</strong></div>
-        <div class="stat-card"><span>Đang xử lý</span><strong>1</strong></div>
-        <div class="stat-card"><span>Đã nghiệm thu hoàn tất</span><strong>18</strong></div>
-      </div>
+        <div class="layout">
+          <!-- Cột trái: Danh sách phiếu báo sự cố (BR1, BR2) -->
+          <section class="card" id="ticketCard">
+            <div class="card-head">
+              <h2>Phiếu báo sự cố</h2>
+              <span class="hint-ok" id="slaHint"></span>
+            </div>
 
-      <div class="ua4-card">
-        <table class="ua4-table">
-          <thead>
-            <tr>
-              <th>Mã phiếu</th>
-              <th>Cơ sở / Phòng</th>
-              <th>Thiết bị gặp sự cố</th>
-              <th>Mức độ ưu tiên</th>
-              <th>Trạng thái</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody id="ua1-ticket-tbody"></tbody>
-        </table>
-      </div>
-    </main>
+            <form class="filter" id="ticketFilterForm">
+              <div class="field">
+                <label for="fCampus">Cơ sở phụ trách</label>
+                <select id="fCampus">
+                  <option value="CS3">Cơ sở 3</option>
+                  <option value="CS1">Cơ sở 1</option>
+                  <option value="CS2">Cơ sở 2</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="fBuilding">Tòa nhà</label>
+                <select id="fBuilding">
+                  <option value="all">Tất cả tòa nhà</option>
+                  <option value="A">Tòa A</option>
+                  <option value="G">Tòa G</option>
+                  <option value="H">Tòa H</option>
+                  <option value="LV">Tòa LV</option>
+                </select>
+              </div>
+              <div class="field wide">
+                <label for="fPriority">Mức độ ưu tiên</label>
+                <select id="fPriority">
+                  <option value="all">Tất cả mức độ</option>
+                  <option value="urgent">Khẩn cấp (Đang có tiết)</option>
+                  <option value="medium">Trung bình</option>
+                  <option value="low">Thấp</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary" id="btnFilter">Lọc phiếu</button>
+            </form>
+
+            <div id="ticketBanner"></div>
+
+            <div class="result-bar">
+              <strong id="resCount"></strong>
+              <span id="slaTime"></span>
+            </div>
+
+            <div class="ticket-grid" id="ticketGrid"></div>
+
+            <p class="note" id="noteBr"></p>
+          </section>
+
+          <!-- Cột phải: Phiếu đang phụ trách (F76 - F78) -->
+          <aside class="card">
+            <div class="card-head">
+              <h2>Phiếu tôi phụ trách</h2>
+              <span class="count" id="assignedCount"></span>
+            </div>
+
+            <div id="assignedBanner"></div>
+
+            <div class="tabs" id="ticketTabs">
+              <button class="tab active" data-filter="all">Tất cả</button>
+              <button class="tab" data-filter="pending">Chờ tiếp nhận</button>
+              <button class="tab" data-filter="processing">Đang xử lý</button>
+              <button class="tab" data-filter="locked">Chờ linh kiện / Khóa</button>
+              <button class="tab" data-filter="closed">Đã nghiệm thu</button>
+            </div>
+
+            <div class="order-list" id="assignedList"></div>
+
+            <p class="note key-note" id="noteAcceptance"></p>
+          </aside>
+        </div>
+      </main>
+
+      <div id="app-footer"></div>
+    </div>
   </div>
 
-  <div id="ua1-modal-root"></div>
-  <script src="ua1-modals.js"></script>
-  <script src="ua1.js"></script>
+  <!-- Nhắc nhở SLA 15 phút + khung nạp modal động -->
+  <div id="reminder"></div>
+  <div id="modalRoot"></div>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/ua1.js"></script>
+  <script src="../js/ua1-modals.js"></script>
 </body>
 </html>
